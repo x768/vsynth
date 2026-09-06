@@ -519,7 +519,8 @@ class ConfigPage
                 document.getElementById('dic-ja-word-count').textContent = `Error: responce=${res.status}`;
             } else {
                 const src = await res.text();
-                ja_reading.load_src(src);
+                const [alias, dic] = await db.set_ja_dic_file(src.split("\n"));
+                ja_reading.load(alias, dic);
                 document.getElementById('dic-ja-word-count').textContent = ja_reading.count;
                 this.set_button_hilight('dic-import-ja', ja_reading.count === 0);
                 this.set_button_hilight('dic-init-ja', ja_reading.count === 0);
