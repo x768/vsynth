@@ -302,10 +302,12 @@ export class JaReading
                 }
             } else {
                 const a = line.split('|');
-                const w = a.shift();
-                const k = a.shift();
-                const obj = {w:w, k:k, v:a};
-                dic.push(obj);
+                if (a.length >= 3) {
+                    const w = a.shift();
+                    const k = a.shift();
+                    const obj = {w:w, k:k, v:a};
+                    dic.push(obj);
+                }
             }
         }
         return [alias, dic];
