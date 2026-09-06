@@ -590,7 +590,7 @@ class LanguagePage
                 'tou-audio-use': 'The generated audio may be used for both commercial and non-commercial purposes. Please use it at your own risk.',
                 'tou-beta-release': 'This software is a beta version. Please be aware that data created previously may become unavailable.',
                 'software-license': 'Software License',
-                'language-support-info': 'Speech synthesis feature for English is not yet available.',
+                'language-support-info': 'English speech synthesis is not yet available.',
                 'software-descript1': 'NinbosVoice is released under the GPL version 3 license.',
                 'software-descript2': 'This product uses modified portions of the eSpeak NG source code and audio data.',
             },

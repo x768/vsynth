@@ -3,7 +3,7 @@
 NinbosVoiceは、JavaScriptで実装した音声合成ソフトウェアです。
 
 NinbosVoice is a speech synthesizer works on a web browser.
-Speech synthesis feature for English is not yet available.
+English speech synthesis is not yet available.
 
 https://x768.github.io/vsynth/
 
