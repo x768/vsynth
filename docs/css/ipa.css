@@ -1,0 +1,65 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    padding: 0.5em 1em;
+}
+table {
+    border-collapse: collapse;
+    margin: 16px 8px;
+}
+th {
+    font-weight: normal;
+    background: #e0e0e0;
+    vertical-align: bottom;
+}
+td, th {
+    border: 1px solid silver;
+    padding: 0.2em 0.2em;
+}
+button {
+    padding: 0.1em 0.4em;
+    width: 100%;
+}
+.ipa {
+    font-size: 150%;
+    text-align: center;
+    cursor: pointer;
+    width: 32px;
+}
+.ipa, #ipa {
+    font-family: 'Charis SIL', 'Doulos SIL', 'DejaVu Sans', sans-serif;
+}
+#ipa {
+    font-size: 150%;
+}
+#pfn, #xsampa {
+    font-family: "Courier", monospace;
+}
+.na {
+    background: silver;
+}
+.not-available {
+    background: #e0e0e0;
+}
+.selected {
+    color: white;
+    background: #66f;
+}
+.note-hover {
+    background: yellow;
+}
+#flow {
+    display: flex;
+    align-items: flex-start;
+}
+#play svg {
+    width:48px;
+    height:48px;
+    stroke: none;
+    fill: black;
+}
+#play:disabled path {
+    fill: gray;
+}

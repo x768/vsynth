@@ -1,0 +1,524 @@
+:root {
+    --bg-color: white;
+    --bg2-color: #f4f4f4;
+    --fg-color: black;
+    --border-color: silver;
+    --hover-color: #eee;
+    --warning-color: red;
+    --light-color: #bfefff;
+    --selected-color: #0090bf;
+    --light-hover-color: #9fcfef;
+    --hilight-color: #ff8;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: black;
+        --bg2-color: #444;
+        --fg-color: white;
+        --border-color: gray;
+        --hover-color: #666;
+        --light-color: #0090bf;
+        --selected-color: #bfefff;
+        --light-hover-color: #8fbfdf;
+        --hilight-color: #880;
+    }
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    font-size: 100%;
+}
+
+body {
+    font-family: sans-serif;
+    height: 100vh;
+    background: var(--bg-color);
+    color: var(--fg-color);
+    stroke: var(--fg-color);
+    fill: var(--fg-color);
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    user-select: none;
+    display: none;
+}
+h1 {
+    margin: 16px 0 12px;
+    font-size: 140%;
+    font-weight: bold;
+    border-bottom: 1px solid var(--border-color);
+}
+p {
+    margin: 8px 0;
+}
+select {
+    background: var(--bg-color);
+    color: var(--fg-color);
+    margin: 8px 0;
+}
+option {
+    padding: 2px 4px;
+}
+input {
+    margin: 2px 0;
+}
+a {
+    color: var(--selected-color);
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+table {
+    margin: 10px 0;
+    border-collapse: collapse;
+    border: 1px solid var(--border-color);
+}
+th {
+    font-weight: normal;
+    background: var(--hover-color);
+    padding: 4px;
+}
+td {
+    padding: 4px;
+    border: 1px solid var(--border-color);
+}
+textarea {
+    margin: 2px;
+    padding: 1px;
+    resize: none;
+}
+input {
+    padding: 1px;
+}
+input[type=range] {
+    width: 100%;
+}
+input[type=text] {
+    color: var(--fg-color);
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+}
+input[type=number] {
+    color: var(--fg-color);
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    text-align: end;
+}
+ul, ol {
+    padding: 6px 0 6px 2em;
+}
+button {
+    color: var(--fg-color);
+    stroke: var(--fg-color);
+    fill: var(--fg-color);
+    margin: 8px;
+    padding: 4px 8px;
+    height: 2.1em;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--bg-color);
+    min-width: 6em;
+    vertical-align: middle;
+    cursor: pointer;
+}
+button:disabled {
+    background: var(--border-color);
+    cursor: default;
+}
+button:not(:disabled):hover {
+    background: var(--hover-color);
+}
+.button-hilight {
+    background: var(--hilight-color);
+}
+
+.warning {
+    color: var(--warning-color);
+}
+#tab {
+    padding: 10px 4px 0;
+    background: var(--light-color);
+}
+#tab div {
+    display: inline;
+    vertical-align: bottom;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    padding: 2px 1em 0;
+    cursor: pointer;
+}
+.tab-selected {
+    background: var(--selected-color);
+    color: var(--bg-color);
+}
+#tab div:not(.tab-selected):hover {
+    background: var(--light-hover-color);
+}
+#sub {
+    background: var(--selected-color);
+    min-height: 50px;
+    vertical-align: bottom;
+}
+
+#dialog {
+    width: 800px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin: auto;
+    padding: 10px;
+    user-select: none;
+    background: var(--bg-color);
+    color: var(--fg-color);
+}
+.hidden {
+    display: none;
+}
+#dialog-upload {
+    margin: 20px;
+    border: 3px dashed var(--fg-color);
+    height: 300px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.dialog-drop-active {
+    background: var(--hilight-color);
+}
+#dialog-download-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+    height: 200px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--selected-color);
+    color: var(--bg-color);
+    stroke: var(--bg-color);
+    fill: var(--bg-color);
+    font-size: 140%;
+    text-align: center;
+    text-decoration: none;
+}
+#dialog-download-button svg {
+    margin-right: 8px;
+}
+#dialog-download-button path {
+    stroke-width: 2px;
+    fill: none;
+}
+#dialog-filelist {
+    margin: 20px;
+    border: 1px solid var(--border-color);
+    height: 350px;
+    overflow-y: scroll;
+}
+#dialog-filename {
+    margin: 20px;
+}
+#dialog-filename-input {
+    width: 100%;
+}
+.file-list-item {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    display: grid;
+    grid-template-columns: 32px 1fr 24px;
+}
+.file-list-item input[type=checkbox] {
+    margin: 6px 4px;
+}
+.file-list-item a {
+    text-decoration: none;
+    color: var(--fg-color);
+}
+.file-list-item.active {
+    background: var(--selected-color);
+}
+.file-list-item.active a {
+    text-decoration: none;
+    color: var(--bg-color);
+}
+.file-list-item:not(.active):hover {
+    background: var(--hover-color);
+}
+.file-list-dl {
+    padding: 3px 5px;
+    cursor: pointer;
+}
+.file-list-dl path {
+    stroke: var(--fg-color);
+    stroke-width: 1px;
+    fill: none;
+}
+.file-list-close {
+    padding: 3px 5px;
+    cursor: pointer;
+}
+.file-list-close path {
+    stroke: var(--fg-color);
+    stroke-width: 1px;
+    fill: none;
+}
+.file-list-add {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    display: grid;
+    grid-template-columns: 32px 1fr 20px;
+    cursor: pointer;
+}
+.file-list-add:hover {
+    background: var(--hover-color);
+}
+.active .proj-list-item {
+    color: var(--bg-color);
+}
+#dialog-button-row {
+    text-align: end;
+    padding: 10px 10px 0;
+}
+
+.page {
+    height: 100%;
+}
+.icon16 {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2px;
+    fill: none;
+}
+.icon24 {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2px;
+    fill: none;
+}
+.icon32 {
+    width: 32px;
+    height: 32px;
+    stroke-width: 2px;
+    fill: none;
+}
+#page-config, #page-help, #page-language {
+    display: grid;
+    min-width: 0;
+    min-height: 0;
+    grid-template-columns: 1fr 1000px 1fr;
+}
+.page-inner {
+    grid-column: 2;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+#page-tts {
+    display: grid;
+    min-width: 0;
+    min-height: 0;
+    grid-template-columns: 100px 200px 1fr;
+    grid-template-rows: 220px 1fr;
+}
+#tts-player {
+    grid-column: 1;
+    background: var(--bg2-color);
+}
+#tts-player svg {
+    width:60px;
+    height:60px;
+    margin: 4px 15px;
+}
+#tts-player rect {
+    stroke: none;
+    fill: var(--border-color);
+}
+#tts-player .enabled {
+    cursor: pointer;
+}
+#tts-player .enabled rect {
+    fill: var(--selected-color);
+}
+#tts-player .enabled:hover rect {
+    fill: #40c0df;
+}
+#tts-chunk {
+    grid-column: 2;
+    grid-row: 1;
+}
+#tts-pfn-edit {
+    width: 190px;
+}
+#tts-note {
+    grid-column: 3;
+    grid-row: 1;
+    overflow-x: scroll;
+    min-width: 0;
+}
+#tts-note-svg {
+    width: 300px;
+    height: 200px;
+}
+#tts-note-svg line {
+    stroke: var(--fg-color);
+    stroke-width: 1px;
+    fill: none;
+}
+#tts-note text {
+    stroke: none;
+    fill: var(--fg-color);
+    text-anchor: middle;
+}
+.note-tone {
+    stroke: none;
+    fill: var(--fg-color);
+}
+.note-chunk {
+    stroke: none;
+    fill: rgba(192,192,255,0);
+}
+.note-chunk:hover {
+    fill: rgba(192,192,255,0.25);
+}
+.note-chunk-selected {
+    fill: rgba(192,192,255,0.25);
+}
+
+#tts-parameter {
+    grid-column: 1 / 3;
+    grid-row: 2;
+    overflow-y: auto;
+    min-height: 0;
+    background: var(--bg2-color);
+    padding: 0 1em;
+}
+#tts-voice-select {
+    width: 300px;
+    height: 400px;
+    inset: auto;
+    position-area: bottom right;
+    margin: 0;
+    border: none;
+    box-shadow: 0 0 10px var(--fg-color);
+    overflow-y: scroll;
+    background: var(--bg2-color);
+}
+.tss-voice-select-item {
+    margin: 6px;
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    align-items: flex-start;
+    cursor: pointer;
+}
+.tss-voice-select-name {
+    margin-left: 0.5em;
+}
+.tss-voice-select-item:not(.tts-voice-selected):hover {
+    background: var(--light-hover-color);
+}
+.tts-voice-selected {
+    background: var(--selected-color);
+    color: var(--bg-color);
+}
+
+#tts-list {
+    grid-column: 3;
+    grid-row: 2;
+    overflow-y: scroll;
+    min-height: 0;
+    border-top: 1px solid var(--selected-color);
+}
+.tts-item {
+    padding: 4px 8px;
+    display: grid;
+    grid-template-columns: 40px 1fr 30px;
+}
+.tts-item:not(.tts-selected):hover {
+    background: var(--light-color);
+}
+#tts-item-add {
+    padding: 4px 8px;
+    text-align: end;
+    cursor: pointer;
+}
+#tts-item-add:hover {
+    background: var(--light-color);
+}
+.tts-item-del {
+    text-align: end;
+    cursor: pointer;
+}
+.tts-voice-select {
+    cursor: pointer;
+}
+.tts-selected {
+    background: var(--selected-color);
+    color: var(--bg-color);
+    stroke: var(--bg-color);
+    fill: var(--bg-color);
+}
+.tts-voice {
+    cursor: pointer;
+}
+#tts-text-src, #tts-text-phonetic {
+    width: 100%;
+}
+
+#page-voices {
+    display: grid;
+    overflow-y: hidden;
+    min-height: 0;
+    grid-template-columns: 24em 1fr;
+}
+#voices-list {
+    background: var(--bg2-color);
+    overflow-y: scroll;
+    min-height: 0;
+}
+#voice-profile {
+    padding: 12px 1em;
+    overflow-y: scroll;
+    min-height: 0;
+}
+.voice-item {
+    margin: 6px;
+    border-radius: 8px;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: 48px 1fr 20px;
+}
+#voice-item-add {
+    margin: 6px;
+    padding: 8px;
+    border-radius: 8px;
+    text-align: end;
+    cursor: pointer;
+}
+#voices-list > div:not(.voice-selected):hover {
+    background: var(--light-hover-color);
+}
+.voice-name {
+    font-size: 140%;
+}
+#voice-name {
+    width: 200px;
+}
+.voice-item-icon {
+    cursor: pointer;
+}
+.voice-item-del {
+    padding: 8px 0;
+    text-align: end;
+    cursor: pointer;
+}
+.voice-selected {
+    background: var(--selected-color);
+    color: var(--bg-color);
+    stroke: var(--bg-color);
+    fill: var(--bg-color);
+    cursor: default;
+}
+#page-help {
+    user-select: text;
+}

@@ -1,0 +1,109 @@
+:root {
+    --bg-color: white;
+    --fg-color: black;
+    --border-color: gray;
+    --link-color: #44f;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: black;
+        --fg-color: white;
+        --link-color: #aaf;
+    }
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    padding: 0.5em 0 2em;
+    background: var(--bg-color);
+    color: var(--fg-color);
+    fill: var(--fg-color);
+}
+.ipa {
+    font-family: 'Charis SIL', 'Doulos SIL', 'DejaVu Sans', sans-serif;
+}
+#container {
+    width: 1200px;
+    margin: auto;
+}
+h1 {
+    margin: 0.8em 0;
+    padding: 0 0.2em;
+    font-size: 160%;
+    font-weight: bold;
+    border-bottom: 1px solid gray;
+    border-left: 3px solid gray;
+}
+h2 {
+    margin: 0.8em 0;
+    padding: 0 0.2em;
+    font-size: 140%;
+    font-weight: bold;
+    border-bottom: 1px solid gray;
+}
+h3 {
+    margin: 1.4em 0 0.8em;
+    font-size: 100%;
+}
+ul, ol, dl {
+    margin: 0.5em 0 0.5em 2em;
+}
+li {
+    margin: 0.05em 0;
+}
+dd {
+    margin: 0.1em 1.5em;
+}
+p, pre {
+    margin: 0.8em 0;
+}
+a {
+    color: var(--link-color);
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+table {
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid silver;
+    padding: 4px 6px;
+}
+th {
+    background: #ddd;
+    font-weight: normal;
+}
+.code {
+    border: 1px solid silver;
+    background: #f4f4f4;
+    font-family: "Courier", monospace;
+}
+.chart text {
+    font-size: 16px;
+    fill: black;
+}
+.not-impl {
+    color: silver;
+}
+.na {
+    background: #eee;
+}
+
+.button-style-link {
+    border-radius: 12px;
+    padding: 8px 20px;
+    background: var(--link-color);
+    color: var(--bg-color);
+    font-size: 130%;
+}
+.b {
+    border-bottom: 2px solid gray;
+}
+.phoneme td {
+    width: 100px;
+}

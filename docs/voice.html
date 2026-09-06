@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data:">
+<link rel="icon" href="favicon.png">
+<link rel="stylesheet" href="css/voice.css">
+<script src="js/voice.js" type="module"></script>
+<title>NinbosVoice beta</title>
+</head>
+<body>
+<nav id="tab">
+<div data-tab="tts"><span data-res="tts"></span><span id="filename"></span></div>
+<div data-tab="voices" data-res="voices"></div>
+<div data-tab="config" data-res="config"></div>
+<div data-tab="help" data-res="help"></div>
+<div data-tab="language">Language</div>
+</nav>
+
+<div id="sub">
+<button class="sub-tts sub-voices" id="sub-undo"><svg class="icon24" viewBox="-12,0,24,24"><path stroke-width="2" d="M-11,18 Q0,2,11,18 M-11,12 L-11,18 L-5,18" /></svg></button>
+<button class="sub-tts sub-voices" id="sub-redo"><svg class="icon24" viewBox="-12,0,24,24"><path stroke-width="2" d="M-11,18 Q0,2,11,18 M11,12 L11,18 L5,18" /></svg></button>
+<button class="sub-tts" id="sub-open-proj" data-res="open-proj"></button>
+<button class="sub-tts" id="sub-save-proj" data-res="save-proj"></button>
+<button class="sub-tts" id="sub-save-as" data-res="save-as"></button>
+<button class="sub-tts" id="sub-manage-proj" data-res="manage-proj"></button>
+<button class="sub-voices" id="sub-import-file" data-res="import-file"></button>
+<button class="sub-voices" id="sub-export-file" data-res="export-file"></button>
+</div>
+
+<div class="page" id="page-tts">
+<div id="tts-player">
+<svg id="tts-wavs-download" viewBox="-30,-30,60,60">
+<rect x="-30" y="-30" width="60" height="60" rx="10" ry="10"></rect>
+<path transform="translate(0,-12)" stroke="white" stroke-width="3" fill="none" d="M-8,0 L-8,18 M-14,12 L-8,18 L-2,12 M8,0 L8,18 M14,12 L8,18 L2,12 M-16,20 L-16,27 L16,27 L16,20" /></svg>
+<svg id="tts-wav-download" viewBox="-30,-30,60,60">
+<rect x="-30" y="-30" width="60" height="60" rx="10" ry="10"></rect>
+<path transform="translate(0,-12)" stroke="white" stroke-width="3" fill="none" d="M0,0 L0,20 M-8,12 L0,20 L8,12 M-14,16 L-14,27 L14,27 L14,16" /></svg>
+<svg id="tts-play-stop" viewBox="-30,-30,60,60">
+<rect x="-30" y="-30" width="60" height="60" rx="10" ry="10"></rect>
+<path id="tts-play-mark" stroke="none" fill="white" d="M15,0 L-10,-15 L-10,15 z"></path>
+<path id="tts-stop-mark" stroke="none" fill="white" d="M-12,-12 L-12,12 L12,12 L12,-12 z"></path>
+</svg>
+</div>
+<div id="tts-note"><svg id="tts-note-svg" viewBox="0,0,300,200"></svg></div>
+<div id="tts-chunk">
+<textarea id="tts-pfn-edit" rows="6"></textarea>
+</div>
+<div id="tts-parameter">
+<p><span data-res="tts-speed"></span> <input type="number" id="tts-speed-t" min="60" max="720" value="480" size="5" step="10"> syl/min</p>
+<p><input type="range" id="tts-speed-r"></p>
+<p><span data-res="tts-pitch"></span> <input type="number" id="tts-pitch-t" min="-2400" max="2400" value="0" size="5" step="100"> cents</p>
+<p><input type="range" id="tts-pitch-r"></p>
+<p><span data-res="tts-accent"></span> <input type="number" id="tts-accent-t" min="0" max="1200" value="400" size="5" step="20"> cents</p>
+<p><input type="range" id="tts-accent-r"></p>
+<p><span data-res="tts-volume"></span> <input type="number" id="tts-volume-t" min="0" max="100" value="100" size="5" step="10"> %</p>
+<p><input type="range" id="tts-volume-r"></p>
+</div>
+<div id="tts-voice-select" popover></div>
+<div id="tts-list"><div id="tts-item-add"><svg class="icon16" viewBox="-8,-8,16,16"><path d="M0,-8 L0,8 M-8,0 L8,0" /></svg></div></div>
+<template id="tts-editor-template">
+<div id="tts-editor">
+<div><input type="text" id="tts-text-src" value=""></div>
+<div><input type="text" id="tts-text-phonetic" value=""></div>
+</div>
+</template>
+</div>
+
+<div class="page" id="page-voices">
+<div id="voices-list"><div id="voice-item-add"><svg class="icon16" viewBox="-8,-8,16,16"><path d="M0,-8 L0,8 M-8,0 L8,0" /></svg></div></div>
+<div id="voice-profile">
+<table>
+<tr><th colspan="2">Base Pitch</th><td><input type="number" id="voice-pitch" min="50" max="500" value="50" size="5" step="10"> Hz</td></tr>
+<tr><th colspan="2">Flutter</th><td><input type="number" id="voice-flutter" min="0" max="256" value="0" size="5" step="16"> / 256</td></tr>
+<tr><th colspan="2">Fricative Amplitude</th><td><input type="number" id="voice-fricative" min="0" max="256" value="0" size="5" step="16"> / 256</td></tr>
+<tr><th rowspan="4">Formants</th><th>height</th><td><input type="text" id="voice-formant-h" size="40" data-min="0" data-max="300" autocomplete="off"></td></tr>
+<tr><th>width</th><td><input type="text" id="voice-formant-w" size="40" data-min="10" data-max="1000" autocomplete="off"></td></tr>
+<tr><th>freq</th><td><input type="text" id="voice-formant-f" size="40" data-min="10" data-max="500" autocomplete="off"></td></tr>
+<tr><th>freqadd</th><td><input type="text" id="voice-formant-a" size="40" data-min="-600" data-max="600" autocomplete="off"></td></tr>
+</table>
+<p class="warning" data-res="warning-laud"></p>
+<div><button class="enabled" id="voice-sample-ja" data-res="voice-sample-ja"></button></div>
+</div>
+<template id="voice-editor-template">
+<input type="text" id="voice-name" value="" autocomplete="off">
+</template>
+</div>
+
+<div class="page" id="page-config">
+<div class="page-inner">
+<h1 data-res="wav-filename"></h1>
+<table>
+<tr><th data-res="filename-single"></th><td><input type="text" id="wav-filename-single" size="50" autocomplete="off">.wav</td></tr>
+<tr><th data-res="filename-seq"></th><td><input type="text" id="wav-filename-seq" size="50" autocomplete="off">.wav</td></tr>
+</table>
+<h1 data-res="dictionary-ja"></h1>
+<div>
+<button id="dic-import-ja" data-res="import-file"></button>
+<button id="dic-export-ja" data-res="export-file"></button>
+<!-- #if_module --><button id="dic-init-ja" data-res="load-dic"></button><!-- #endif -->
+<span id="dic-ja-word-count"></span> words
+</div>
+<h1 data-res="initialize-db"></h1>
+<p class="warning" data-res="delete-all"></p>
+<div><button id="initialize-db" data-res="execute"></button></div>
+</div>
+
+</div>
+
+<div class="page" id="page-help">
+<div class="page-inner">
+
+<p data-res="ninbos-voice-intro"></p>
+<p data-res="language-support-info"></p>
+<p><a href="https://github.com/x768/vsynth/">GitHub - x768/vsynth</a></p>
+<h1 data-res="supported-browsers"></h1>
+<ul>
+    <li>Google Chrome 152 or Later</li>
+    <li>Mozilla Firefox 154 or Later</li>
+</ul>
+<h1 data-res="terms-of-use"></h1>
+<ol>
+<li data-res="tou-no-warranty"></li>
+<li data-res="tou-audio-use"></li>
+<li data-res="tou-beta-release"></li>
+</ol>
+<h1 data-res="software-license"></h1>
+<p><a href="https://www.gnu.org/licenses/gpl-3.0.html"><img src="img/gplv3-127x51.png" width="127" height="51" alt="GPLv3"></a></p>
+<p data-res="software-descript1"></p>
+<p data-res="software-descript2"></p>
+<p><a href="https://github.com/espeak-ng/espeak-ng/">GitHub - espeak-ng/espeak-ng</a></p>
+</div>
+</div>
+
+<div class="page" id="page-language">
+<div class="page-inner">
+<h1>Interface Language</h1>
+<select id="setting-language" size="6">
+<option value="en">English (en)</option>
+<option value="ja">日本語 (ja)</option>
+<option value="zh">简体中文 (zh-Hans)</option>
+<option value="zh-hant">繁體中文 (zh-Hant)</option>
+</select>
+<p data-res="language-support-info"></p>
+</div>
+</div>
+
+<dialog id="dialog" closedby="any">
+<div id="dialog-upload"><div><div data-res="upload-area1"></div><div data-res="upload-area2"></div></div></div>
+<div id="dialog-download">
+    <a href="#" id="dialog-download-button"><div><svg class="icon32" viewBox="-16,-4,32,32"><path d="M0,0 L0,20 M-8,12 L0,20 L8,12 M-14,16 L-14,27 L14,27 L14,16" /></svg><span id="dialog-download-filename"></span></div></a>
+</div>
+<div id="dialog-filelist"></div>
+<div id="dialog-filename"><input type="text" id="dialog-filename-input" autocomplete="off"></div>
+<p id="dialog-warning-message" data-res="confirm-delete-all" class="warning"></p>
+<div id="dialog-button-row"><button id="dialog-ok"></button> <button id="dialog-cancel"></button></div>
+</dialog>
+
+<div class="hidden">
+<canvas id="voice-icon" width="32" height="32"></canvas>
+<input type="file" id="input-file-open">
+</div>
+
+</body>
+</html>

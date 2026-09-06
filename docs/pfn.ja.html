@@ -1,0 +1,255 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="favicon.png">
+<link rel="stylesheet" href="css/style.css">
+<title>弁別素性表記</title>
+</head>
+<body>
+<div id="container">
+<h1>弁別素性表記</h1>
+<p><b>弁別素性表記</b> (べんべつそせいひょうき、英:Phonetic Feature Notation (<b>PFN</b>))は、ヒトの言語音を記述するための表記法である。</p>
+
+<h2>チャンク</h2>
+<p>PFNは、複数のチャンクから構成され、デフォルトで等しい継続時間を持つ。
+チャンクはアプリケーション定義の方法で区切られるが、通常は改行文字を使う。</p>
+<p>各チャンクには対応する自然言語の文字を指定でき、|(U+007C)で区切る。
+継続時間を変更する場合は、1を基準とした継続時間を=(U+003D)に続いて小数で記述する。</p>
+<p>チャンク全体が無音の場合は.(U+002E)を置く。</p>
+<p>チャンクにモーラ(拍)を割り当てた例。母音のみのモーラは継続時間を短くしている。</p>
+<pre class="code">オ|=0.8 o5L7v 7 ! 5 p0 0 A0 +10 A
+オ|=0.8 o5L7v 7 ! 5 p
+サ|Fv0c5 +40 c5 +10 v0c0 +10 f5o9v 7 ! 5 p
+カ|f0v0c +20 c0 +20 v0 +10 f5o9v 7 ! 5 p  7 A ^ A0
+|.
+</pre>
+
+<h2>時刻</h2>
+<p>時刻はチャンク内の相対値で表す。初期状態では現在位置はチャンク始点を指す。</p>
+
+<table>
+<tr><th>パターン</th><th>例</th><th></th></tr>
+<tr><td>0</td><td class="code">0</td><td>チャンク始点に移動</td></tr>
+<tr><td>\d</td><td class="code">3</td><td>チャンク全体の30%時点に移動</td></tr>
+<tr><td>\d\d</td><td class="code">45</td><td>チャンク全体の45%時点に移動</td></tr>
+<tr><td>\^</td><td class="code">^</td><td>チャンク終点に移動</td></tr>
+<tr><td>\+\d</td><td class="code">+10</td><td>現在位置から終点方向に10ms移動</td></tr>
+<tr><td>\-\d</td><td class="code">-10</td><td>現在位置から始点方向に10ms移動</td></tr>
+</table>
+
+<p>例</p>
+<pre class="code">A1 +10 A2 5 A3 +10 A4 A5 +20 A6 ^ -10 A7
+</pre>
+
+<svg class="chart" style="width:400px;height:250px" viewBox="0,0,400,250">
+    <path fill="none" stroke="silver" stroke-width="2" d="M10,240 L10,10 L390,10" />
+    <text text-anchor="start" x="10" y="30">A1</text>
+    <path fill="none" stroke="silver" stroke-width="2" d="M10,50 L50,50 L45,45" />
+    <text text-anchor="middle" x="30" y="70">10ms</text>
+    <text text-anchor="start" x="50" y="55">A2</text>
+    <path fill="none" stroke="silver" stroke-width="2" d="M10,90 L200,90 L195,85" />
+    <text text-anchor="middle" x="100" y="110">50%</text>
+    <text text-anchor="start" x="200" y="95">A3</text>
+    <path fill="none" stroke="silver" stroke-width="2" d="M200,110 L240,110 L235,105" />
+    <text text-anchor="middle" x="210" y="130">10ms</text>
+    <text text-anchor="start" x="240" y="115">A4</text>
+    <text text-anchor="start" x="240" y="135">A5</text>
+    <path fill="none" stroke="silver" stroke-width="2" d="M240,150 L280,150 L275,145" />
+    <text text-anchor="middle" x="260" y="170">20ms</text>
+    <text text-anchor="start" x="280" y="155">A6</text>
+    <path fill="none" stroke="silver" stroke-width="2" d="M10,190 L390,190 L385,185" />
+    <text text-anchor="middle" x="200" y="210">100%</text>
+    <path fill="none" stroke="silver" stroke-width="2" d="M390,220 L350,220 L355,215" />
+    <text text-anchor="middle" x="370" y="240">10ms</text>
+    <text text-anchor="end" x="350" y="225">A7</text>
+</svg>
+
+<h2>割合指定</h2>
+<p>本文書内で「割合を指定する」と記載されている場合、以下の3種類の指定方法とする。</p>
+<table>
+<tr><th>パターン</th><th>例</th><th></th></tr>
+<tr><td>\d</td><td class="code">A3</td><td>10に対する割合 (例:30%)</td></tr>
+<tr><td>\d\d</td><td class="code">A45</td><td>100に対する割合 (例:45%)</td></tr>
+<tr><td>なし</td><td class="code">A</td><td>100%</td></tr>
+</table>
+
+<h2>パラメーター補間</h2>
+<p>パラメーター指定された2点間は線形補間される。
+ただし、最初のパラメーター指定点より前や、最後のパラメーター指定点の後は、最も近い指定点の値となる。</p>
+<p>例: ピッチ変更</p>
+<pre class="code">3 P4800 7 P5000
+</pre>
+
+<svg class="chart" style="width:400px;height:160px" viewBox="0,0,400,160">
+    <path fill="none" stroke="silver" stroke-width="2" d="M50,20 L50,120 L310,120" />
+    <path fill="none" stroke="black" stroke-width="2" d="M50,100 L140,100 L240,30 L310,30" />
+
+    <text text-anchor="end" x="48" y="35">5000</text>
+    <text text-anchor="end" x="48" y="105">4800</text>
+
+    <text text-anchor="middle" x="50" y="140">0</text>
+    <text text-anchor="middle" x="140" y="140">30%</text>
+    <text text-anchor="middle" x="240" y="140">70%</text>
+</svg>
+<p>ただし、途中で無音(<span class="code">A0</span>)がある場合は補間されない。</p>
+
+<h2>声調</h2>
+<h3>絶対指定</h3>
+<p><span class="code">P</span>に続き数値をcentで指定する。
+(1オクターブは1200cents、12平均律の半音は100cents)</p>
+<h3>相対指定</h3>
+<p><span class="code">p</span>に続き割合を指定する。実際のピッチは別途指定する。</p>
+
+<h2>声量</h2>
+<p><span class="code">A</span>に続き割合を指定する。</p>
+
+<h2>声門閉鎖度 / Voiced or Glottal stop / 聲門塞度</h2>
+<p>有声・無声の度合いは、<span class="code">v</span>に続いて割合を指定する。
+また、声門閉鎖の度合いは、<span class="code">g</span>に続いて割合を指定する。</p>
+
+<table>
+<tr><th>PFN</th><th>IPA</th><th></th></tr>
+<tr><td class="code">v0</td><td class="ipa">ḁ</td><td>無声音</td></tr>
+<tr><td class="code">v5</td><td class="ipa">a̤</td><td>かすれ声 (TODO)</td></tr>
+<tr><td class="code">v / g0</td><td class="ipa">a</td><td>有声音</td></tr>
+<tr><td class="code">g5</td><td class="ipa">a̰</td><td>きしみ声/Creaky voice (TODO)</td></tr>
+<tr><td class="code">g</td><td class="ipa">ʔ</td><td>声門閉鎖音</td></tr>
+</table>
+
+<p>例: 声門摩擦音<span class="ipa">[hä]</span>は、<span class="code">f5o9v0 +50 v0 +20 f5o9v</span> (母音を無声化したものを子音とする)</p>
+
+<h2>広さと前舌度</h2>
+<svg class="chart" style="width:400px;height:200px" viewBox="0,0,400,200">
+    <path fill="none" stroke="silver" stroke-width="2" d="M40,50 L290,50 L290,170 L160,170 z" />
+    <path fill="none" stroke="silver" stroke-width="2" d="M80,90 L290,90" />
+    <path fill="none" stroke="silver" stroke-width="2" d="M120,130 L290,130" />
+    <path fill="none" stroke="silver" stroke-width="2" d="M165,50 L225,170" />
+
+    <text text-anchor="middle" x="40" y="22" font-weight="bold">f</text>
+    <text text-anchor="middle" x="165" y="22" font-weight="bold">f5</text>
+    <text text-anchor="middle" x="290" y="22" font-weight="bold">f0</text>
+
+    <text text-anchor="middle" x="40" y="50">i • y</text>
+    <text text-anchor="middle" x="165" y="50">ɨ • ʉ</text>
+    <text text-anchor="middle" x="290" y="50">ɯ • u</text>
+    <text text-anchor="left" x="360" y="50" font-weight="bold">o0</text>
+
+    <text text-anchor="middle" x="80" y="90">e • ø</text>
+    <text text-anchor="middle" x="185" y="90">ɘ • ɵ</text>
+    <text text-anchor="middle" x="290" y="90">ɤ • o</text>
+    <text text-anchor="left" x="360" y="90" font-weight="bold">o4</text>
+
+    <text text-anchor="middle" x="120" y="130">ɛ • œ</text>
+    <text text-anchor="middle" x="205" y="130">ɜ • ɞ</text>
+    <text text-anchor="middle" x="290" y="130">ʌ • ɔ</text>
+    <text text-anchor="left" x="360" y="130" font-weight="bold">o6</text>
+
+    <text text-anchor="middle" x="160" y="170">a • ɶ</text>
+    <text text-anchor="middle" x="290" y="170">ɑ • ɒ</text>
+    <text text-anchor="left" x="360" y="170" font-weight="bold">o</text>
+</svg>
+
+<p>前舌・後舌の度合いは、<span class="code">f</span>に続き割合(前舌ほど大)を指定する。
+広さ(高さ)は<span class="code">o</span>に続き割合(広いほど大)を指定する。</p>
+<p>例: 前舌狭母音<span class="ipa">[i]</span>は、<span class="code">fo0v</span>であるが、<span class="code">o0</span>は省略できるため<span class="code">fv</span>となる。</p>
+
+<h2>調音位置</h2>
+<svg class="chart" style="width:400px;height:200px" viewBox="0,0,400,200">
+    <path fill="none" stroke="silver" stroke-width="2" d="M40,50 L290,50 L290,170" />
+
+    <text text-anchor="middle" x="40" y="22" font-weight="bold">F</text>
+    <text text-anchor="middle" x="165" y="22" font-weight="bold">F0 / f</text>
+    <text text-anchor="middle" x="290" y="22" font-weight="bold">f0</text>
+
+    <text text-anchor="middle" x="40" y="50">alv</text>
+    <text text-anchor="middle" x="40" y="70">歯茎</text>
+    <text text-anchor="middle" x="165" y="50">pal</text>
+    <text text-anchor="middle" x="165" y="70">硬口蓋</text>
+    <text text-anchor="middle" x="290" y="50">vel</text>
+    <text text-anchor="middle" x="290" y="70">軟口蓋</text>
+
+    <text text-anchor="middle" x="290" y="130">uvl</text>
+    <text text-anchor="middle" x="290" y="150">口蓋垂</text>
+
+    <text text-anchor="left" x="360" y="50" font-weight="bold">o0</text>
+    <text text-anchor="left" x="360" y="90" font-weight="bold">o4</text>
+    <text text-anchor="left" x="360" y="130" font-weight="bold">o6</text>
+    <text text-anchor="left" x="360" y="170" font-weight="bold">o</text>
+</svg>
+
+<p>舌背音は<span class="code">f</span>に続き割合(軟口蓋=<span class="code">f0</span>、硬口蓋=<span class="code">f</span>)を指定する。
+舌端音は<span class="code">F</span>に続き割合(硬口蓋=<span class="code">F0</span>、歯茎=<span class="code">F</span>)を指定する。</p>
+<p>例: 硬口蓋音<span class="ipa">[jä]</span>は、<span class="code">fv +70 f5o9v</span>(子音は<span class="code">fv +70</span>)である。</p>
+
+<h2>調音区間</h2>
+<p>調音位置を区間で指定する場合、<span class="code">e</span>と<span class="code">f/F</span>を併用する。</p>
+<p><span class="code">e</span>が未指定の場合、<span class="code">f/F</span>と同一の値が指定される。</p>
+<p>例: <span class="ipa">[ɡʲi]</span>は、調音位置が軟口蓋〜硬口蓋の破裂音のため、<span class="code">f0ecv +20 fv</span>→<span class="code">f0</span>は省略可能なため、<span class="code">ecv +20 fv</span>。</p>
+
+<h2>円唇度</h2>
+<p><span class="code">L</span>に続き割合を指定する。</p>
+<p>円唇母音または唇音化子音で使用する。</p>
+
+<h2>そり舌度</h2>
+<p><span class="code">r</span>に続き割合を指定する。</p>
+<p>R音化母音またはそり舌子音で使用する。</p>
+
+<h2>側面度</h2>
+<p><span class="code">a</span>に続き割合を指定する。</p>
+
+<h2>歯擦度</h2>
+<p><span class="code">s</span>に続き割合を指定する。</p>
+
+<h2>鼻音度</h2>
+<p><span class="code">n</span>に続き割合を指定する。</p>
+<p><span class="code">n0</span>は口音、<span class="code">n</span>は鼻音(口腔閉鎖)、<span class="code">n5</span>で母音を発すると鼻母音となる。</p>
+
+<h2>閉塞度</h2>
+<p><span class="code">c</span>に続き割合を指定する。</p>
+<p><span class="code">c0</span>は閉鎖なし、<span class="code">c</span>は調音位置で完全に閉鎖する。</p>
+<p><span class="code">c5</span>を維持することで摩擦音となる。</p>
+<p>閉鎖状態から閉塞度95%以下に遷移するとき調音位置に応じた破裂音が発生する。
+円唇度85%以上で閉鎖を開放すると両唇破裂音となる。</p>
+
+<h2>パラメーター</h2>
+<ul>
+    <li><span class="code">F/f/e/o</span> : 調音位置/前舌度/広さ</li>
+    <li><span class="code">L</span> : 円唇度</li>
+    <li><span class="code">r</span> : そり舌度</li>
+    <li><span class="code">a</span> : 側面度</li>
+    <li><span class="code">s</span> : 歯擦度</li>
+    <li><span class="code">n</span> : 鼻音度</li>
+    <li><span class="code">c</span> : 閉塞度</li>
+</ul>
+<p>上記のパラメーターのいずれかが指定された場合、無指定のパラメーターは前回指定と同じ値となる。</p>
+<p>ただし、<span class="code">F/f/e/o</span> については以下の通り。</p>
+<ul>
+    <li><span class="code">F/f</span>のみ指定された場合、<span class="code">e</span>は<span class="code">F/f</span>と同じ、<span class="code">o</span>は0となる。</li>
+    <li><span class="code">e</span>のみ指定された場合、<span class="code">f/o</span>は0となる。</li>
+    <li><span class="code">o</span>のみ指定された場合、<span class="code">F/f/e</span>は0となる。</li>
+    <li><span class="code">F/f/e/o</span>のいずれかが指定された場合、他のパラメーター(<span class="code">L/r/a/s/n/c</span>)は0にリセットされる。</li>
+</ul>
+
+<h2>再指定</h2>
+<p><span class="code">!</span>は、声調<span class="code">p/P</span>、声量<span class="code">A</span>と声門閉鎖度<span class="code">v/g</span>を除き直前で指定したパラメーターを、その時刻において指定しなおす。</p>
+<p>例</p>
+<pre class="code">f5o9v 8 !</pre>
+<p>以下のコードと等価である。</p>
+<pre class="code">f5o9v 8 f5o9v</pre>
+
+<h2 class="not-impl">入破音</h2>
+<p class="not-impl">TODO</p>
+
+<h2 class="not-impl">放出音</h2>
+<p class="not-impl">TODO</p>
+
+<h2 class="not-impl">吸着音</h2>
+<p class="not-impl">TODO</p>
+
+<h2 class="not-impl">ファルセット</h2>
+<p class="not-impl">TODO</p>
+
+</div>
+</body>
+</html>

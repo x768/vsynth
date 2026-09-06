@@ -1,0 +1,15 @@
+{
+  "name": "sample",
+  "version": "1.0.0",
+  "description": "VoiceSynth sample",
+  "main": "sample.js",
+  "directories": {
+    "pub/lib": "pub/lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "author": "",
+  "license": "GPLv3"
+}
