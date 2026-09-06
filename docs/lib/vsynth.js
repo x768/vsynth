@@ -375,7 +375,7 @@ class ResonatorSet
         return sum;
     }
 }
-class Interpolation
+class Interpolator
 {
     constructor(val) {
         this.val = val;
@@ -770,7 +770,7 @@ export class VoiceSynth
 
         this.voice = new Voice(vp);
         this.prm = {};
-        for (let c of p_keys) this.prm[c] = new Interpolation(0);
+        for (let c of p_keys) this.prm[c] = new Interpolator(0);
 
         this.flutter_ix = 0;
         this.amplitude_v = 0;
