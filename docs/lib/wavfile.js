@@ -27,8 +27,7 @@ export class WavFile
 {
     constructor(sample_rate, gain, limit) {
         this.sample_rate = sample_rate;
-        this.gain = gain;
-        this.limit = limit;
+        this.compressor = new Compressor(gain, limit);
     }
     static set_str(buf, offset, str) {
         for (let i = 0; i < str.length; i++) {
@@ -63,6 +62,7 @@ export class WavFile
 
         let offset = 44;
         for (const b of list) {
+            this.compressor.process(b, b);
             for (let i = 0; i < b.length; i++) {
                 const v = (b[i] * 32767) | 0;
                 buf[offset++] = v & 0xFF;
