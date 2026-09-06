@@ -1,5 +1,5 @@
 import { JaToPFN } from '../lib/phone_ja.js';
-import { VoiceSynth } from '../lib/vsynth.js';
+import { SAMPLING_RATE, VoiceSynth } from '../lib/vsynth.js';
 import { WavFile } from '../lib/wavfile.js';
 import { SpeechNote } from './note.js';
 import { create_icon } from './voice.js';
