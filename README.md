@@ -5,6 +5,8 @@ NinbosVoiceは、JavaScriptで実装した音声合成ソフトウェアです�
 NinbosVoice is a speech synthesizer works on a web browser.
 Speech synthesis feature for English is not yet available.
 
+https://x768.github.io/vsynth/
+
 # Features
 
 - 肉声不使用のロボットボイス
@@ -31,7 +33,7 @@ Speech synthesis feature for English is not yet available.
 `make.py` を実行すると、ESModuleを使わないファイルが `local/` に生成されるので、直接実行できます。
 初回起動時の辞書読み込みは、事前にダウンロードした `dict_ja.txt` を手動で読み込んでください。
 
-[!WARNING]
+# WARNING
 
 本ソフトウェアはベータ版です。
 作成したデータが使用できなくなる可能性があることをご了承ください。
