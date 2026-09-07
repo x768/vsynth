@@ -1,6 +1,6 @@
 import { JaReading } from '../lib/text_ja.js';
 
-export class SettingDB
+export class DataHolder
 {
     static async open() {
         const request = window.indexedDB.open('NinbosVoice', 1);
@@ -9,7 +9,7 @@ export class SettingDB
                 reject(e);
             });
             request.addEventListener('success', e => {
-                const db = new SettingDB(e.target.result);
+                const db = new DataHolder(e.target.result);
                 db.init().then(() => resolve(db));
             });
             request.addEventListener('upgradeneeded', e => {
@@ -51,7 +51,7 @@ export class SettingDB
     }
     async init() {
         const store = this.#open_read('config');
-        const list = await SettingDB.#to_promise(store.getAll());
+        const list = await DataHolder.#to_promise(store.getAll());
         for (const row of list) {
             if (row.key === 'filename_single') {
                 this.filename_single = row.value;
@@ -66,10 +66,10 @@ export class SettingDB
     }
 
     get_filename_single() {
-        return SettingDB.split_format(this.filename_single);
+        return DataHolder.split_format(this.filename_single);
     }
     get_filename_seq() {
-        return SettingDB.split_format(this.filename_seq);
+        return DataHolder.split_format(this.filename_seq);
     }
     #open_read(name) {
         const tr = this.db.transaction(name, 'readonly');
@@ -94,11 +94,11 @@ export class SettingDB
     }
     async get_voices() {
         const store = this.#open_read('voices');
-        const list = await SettingDB.#to_promise(store.getAll());
+        const list = await DataHolder.#to_promise(store.getAll());
         list.sort((a, b) => a.order - b.order);
         const ret = [];
         for (const row of list) {
-            if (SettingDB.#is_valid_voice(row.value)) {
+            if (DataHolder.#is_valid_voice(row.value)) {
                 ret.push(row.value);
             }
         }
@@ -131,14 +131,14 @@ export class SettingDB
     }
     save_voice(voice, index) {
         const store = this.#open_rw('voices');
-        store.put({order: index, value: SettingDB.#trim_voice_data(voice)});
+        store.put({order: index, value: DataHolder.#trim_voice_data(voice)});
     }
     async save_all_voices(voices) {
         const store = this.#open_rw('voices');
-        const count = await SettingDB.#to_promise(store.count());
+        const count = await DataHolder.#to_promise(store.count());
 
         for (let i = 0; i < voices.length; i++) {
-            store.put({order: i, value: SettingDB.#trim_voice_data(voices[i])});
+            store.put({order: i, value: DataHolder.#trim_voice_data(voices[i])});
         }
         for (let i = voices.length; i < count; i++) {
             store.delete(i);
@@ -147,7 +147,7 @@ export class SettingDB
 
     async get_all_projects() {
         const store = this.#open_read('projects');
-        const list = await SettingDB.#to_promise(store.getAll());
+        const list = await DataHolder.#to_promise(store.getAll());
         list.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
         return list;
     }
@@ -163,8 +163,8 @@ export class SettingDB
     async get_ja_dic() {
         const [alias_store, dic_store] = this.#open_read(['ja_alias', 'ja_dic']);
         return await Promise.all([
-            SettingDB.#to_promise(alias_store.getAll()),
-            SettingDB.#to_promise(dic_store.getAll())
+            DataHolder.#to_promise(alias_store.getAll()),
+            DataHolder.#to_promise(dic_store.getAll())
         ]);
     }
 
@@ -188,8 +188,8 @@ export class SettingDB
         const [alias_store, dic_store] = this.#open_rw(['ja_alias', 'ja_dic']);
 
         await Promise.all([
-            SettingDB.#to_promise(alias_store.clear()),
-            SettingDB.#to_promise(dic_store.clear())
+            DataHolder.#to_promise(alias_store.clear()),
+            DataHolder.#to_promise(dic_store.clear())
         ]);
 
         const [alias, dic] = JaReading.parse(src);

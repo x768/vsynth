@@ -1,6 +1,6 @@
 import { JaReading } from '../lib/text_ja.js';
 import { SAMPLING_RATE, VoiceSynth } from '../lib/vsynth.js';
-import { SettingDB } from './db.js';
+import { DataHolder } from './db.js';
 import { WavPlayer } from './player.js';
 import { FileDialogSet } from './dialog.js';
 import { TtsPage } from './tts.js';
@@ -735,7 +735,7 @@ class LanguagePage
                 'filename-single': '單個',
                 'filename-seq': '序號',
                 'dictionary-ja': '詞典 (日語)',
-                'load-dic': '載入預設字典',
+                'load-dic': '載入預設詞典',
                 'initialize-db': '初始化 IndexedDB',
                 'delete-all': '警告: 按下此按鈕將刪除所有已儲存的資料。',
                 'confirm-delete-all': '您確定要刪除所有已儲存的資料嗎？',
@@ -807,7 +807,7 @@ class LanguagePage
 
 document.addEventListener('DOMContentLoaded', async () =>
 {
-    const db = await SettingDB.open();
+    const db = await DataHolder.open();
 
     const ja_reading = new JaReading();
     const player = new WavPlayer(SAMPLING_RATE, 0.4, 0.9);
