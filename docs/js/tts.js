@@ -50,7 +50,7 @@ class TtsItem
     }
     end_edit(edit_root) {
         edit_root.remove();
-        this.text_area.textContent = this.text !== '' ? this.text : this.phonetic;
+        this.text_area.textContent = this.get_text();
     }
     select() {
         this.elem.classList.add('tts-selected');
