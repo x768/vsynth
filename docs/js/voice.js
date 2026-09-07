@@ -498,6 +498,7 @@ class ConfigPage
         document.getElementById('dic-import-ja').addEventListener('click', async () => {
             const f = await dialog.show_upload('.txt');
             if (f) {
+                this.enable_dic_buttons(false);
                 const src = await f.text();
                 const [alias, dic] = await db.set_ja_dic_file(src.split("\n"));
                 ja_reading.load(alias, dic);
@@ -506,6 +507,7 @@ class ConfigPage
 //#if_module
                 this.set_button_hilight('dic-init-ja', ja_reading.count === 0);
 //#endif
+                this.enable_dic_buttons(true);
             }
         });
         document.getElementById('dic-export-ja').addEventListener('click', async () => {
@@ -514,6 +516,7 @@ class ConfigPage
         });
 //#if_module
         document.getElementById('dic-init-ja').addEventListener('click', async () => {
+            this.enable_dic_buttons(false);
             const res = await fetch('./files/dict_ja.txt');
             if (!res.ok) {
                 document.getElementById('dic-ja-word-count').textContent = `Error: responce=${res.status}`;
@@ -525,6 +528,7 @@ class ConfigPage
                 this.set_button_hilight('dic-import-ja', ja_reading.count === 0);
                 this.set_button_hilight('dic-init-ja', ja_reading.count === 0);
             }
+            this.enable_dic_buttons(true);
         });
 //#endif
         document.getElementById('initialize-db').addEventListener('click', () => {
@@ -538,6 +542,13 @@ class ConfigPage
         } else {
             btn.classList.remove('button-hilight');
         }
+    }
+    enable_dic_buttons(enabled) {
+        document.getElementById('dic-import-ja').disabled = !enabled;
+        document.getElementById('dic-export-ja').disabled = !enabled;
+//#if_module
+        document.getElementById('dic-init-ja').disabled = !enabled;
+//#endif
     }
 }
 class LanguagePage
@@ -578,7 +589,7 @@ class LanguagePage
                 'filename-single': 'Single',
                 'filename-seq': 'Series',
                 'dictionary-ja': 'Dictionary (Japanese)',
-                'load-dic': 'Load the Dictionary',
+                'load-dic': 'Load the Default Dictionary',
                 'initialize-db': 'Initialize IndexedDB',
                 'delete-all': 'Warning: Pressing this button will delete all stored data.',
                 'confirm-delete-all': 'Are you sure to delete all stored data?',
@@ -627,7 +638,7 @@ class LanguagePage
                 'filename-single': '単独',
                 'filename-seq': '連番',
                 'dictionary-ja': '辞書',
-                'load-dic': '辞書を読み込む',
+                'load-dic': 'デフォルト辞書を読み込む',
                 'initialize-db': 'IndexedDB の初期化',
                 'delete-all': '警告: ボタンを押すと保存されているすべてのデータを削除します。',
                 'confirm-delete-all': '保存されているすべてのデータを削除してもよろしいですか？',
@@ -677,7 +688,7 @@ class LanguagePage
                 'filename-single': '单个',
                 'filename-seq': '连载',
                 'dictionary-ja': '词典 (日语)',
-                'load-dic': '加载词典',
+                'load-dic': '加载默认词典',
                 'initialize-db': '初始化 IndexedDB',
                 'delete-all': '警告: 按下此按钮将删除所有已存储的数据。',
                 'confirm-delete-all': '您确定要删除所有已存储的数据吗？',
@@ -724,7 +735,7 @@ class LanguagePage
                 'filename-single': '單個',
                 'filename-seq': '序號',
                 'dictionary-ja': '詞典 (日語)',
-                'load-dic': '載入詞典',
+                'load-dic': '載入預設字典',
                 'initialize-db': '初始化 IndexedDB',
                 'delete-all': '警告: 按下此按鈕將刪除所有已儲存的資料。',
                 'confirm-delete-all': '您確定要刪除所有已儲存的資料嗎？',
