@@ -201,6 +201,11 @@ export class TtsPage
                 this.#set_note_main([this.editing_item], true);
             }
         });
+        this.list.addEventListener('click', e => {
+            if (e.currentTarget === e.target) {
+                this.#end_edit();
+            }
+        });
         this.play_button.addEventListener('click', () => {
             if (this.is_playing) {
                 this.player.stop();
@@ -275,7 +280,6 @@ export class TtsPage
                 break;
             }
         });
-        this.#add_item(new TtsItem(this.voices[0])).select();
         this.stop_mark.style.display = 'none';
         this.#enable_parameters(false);
         this.#enable_player_buttons();

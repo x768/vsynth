@@ -555,6 +555,7 @@ class LanguagePage
 
                 'upload-area1': 'Drop the file here',
                 'upload-area2': 'Click here to choose the file',
+                'click-enter-text': 'Click to enter text...',
 
                 'tts-speed': 'Speed',
                 'tts-pitch': 'Pitch',
@@ -604,6 +605,7 @@ class LanguagePage
 
                 'upload-area1': 'ファイルをここにドロップ',
                 'upload-area2': 'ここをクリックしてファイルを選択',
+                'click-enter-text': 'クリックしてテキストを入力...',
 
                 'tts-speed': '話速',
                 'tts-pitch': '音高',
@@ -654,6 +656,7 @@ class LanguagePage
 
                 'upload-area1': '在此处拖放文件',
                 'upload-area2': '单击此处以选择文件',
+                'click-enter-text': '点击以输入文字...',
 
                 'tts-speed': '语速',
                 'tts-pitch': '音高',
@@ -701,6 +704,7 @@ class LanguagePage
 
                 'upload-area1': '在此處拖放文件',
                 'upload-area2': '單擊這裡以選擇文件',
+                'click-enter-text': '單擊以輸入文字...',
 
                 'tts-speed': '語速',
                 'tts-pitch': '音高',
