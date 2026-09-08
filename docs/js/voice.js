@@ -93,16 +93,27 @@ class VoicesPage
         this.voice_pitch = document.getElementById('voice-pitch');
         this.voice_flutter = document.getElementById('voice-flutter');
         this.voice_fricative = document.getElementById('voice-fricative');
+
         this.voice_formant_h = document.getElementById('voice-formant-h');
         this.voice_formant_w = document.getElementById('voice-formant-w');
         this.voice_formant_f = document.getElementById('voice-formant-f');
         this.voice_formant_a = document.getElementById('voice-formant-a');
+
         const template = document.getElementById('voice-editor-template').content;
         this.voice_name = template.getElementById('voice-name');
 
         this.selected_voice = null;
         this.modified = false;
         this.on_list_change = null;
+
+        const fmt_header = document.getElementById('voice-formant-header');
+        for (let i = 0; i < 7; i++) {
+            fmt_header.appendChild($e('th', null, `F${i + 1}`));
+            this.voice_formant_h.appendChild($e('td', null, this.#create_number('height', i, 0, 300)));
+            this.voice_formant_w.appendChild($e('td', null, this.#create_number('width', i, 10, 1000)));
+            this.voice_formant_f.appendChild($e('td', null, this.#create_number('freq', i, 10, 500)));
+            this.voice_formant_a.appendChild($e('td', null, this.#create_number('freqadd', i, -600, 600)));
+        }
 
         if (db.voices.length > 0) {
             this.voices = db.voices;
@@ -140,27 +151,9 @@ class VoicesPage
             this.create_new_voice();
         });
 
-        this.voice_pitch.addEventListener('change', e => {
-            this.selected_voice.pitch = this.#number_limit(e);
-        });
-        this.voice_flutter.addEventListener('change', e => {
-            this.selected_voice.flutter = this.#number_limit(e);
-        });
-        this.voice_fricative.addEventListener('change', e => {
-            this.selected_voice.fricative = this.#number_limit(e);
-        });
-        this.voice_formant_h.addEventListener('change', e => {
-            this.selected_voice.height = this.#formant_limit(e);
-        });
-        this.voice_formant_w.addEventListener('change', e => {
-            this.selected_voice.width = this.#formant_limit(e);
-        });
-        this.voice_formant_f.addEventListener('change', e => {
-            this.selected_voice.freq = this.#formant_limit(e);
-        });
-        this.voice_formant_a.addEventListener('change', e => {
-            this.selected_voice.freqadd = this.#formant_limit(e);
-        });
+        this.voice_pitch.addEventListener('change', e => { this.#update_from_input(e); });
+        this.voice_flutter.addEventListener('change', e => { this.#update_from_input(e); });
+        this.voice_fricative.addEventListener('change', e => { this.#update_from_input(e); });
 
         document.getElementById('voice-sample-ja').addEventListener('click', e => {
             const t = e.currentTarget;
@@ -178,11 +171,17 @@ class VoicesPage
         });
     }
 
+    #create_number(key, i, min, max) {
+        const n = $e('input', {type:'number', min, max, step:'10', size:'4', 'data-key':key, 'data-i':i});
+        n.addEventListener('change', e => { this.#update_from_input(e); });
+        return n;
+    }
+
     set_change_handler(f) {
         this.on_list_change = f;
     }
 
-    #number_limit(e) {
+    #update_from_input(e) {
         const t = e.currentTarget;
         let val = Number.parseInt(t.value);
         const min = Number.parseInt(t.min);
@@ -198,14 +197,12 @@ class VoicesPage
             t.value = val;
         }
         this.modified = true;
-        return val;
-    }
-    #formant_limit(e) {
-        const t = e.currentTarget;
-        const a = VoicesPage.#parse_formant(t);
-        t.value = a.join('/');
-        this.modified = true;
-        return a;
+        const v = this.selected_voice;
+        if (t.dataset.i !== undefined) {
+            v[t.dataset.key][Number.parseInt(t.dataset.i)] = val;
+        } else {
+            v[t.dataset.key] = val;
+        }
     }
 
     #play_sample(button) {
@@ -234,14 +231,7 @@ class VoicesPage
     create_new_voice() {
         const voice = {
             icon: VoicesPage.create_default_icon(),
-            pitch: 100,
-            flutter: 64,
-            roughness: 1,
-            fricative: 48,
-            height: new Int16Array([236,236,240,232,200,200,256]),
-            width: new Int16Array([294,256,256,320,342,342,256]),
-            freq: new Int16Array([256,256,256,256,256,256,256]),
-            freqadd: new Int16Array([0,0,0,0,0,0,0]),
+            ...VoiceSynth.default_voice()
         };
         voice.name = this.#get_safe_name('Untitled', null);
         this.voices.push(voice);
@@ -269,11 +259,6 @@ class VoicesPage
         const name = file.name.replace(/\.json$/i, '');
         const src = await file.text();
         const voice = JSON.parse(src);
-        for (const k in voice) {
-            if (voice[k] instanceof Array) {
-                voice[k] = new Int16Array(voice[k]);
-            }
-        }
         voice.name = this.#get_safe_name(name, null);
         if (!voice.icon) {
             voice.icon = VoicesPage.create_default_icon();
@@ -287,9 +272,7 @@ class VoicesPage
         const v0 = this.selected_voice;
         const v = {};
         for (const k in v0) {
-            if (v0[k] instanceof Int16Array) {
-                v[k] = Array.from(v0[k]);
-            } else if (typeof(v0[k]) !== 'object' && k !== 'name') {
+            if (v0[k] instanceof Array || (typeof(v0[k]) !== 'object' && k !== 'name')) {
                 v[k] = v0[k];
             }
         }
@@ -367,6 +350,13 @@ class VoicesPage
         }
         this.db.save_all_voices(this.voices);
     }
+    static #set_formant_values(tr, values) {
+        let i = 0;
+        for (const input of tr.getElementsByTagName('input')) {
+            input.value = values[i];
+            i++;
+        }
+    }
     #select_profile(voice) {
         if (this.modified) {
             const idx = this.voices.indexOf(this.selected_voice);
@@ -390,10 +380,10 @@ class VoicesPage
         this.voice_pitch.value = voice.pitch;
         this.voice_flutter.value = voice.flutter;
         this.voice_fricative.value = voice.fricative;
-        this.voice_formant_w.value = voice.width.join('/');
-        this.voice_formant_h.value = voice.height.join('/');
-        this.voice_formant_f.value = voice.freq.join('/');
-        this.voice_formant_a.value = voice.freqadd.join('/');
+        VoicesPage.#set_formant_values(this.voice_formant_w, voice.width);
+        VoicesPage.#set_formant_values(this.voice_formant_h, voice.height);
+        VoicesPage.#set_formant_values(this.voice_formant_f, voice.freq);
+        VoicesPage.#set_formant_values(this.voice_formant_a, voice.freqadd);
         this.selected_voice = voice;
     }
     #get_safe_name(n, self) {
@@ -418,23 +408,10 @@ class VoicesPage
             i++;
         }
     }
-    static #parse_formant(input) {
-        const a = input.value.split('/');
-        const min = Number.parseInt(input.getAttribute('data-min'));
-        const max = Number.parseInt(input.getAttribute('data-max'));
-        const ret = new Int16Array(7);
-
-        for (let i = 0; i < ret.length; i++) {
-            const n = i < a.length ? Number.parseInt(a[i]) : Number.NaN;
-            if (Number.isNaN(n)) {
-                ret[i] = (min + max) >> 1;
-            } else if (n < min) {
-                ret[i] = min;
-            } else if (n > max) {
-                ret[i] = max;
-            } else {
-                ret[i] = n;
-            }
+    static #get_formant_values(tr) {
+        const ret = [];
+        for (const input of tr.getElementsByTagName('input')) {
+            ret.push(Number.parseInt(input.value));
         }
         return ret;
     }
@@ -444,10 +421,10 @@ class VoicesPage
             flutter: Number.parseInt(this.voice_flutter.value),
             roughness: 1,
             fricative: Number.parseInt(this.voice_fricative.value),
-            height: VoicesPage.#parse_formant(this.voice_formant_h),
-            width: VoicesPage.#parse_formant(this.voice_formant_w),
-            freq: VoicesPage.#parse_formant(this.voice_formant_f),
-            freqadd: VoicesPage.#parse_formant(this.voice_formant_a),
+            height: VoicesPage.#get_formant_values(this.voice_formant_h),
+            width: VoicesPage.#get_formant_values(this.voice_formant_w),
+            freq: VoicesPage.#get_formant_values(this.voice_formant_f),
+            freqadd: VoicesPage.#get_formant_values(this.voice_formant_a),
         };
     }
     static async load_icon_file(item, file) {

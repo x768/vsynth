@@ -111,19 +111,19 @@ export class DataHolder
             Number.isFinite(voice.flutter) &&
             Number.isFinite(voice.roughness) &&
             Number.isFinite(voice.fricative) &&
-            voice.height instanceof Int16Array &&
+            voice.height instanceof Array &&
             voice.height.length === 7 &&
-            voice.width instanceof Int16Array &&
+            voice.width instanceof Array &&
             voice.width.length === 7 &&
-            voice.freq instanceof Int16Array &&
+            voice.freq instanceof Array &&
             voice.freq.length === 7 &&
-            voice.freqadd instanceof Int16Array &&
+            voice.freqadd instanceof Array &&
             voice.freqadd.length === 7;
     }
     static #trim_voice_data(v0) {
         const v = {};
         for (const k in v0) {
-            if (v0[k] instanceof Int16Array || typeof(v0[k]) !== 'object') {
+            if (v0[k] instanceof Array || typeof(v0[k]) !== 'object') {
                 v[k] = v0[k];
             }
         }

@@ -70,13 +70,16 @@
 <div id="voices-list"><div id="voice-item-add"><svg class="icon16" viewBox="-8,-8,16,16"><path d="M0,-8 L0,8 M-8,0 L8,0" /></svg></div></div>
 <div id="voice-profile">
 <table>
-<tr><th colspan="2">Base Pitch</th><td><input type="number" id="voice-pitch" min="50" max="500" value="50" size="5" step="10"> Hz</td></tr>
-<tr><th colspan="2">Flutter</th><td><input type="number" id="voice-flutter" min="0" max="256" value="0" size="5" step="16"> / 256</td></tr>
-<tr><th colspan="2">Fricative Amplitude</th><td><input type="number" id="voice-fricative" min="0" max="256" value="0" size="5" step="16"> / 256</td></tr>
-<tr><th rowspan="4">Formants</th><th>height</th><td><input type="text" id="voice-formant-h" size="40" data-min="0" data-max="300" autocomplete="off"></td></tr>
-<tr><th>width</th><td><input type="text" id="voice-formant-w" size="40" data-min="10" data-max="1000" autocomplete="off"></td></tr>
-<tr><th>freq</th><td><input type="text" id="voice-formant-f" size="40" data-min="10" data-max="500" autocomplete="off"></td></tr>
-<tr><th>freqadd</th><td><input type="text" id="voice-formant-a" size="40" data-min="-600" data-max="600" autocomplete="off"></td></tr>
+<tr><th>Base Pitch</th><td><input type="number" id="voice-pitch" min="50" max="500" value="50" size="5" step="10" data-key="pitch"> Hz</td></tr>
+<tr><th>Flutter</th><td><input type="number" id="voice-flutter" min="0" max="256" value="0" size="5" step="16" data-key="flutter"> / 256</td></tr>
+<tr><th>Fricative Amplitude</th><td><input type="number" id="voice-fricative" min="0" max="256" value="0" size="5" step="16" data-key="fricative"> / 256</td></tr>
+</table>
+<table>
+<tr id="voice-formant-header"><th></th></tr>
+<tr id="voice-formant-h"><th>height</th></tr>
+<tr id="voice-formant-w"><th>width</th></tr>
+<tr id="voice-formant-f"><th>freq</th></tr>
+<tr id="voice-formant-a"><th>freqadd</th></tr>
 </table>
 <p class="warning" data-res="warning-laud"></p>
 <div><button class="enabled" id="voice-sample-ja" data-res="voice-sample-ja"></button></div>

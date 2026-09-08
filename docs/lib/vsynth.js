@@ -760,10 +760,10 @@ export class VoiceSynth
             flutter: 64,
             fricative: 64,
             roughness: 1,
-            height: new Int16Array([260,256,240,232,200,200,256]),
-            width: new Int16Array([294,256,256,320,342,342,256]),
-            freq: new Int16Array([256,256,256,256,256,256,256]),
-            freqadd: new Int16Array([0,0,0,0,0,0,0]),
+            height: [260, 256, 240, 232, 200, 200, 256],
+            width: [294, 256, 256, 320, 342, 342, 256],
+            freq: [256, 256, 256, 256, 256, 256, 256],
+            freqadd: [0, 0, 0, 0, 0, 0, 0],
         };
     }
 
