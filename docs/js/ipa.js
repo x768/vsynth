@@ -2,7 +2,7 @@ import { SAMPLING_RATE, VoiceSynth } from '../lib/vsynth.js';
 import { WavPlayer } from './player.js';
 import { show_spectrum } from './spectrum.js';
 
-function get_en_name(k)
+function get_c_en_name(k)
 {
     const ret = [];
     for (const s of k.split('-')) {
@@ -36,7 +36,7 @@ function get_en_name(k)
     }
     return ret.join(' ');
 }
-function get_ja_name(k)
+function get_c_ja_name(k)
 {
     const ret = [];
     for (const s of k.split('-')) {
@@ -71,14 +71,14 @@ function get_ja_name(k)
     return ret.join('');
 }
 
-function update_info(elem, pfn)
+function update_c_info(elem, pfn)
 {
-    const k = elem.getAttribute('data-smp');
-    const en = get_en_name(k);
+    const k = elem.dataset.smp;
+    const en = get_c_en_name(k);
     document.getElementById('en').textContent = en[0].toUpperCase() + en.substring(1);
-    document.getElementById('ja').textContent = get_ja_name(k);
+    document.getElementById('ja').textContent = get_c_ja_name(k);
     document.getElementById('ipa').textContent = elem.textContent;
-    document.getElementById('xsampa').textContent = elem.getAttribute('data-xsampa') ?? elem.textContent;
+    document.getElementById('xsampa').textContent = elem.dataset.xsampa ?? elem.textContent;
 
     if (!pfn) return null;
 
@@ -161,12 +161,12 @@ function get_v_ja_name(pfn)
     ret.push('母音');
     return ret.join('');
 }
-function update_info_v(elem, pfn)
+function update_v_info(elem, pfn)
 {
     document.getElementById('en').textContent = get_v_en_name(pfn);
     document.getElementById('ja').textContent = get_v_ja_name(pfn);
     document.getElementById('ipa').textContent = elem.textContent;
-    document.getElementById('xsampa').textContent = elem.getAttribute('data-xsampa') ?? elem.textContent;
+    document.getElementById('xsampa').textContent = elem.dataset.xsampa ?? elem.textContent;
     document.getElementById('pfn').textContent = pfn;
 
     const synth = new VoiceSynth(VoiceSynth.default_voice());
@@ -192,15 +192,15 @@ document.addEventListener('DOMContentLoaded', () =>
         if (selected_cell) selected_cell.classList.remove('selected');
         selected_cell = target;
         selected_cell.classList.add('selected');
-        const pfn = selected_cell.getAttribute('data-pfn');
+        const pfn = selected_cell.dataset.pfn;
         if (!pfn) {
             wavebuf = null;
             return;
         }
-        if (selected_cell.getAttribute('data-vowel')) {
-            wavebuf = update_info_v(selected_cell, pfn);
+        if (selected_cell.dataset.vowel) {
+            wavebuf = update_v_info(selected_cell, pfn);
         } else {
-            wavebuf = update_info(selected_cell, pfn);
+            wavebuf = update_c_info(selected_cell, pfn);
         }
         if (wavebuf) {
             show_spectrum(spectrum, wavebuf);
@@ -210,20 +210,18 @@ document.addEventListener('DOMContentLoaded', () =>
         play_btn.disabled = !wavebuf;
     }
 
-    for (const p of document.getElementsByClassName('ipa')) {
-        p.addEventListener('click', e => {
-            select_cell(e.currentTarget);
-        });
-        if (!p.getAttribute('data-pfn')) {
-            p.classList.add('not-available');
+    document.getElementById('flow').addEventListener('click', e => {
+        const target = e.target;
+        if (target.classList.contains('ipa')) {
+            select_cell(target);
         }
-    }
+    });
     play_btn.addEventListener('click', e => {
         const t = e.currentTarget;
         if (wavebuf) {
             const t = e.currentTarget;
             t.disabled = true;
-            player.play(wavebuf).then(obj => t.disabled = false);
+            player.play(wavebuf).then(() => t.disabled = false);
         }
     });
 

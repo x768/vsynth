@@ -40,7 +40,7 @@ button {
 .na {
     background: silver;
 }
-.not-available {
+.ipa:not([data-pfn]) {
     background: #e0e0e0;
 }
 .selected {
