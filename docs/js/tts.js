@@ -21,14 +21,13 @@ class TtsItem
         return item;
     }
     constructor(voice) {
-        this.elem = $e('div', {'class': 'tts-item', draggable:'true'});
         this.text_area = $e('div', null, '');
         this.voice_anchor = $e('div');
-        this.voice_select = $e('div', {'class': 'tts-voice-select'}, this.voice_anchor, $e('img', {width:32, height:32}));
-        this.close_button = $e('div', {'class': 'tts-item-del'}, create_icon('x'));
-        this.elem.appendChild(this.voice_select);
-        this.elem.appendChild(this.text_area);
-        this.elem.appendChild(this.close_button);
+        this.elem = $e('div', {'class': 'tts-item', draggable:'true'},
+            $e('div', {'class': 'tts-voice-select'}, this.voice_anchor, $e('img', {width:32, height:32})),
+            this.text_area,
+            $e('div', {'class': 'tts-item-del'}, create_icon('x'))
+        );
 
         this.voice = voice;
         this.lang = 'ja';
@@ -202,8 +201,50 @@ export class TtsPage
             }
         });
         this.list.addEventListener('click', e => {
+            let elem = null;
             if (e.currentTarget === e.target) {
                 this.#end_edit();
+            } else if ((elem = e.target.closest('.tts-voice-select')) !== null) {
+                const idx = Number.parseInt(elem.parentNode.dataset.i);
+                const item = this.items[idx];
+                this.#create_voice_select(item);
+                this.voice_select.showPopover({source: item.voice_anchor});
+            } else if ((elem = e.target.closest('.tts-item-del')) !== null) {
+                this.#end_edit();
+
+                const idx = Number.parseInt(elem.parentNode.dataset.i);
+                this.items[idx].elem.remove();
+                this.items.splice(idx, 1);
+                this.last_select = null;
+                this.#set_note();
+                this.#renumber();
+                this.#enable_player_buttons();
+            } else if ((elem = e.target.closest('.tts-item')) !== null) {
+                this.#onclick_item(Number.parseInt(elem.dataset.i));
+            }
+        });
+        this.list.addEventListener('dragstart', e => {
+            const elem = e.target.closest('.tts-item');
+            if (elem !== null) {
+                e.dataTransfer.items.clear();
+                e.dataTransfer.items.add(elem.dataset.i, 'text/plain');
+            }
+        });
+        this.list.addEventListener('dragenter', e => {
+            e.preventDefault();
+        });
+        this.list.addEventListener('dragover', e => {
+            e.preventDefault();
+        });
+        this.list.addEventListener('drop', e => {
+            const elem = e.target.closest('.tts-item');
+            if (elem !== null) {
+                const data = e.dataTransfer.getData('text/plain');
+                if (data !== null) {
+                    const src = Number.parseInt(data);
+                    const dst = Number.parseInt(elem.dataset.i);
+                    this.#swap_item(src, dst);
+                }
             }
         });
         this.play_button.addEventListener('click', () => {
@@ -221,20 +262,18 @@ export class TtsPage
         });
         sub_open.addEventListener('click', async () => {
             const list = await this.db.get_all_projects();
-            this.dialog.select_project(list, false)
-            .then(f => {
-                if (f) {
-                    let found = null;
-                    for (const pj of list) {
-                        if (pj.name === f) {
-                            found = pj.value;
-                            break;
-                        }
+            const f = await this.dialog.select_project(list, false);
+            if (f !== null) {
+                let found = null;
+                for (const pj of list) {
+                    if (pj.name === f) {
+                        found = pj.value;
+                        break;
                     }
-                    this.set_filename(f);
-                    this.#load_json_object(found);
                 }
-            });
+                this.set_filename(f);
+                this.#load_json_object(found);
+            }
         });
         this.sub_save.addEventListener('click', () => {
             if (this.filename !== '') {
@@ -245,13 +284,11 @@ export class TtsPage
         });
         sub_save_as.addEventListener('click', async () => {
             const list = await this.db.get_all_projects();
-            this.dialog.select_project(list, true)
-            .then(f => {
-                if (f) {
-                    this.set_filename(f);
-                    this.db.save_project(f, this.#save_json_object());
-                }
-            });
+            const f = await this.dialog.select_project(list, true);
+            if (f !== null) {
+                this.set_filename(f);
+                this.db.save_project(f, this.#save_json_object());
+            }
         });
         sub_manage.addEventListener('click', async () => {
             const list = await this.db.get_all_projects();
@@ -333,48 +370,6 @@ export class TtsPage
         item.elem.dataset.i = this.items.length;
         this.items.push(item);
         this.list.insertBefore(item.elem, this.item_append);
-        item.elem.addEventListener('click', e => {
-            this.#onclick_item(Number.parseInt(e.currentTarget.dataset.i));
-        });
-        item.elem.addEventListener('dragstart', e => {
-            e.dataTransfer.items.clear();
-            e.dataTransfer.items.add(e.currentTarget.dataset.i, 'text/plain');
-        });
-        item.elem.addEventListener('dragenter', e => {
-            e.preventDefault();
-        });
-        item.elem.addEventListener('dragover', e => {
-            e.preventDefault();
-        });
-        item.elem.addEventListener('drop', e => {
-            const data = e.dataTransfer.getData('text/plain');
-            if (data) {
-                const src = Number.parseInt(data);
-                const dst = Number.parseInt(e.currentTarget.dataset.i);
-                this.#swap_item(src, dst);
-            }
-        });
-        item.voice_select.addEventListener('click', e => {
-            const parent = e.currentTarget.parentNode;
-            if (parent.classList.contains('tts-selected')) {
-                const idx = Number.parseInt(parent.dataset.i);
-                const item = this.items[idx];
-                this.#create_voice_select(item);
-                this.voice_select.showPopover({source: item.voice_anchor});
-            }
-        });
-        item.close_button.addEventListener('click', e => {
-            e.stopPropagation();
-            this.#end_edit();
-
-            const idx = Number.parseInt(e.currentTarget.parentNode.dataset.i);
-            this.items[idx].elem.remove();
-            this.items.splice(idx, 1);
-            this.last_select = null;
-            this.#set_note();
-            this.#renumber();
-            e.stopPropagation();
-        });
         return item;
     }
     #swap_item(src, dst) {

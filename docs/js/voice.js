@@ -134,6 +134,50 @@ class VoicesPage
         }
         this.#select_profile(this.voices[0]);
 
+        this.list.addEventListener('click', e => {
+            let elem = null;
+            if ((elem = e.target.closest('.voice-item-del')) !== null) {
+                const idx = Number.parseInt(elem.parentNode.dataset.i);
+                this.delete_item(idx);
+            } else if ((elem = e.target.closest('.voice-item-icon')) !== null) {
+                this.#select_voice_icon(elem.parentNode);
+            } else if ((elem = e.target.closest('.voice-item')) !== null) {
+                if (!elem.classList.contains('voice-selected')) {
+                    const idx = Number.parseInt(elem.dataset.i);
+                    this.#select_profile(this.voices[idx]);
+                }
+            }
+        });
+        this.list.addEventListener('dragstart', e => {
+            const elem = e.target.closest('.voice-item');
+            if (elem !== null) {
+                e.dataTransfer.items.clear();
+                e.dataTransfer.items.add(elem.dataset.i, 'text/plain');
+            }
+        });
+        this.list.addEventListener('dragenter', e => {
+            e.preventDefault();
+        });
+        this.list.addEventListener('dragover', e => {
+            e.preventDefault();
+        });
+        this.list.addEventListener('drop', e => {
+            const elem = e.target.closest('.voice-item');
+            if (elem !== null) {
+                const data = e.dataTransfer.getData('text/plain');
+                if (data !== null) {
+                    const src = Number.parseInt(data);
+                    const dst = Number.parseInt(elem.dataset.i);
+                    this.#swap_item(src, dst);
+                }
+            }
+        });
+        document.getElementById('voice-profile').addEventListener('change', e => {
+            const elem = e.target.closest('input');
+            if (elem !== null) {
+                this.#update_from_input(elem);
+            }
+        });
         this.voice_name.addEventListener('change', e => {
             const t = e.currentTarget;
             const s = this.#get_safe_name(t.value, this.selected_voice.name);
@@ -150,10 +194,6 @@ class VoicesPage
         this.item_append.addEventListener('click', () => {
             this.create_new_voice();
         });
-
-        this.voice_pitch.addEventListener('change', e => { this.#update_from_input(e); });
-        this.voice_flutter.addEventListener('change', e => { this.#update_from_input(e); });
-        this.voice_fricative.addEventListener('change', e => { this.#update_from_input(e); });
 
         document.getElementById('voice-sample-ja').addEventListener('click', e => {
             const t = e.currentTarget;
@@ -172,17 +212,10 @@ class VoicesPage
     }
 
     #create_number(key, i, min, max) {
-        const n = $e('input', {type:'number', min, max, step:'10', size:'4', 'data-key':key, 'data-i':i});
-        n.addEventListener('change', e => { this.#update_from_input(e); });
-        return n;
+        return $e('input', {type:'number', min, max, step:'10', size:'4', 'data-key':key, 'data-i':i});
     }
 
-    set_change_handler(f) {
-        this.on_list_change = f;
-    }
-
-    #update_from_input(e) {
-        const t = e.currentTarget;
+    #update_from_input(t) {
         let val = Number.parseInt(t.value);
         const min = Number.parseInt(t.min);
         const max = Number.parseInt(t.max);
@@ -213,6 +246,10 @@ class VoicesPage
         this.player.play(buf).then(() => {
             button.disabled = false;
         });
+    }
+
+    set_change_handler(f) {
+        this.on_list_change = f;
     }
 
     show() {
@@ -286,52 +323,22 @@ class VoicesPage
             this.voices[i].elem = elem;
         }
     }
+    async #select_voice_icon(elem) {
+        const idx = Number.parseInt(elem.dataset.i);
+        const f = await this.dialog.show_upload('.png, .gif, .jpg, .jpeg', 'test');
+        if (f !== null) {
+            VoicesPage.load_icon_file(this.voices[idx], f);
+            this.modified = true;
+            if (this.on_list_change) {
+                this.on_list_change();
+            }
+        }
+    }
     #append(voice) {
-        const img = $e('div', {'class':'voice-item-icon'}, $e('img', {src: voice.icon, alt:''}));
-        const name = $e('div', {'class':'voice-name'}, voice.name);
-        const close = $e('div', {'class':'voice-item-del'}, create_icon('x'));
-        const item = $e('div', {'class':'voice-item', 'data-i':this.list.childNodes.length - 1}, img, name, close);
-        item.addEventListener('click', e => {
-            if (!item.classList.contains('voice-selected')) {
-                const idx = Number.parseInt(e.currentTarget.dataset.i);
-                this.#select_profile(this.voices[idx]);
-            }
-        });
-        item.addEventListener('dragstart', e => {
-            e.dataTransfer.items.clear();
-            e.dataTransfer.items.add(e.currentTarget.dataset.i, 'text/plain');
-        });
-        item.addEventListener('dragenter', e => {
-            e.preventDefault();
-        });
-        item.addEventListener('dragover', e => {
-            e.preventDefault();
-        });
-        item.addEventListener('drop', e => {
-            const data = e.dataTransfer.getData('text/plain');
-            if (data) {
-                const src = Number.parseInt(data);
-                const dst = Number.parseInt(e.currentTarget.dataset.i);
-                this.#swap_item(src, dst);
-            }
-        });
-        img.addEventListener('click', async e => {
-            if (e.currentTarget.parentNode.classList.contains('voice-selected')) {
-                const f = await this.dialog.show_upload('.png, .gif, .jpg, .jpeg', 'test');
-                if (f) {
-                    VoicesPage.load_icon_file(this.selected_voice, f);
-                    this.modified = true;
-                    if (this.on_list_change) {
-                        this.on_list_change();
-                    }
-                }
-            }
-        });
-        close.addEventListener('click', e => {
-            const idx = Number.parseInt(e.currentTarget.parentNode.dataset.i);
-            this.delete_item(idx);
-            e.stopPropagation();
-        });
+        const item = $e('div', {'class':'voice-item', 'data-i':this.list.childNodes.length - 1},
+            $e('div', {'class':'voice-item-icon'}, $e('img', {src: voice.icon, alt:''})),
+            $e('div', {'class':'voice-name'}, voice.name),
+            $e('div', {'class':'voice-item-del'}, create_icon('x')));
         this.list.insertBefore(item, this.item_append);
         voice.elem = item;
         return item;
