@@ -74,15 +74,15 @@ class Mola
         if (this.is_voiceless()) {
             if (this.v_name === 'i') {
                 if (next === null) {
-                    this.v += '4';
+                    this.v += '3';
                 } else if (next.is_voiceless()) {
-                    this.v += '6';
+                    this.v += '4';
                 }
             } else if (this.v_name === 'u') {
                 if (next === null) {
-                    this.v += '4';
+                    this.v += '3';
                 } else if (next.is_voiceless()) {
-                    this.v += '6';
+                    this.v += '4';
                 }
             }
         }
