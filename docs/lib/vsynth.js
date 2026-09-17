@@ -344,7 +344,7 @@ class ResonatorSet
                 amp = 0.15;
             } else if (prm.f > 1) {
                 pitch = (prm.f + 5) * 450;
-                amp = (3 - prm.f) * 0.05;
+                amp = (5 - prm.f) * 0.025;
             } else {
                 pitch = (prm.f + 2) * 900;
                 amp = 0.10;
