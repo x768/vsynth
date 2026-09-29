@@ -226,7 +226,7 @@ export class JaToPFN
             if (cns === '' && vwl === '') continue;
 
             const vwl_l = vwl.toLowerCase();
-            const cns_l = cns.toLowerCase();
+            let cns_l = cns.toLowerCase();
             const pitch = (vwl !== vwl_l || cns !== cns_l) ? 10 : 0;
 
             let consonant = this.consonant[cns_l] || '';
@@ -237,21 +237,37 @@ export class JaToPFN
                 if ('kg~nhpbmr'.indexOf(cns_l) >= 0) {
                     if (prev_mola && prev_mola.v !== '') {
                         switch (cns_l) {
-                        case 'g': consonant = this.consonant.Gy; break;
-                        case 'b': consonant = this.consonant.vy; break;
-                        default: consonant = this.consonant[cns_l + 'y']; break;
+                        case 'g':
+                            cns_l = 'Gy';
+                            break;
+                        case 'b':
+                            cns_l = 'vy';
+                            break;
+                        default:
+                            cns_l += 'y';
+                            break;
                         }
                     } else {
-                        consonant = this.consonant[cns_l + 'y'];
+                        cns_l += 'y';
                     }
+                    consonant = this.consonant[cns_l] || '';
                 }
             } else if (prev_mola && prev_mola.v !== '') {
                 switch (cns_l) {
-                case 'g': consonant = this.consonant.G; break;
-                case 'gy': consonant = this.consonant.Gy; break;
-                case 'b': consonant = this.consonant.v; break;
-                case 'by': consonant = this.consonant.vy; break;
+                case 'g':
+                    cns_l = 'G';
+                    break;
+                case 'gy':
+                    cns_l = 'Gy';
+                    break;
+                case 'b':
+                    cns_l = 'v';
+                    break;
+                case 'by':
+                    cns_l = 'vy';
+                    break;
                 }
+                consonant = this.consonant[cns_l] || '';
             }
             if (cns_l.length >= 2 && vwl_l.length >= 1) {
                 if (cns_l.endsWith('y')) {
