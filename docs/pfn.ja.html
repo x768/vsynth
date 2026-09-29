@@ -34,8 +34,8 @@
 <tr><td>\d</td><td class="code">3</td><td>チャンク全体の30%時点に移動</td></tr>
 <tr><td>\d\d</td><td class="code">45</td><td>チャンク全体の45%時点に移動</td></tr>
 <tr><td>\^</td><td class="code">^</td><td>チャンク終点に移動</td></tr>
-<tr><td>\+\d</td><td class="code">+10</td><td>現在位置から終点方向に10ms移動</td></tr>
-<tr><td>\-\d</td><td class="code">-10</td><td>現在位置から始点方向に10ms移動</td></tr>
+<tr><td>\+\d+</td><td class="code">+10</td><td>現在位置から終点方向に10ms移動</td></tr>
+<tr><td>\-\d+</td><td class="code">-10</td><td>現在位置から始点方向に10ms移動</td></tr>
 </table>
 
 <p>例</p>
@@ -98,8 +98,11 @@
 <h3>絶対指定</h3>
 <p><span class="code">P</span>に続き数値をcentで指定する。
 (1オクターブは1200cents、12平均律の半音は100cents)</p>
+<p>4800が標準となる。(デフォルト男声の場合100Hz)</p>
+
 <h3>相対指定</h3>
 <p><span class="code">p</span>に続き割合を指定する。実際のピッチは別途指定する。</p>
+<p>例: 中国語の第三声 mǎ は、<span class="code">f5Lnv +70 f5o9v 2 p3 5 p0 8 p</span> (声調は<span class="code">2 p3 5 p0 8 p</span>)</p>
 
 <h2>声量</h2>
 <p><span class="code">A</span>に続き割合を指定する。</p>
