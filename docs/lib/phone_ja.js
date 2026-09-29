@@ -288,7 +288,7 @@ export class JaToPFN
                 consonant = 'g 8 g';
             }
 
-            const mola = new Mola(consonant, vowel, cns_l, vwl_l, pitch);
+            const mola = new Mola(consonant, vowel, cns.toLowerCase(), vwl.toLowerCase(), pitch);
 
             if (pitch === 10 && (!prev_mola || prev_mola.pitch === 0)) {
                 edge = ret.length;
@@ -299,10 +299,11 @@ export class JaToPFN
                 // 「ん」の異音
                 switch (cns_l[0]) {
                 case '':
+                    // 鼻母音
                     prev_mola.c = mola.v + 'n6';
                     break;
-                case 'k': case 'g':
-                case 'ky': case 'gy':
+                case 'k': case 'g': case 'g~': case 'G':
+                case 'ky': case 'gy': case 'g~y': case 'Gy':
                     prev_mola.c = 'f0n' + v;
                     break;
                 case 't': case 'd': case 'n':
@@ -310,8 +311,8 @@ export class JaToPFN
                 case 's': case 'z': case 'sh': case 'j':
                     prev_mola.c = 'Fn' + v;
                     break;
-                case 'p': case 'b': case 'm':
-                case 'py': case 'by': case 'my': case 'w':
+                case 'p': case 'b': case 'v': case 'm':
+                case 'py': case 'by': case 'vy': case 'my': case 'w':
                     prev_mola.c = 'f0Ln' + v;
                     break;
                 case 'y':
