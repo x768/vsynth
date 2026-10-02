@@ -1,8 +1,8 @@
 import { readFileSync, writeFileSync } from 'fs';
-import { JaReading } from './pub/lib/text_ja.js';
-import { JaToPFN } from './pub/lib/phone_ja.js';
-import { SAMPLING_RATE, VoiceSynth } from './pub/lib/vsynth.js';
-import { WavFile } from './pub/lib/wavfile.js';
+import { JaReading } from './docs/lib/text_ja.js';
+import { JaToPFN } from './docs/lib/phone_ja.js';
+import { SAMPLING_RATE, VoiceSynth } from './docs/lib/vsynth.js';
+import { WavFile } from './docs/lib/wavfile.js';
 
 
 function generate(pfn, speed, pitch)
@@ -18,7 +18,7 @@ function generate(pfn, speed, pitch)
 const src = 'おはようございます。';
 
 const reading = new JaReading();
-reading.load_src(readFileSync('./pub/files/dict_ja.txt', {encoding:'utf-8'}));
+reading.load_src(readFileSync('./docs/files/dict_ja.txt', {encoding:'utf-8'}));
 const latin = reading.conv(src);
 const pfn = new JaToPFN({voiceless: true, reduce_pitch: true}).conv(latin);
 
