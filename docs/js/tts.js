@@ -168,7 +168,7 @@ export class TtsPage
         });
 
         this.edit_text.addEventListener('change', () => {
-            this.edit_text.value = this.edit_text.value.normalize('NFKD');
+            this.edit_text.value = this.edit_text.value.normalize('NFKC');
             this.edit_phonetic.value = this.ja_reading.conv(this.edit_text.value);
             this.#set_pfn();
             this.#set_note();
