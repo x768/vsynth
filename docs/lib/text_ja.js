@@ -373,6 +373,7 @@ export class JaReading
         const ret = [];
         let prev_upper = false;
         let prev_lower = false;
+        let prev_ch = '';
         for (const c of src) {
             const cd = c.charCodeAt(0);
             const upper = JaReading.is_upper(cd);
@@ -387,11 +388,12 @@ export class JaReading
                     ret.push(c);
                 }
             } else if (c === '々') {
-                if (prev !== '') ret.push(prev);
+                ret.push(prev_ch);
+                ret.push(''); // 結合阻止
             } else if (c === 'ゝ' || c === 'ヽ') {
-                ret.push(JaReading.to_voiceless_kana(prev));
+                ret.push(JaReading.to_voiceless_kana(prev_ch));
             } else if (c === 'ゞ' || c === 'ヾ') {
-                ret.push(JaReading.to_voiced_kana(prev));
+                ret.push(JaReading.to_voiced_kana(prev_ch));
             } else if (cd >= 0x0391 && cd <= 0x03A9) {
                 ret.push(String.fromCharCode(cd + 0x20));
             } else {
@@ -409,6 +411,7 @@ export class JaReading
                     }
                 }
             }
+            prev_ch = c;
             prev_upper = upper;
             prev_lower = lower;
         }

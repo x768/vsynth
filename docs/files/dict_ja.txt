@@ -487,7 +487,7 @@
 万|s|man|1
 丈|s|joo|1
 三|s|san
-上|s|ue|0|joo
+上|s|ue||joo
 下|s|shita
 丌|s|ki|1
 不|s|fu
@@ -6194,6 +6194,8 @@
 いい|n//|ii|1
 いかが|n//|ikaga|2
 いかなる|n//|ikanaru|2
+いくつ|n//|ikutsu|1
+いくぶん|n//|ikubun
 いささか|n//|isasaka
 いた|n//|ita
 いたずら|n//|itazura
@@ -6284,6 +6286,7 @@
 できる|n//|dekiru|2
 では|n//|dewa|1
 どういう|n//|dooyuu|1
+どうやら|n//|dooyara|1
 どこ|n//|doko|1
 どの|n//|dono|1
 どれ|n//|dore|1
@@ -6303,6 +6306,7 @@
 ひょんな|n//|hyonna|1
 ふたつ|n//|futatsu
 ふとした|n//|futoshita|1
+ぽい|n//|poi|1
 ほう|n//|hoo|1
 ほのか|n//|honoka|1
 また|n//|mata|2
@@ -6311,6 +6315,7 @@
 まなこ|n//|manako|1
 まぶた|n//|mabuta|1
 まゆげ|n//|mayuge|1
+みた|n//|mita|1
 みじめ|n//|mijime|1
 みっつ|n//|mittsu|3
 むっつ|n//|muttsu|3
@@ -6321,6 +6326,7 @@
 やっつ|n//|yattsu|3
 やや|n//|yaya|1
 よい|n//|yoi|1
+よう|n//|yoo|1
 よっつ|n//|yottsu|3
 わが|n//|waga|1
 わずか|n//|wazuka|1
@@ -7859,6 +7865,7 @@
 愍れ|v|aware
 愛し|v|itoshi
 愛で|v|me
+感じ|v|kanji|0
 慄k|v|onono
 慄r|v|oso
 慈し|v|itsukushi
@@ -8645,9 +8652,9 @@
 補w|v|ogina
 褒め|v|home
 覆w|v|oo
-見r|v|mi
-見t|v|mi
-見え|v|mie
+見r|v|mi|1
+見t|v|mi|1
+見え|v|mie|2
 見上g|v|mia
 見下s|v|mikuda
 見付k|v|mitsu
@@ -8760,7 +8767,7 @@
 読取r|v|yomito
 誹r|v|soshi
 誾k|v|ki
-調べ|v|shirabe
+調べ|v|shirabe|2
 請w|v|ko
 請合w|v|ukea
 請負w|v|ukeo
@@ -8871,7 +8878,7 @@
 逆立t|v|sakada
 透か|v|suka
 透け|v|suke
-途切r|v|togi
+途切r|v|togi|2
 途絶え|v|todae
 這w|v|ha
 通r|v|too||doo
@@ -9333,6 +9340,7 @@ $|n|doru|1
 インスタンス|n|insutansu|1
 インスタント|n|insutanto|1
 インスト|n|insuto
+インストール|n|insutooru|4
 インスリン|n|insurin
 インタビュー|n|intabyuu|1
 インター|n|intaa|1
@@ -10903,6 +10911,7 @@ $|n|doru|1
 パチパチ|n|pachipachi|1
 パチンコ|n|pachinko
 パッキング|n|pakkingu
+パッケージ|n|pakkeeji|1
 パック|n|pakku|1
 パッション|n|passhon|1
 パッチ|n|patchi
@@ -45087,7 +45096,7 @@ $|n|doru|1
 非難|n|hinan|1
 面会|n|menkai
 面体|n|mentee
-面倒|n|mendoo
+面倒|n|mendoo|3
 面前|n|menzen
 面壁|n|menpeki
 面妖|n|men'yoo
@@ -45098,10 +45107,10 @@ $|n|doru|1
 面持|n|omomochi
 面接|n|mensetsu
 面疔|n|menchoo
-面白|n|omoshiro
+面白|n|omoshiro|4
 面白味|n|omoshiromi
-面皮|n|menpi
-面皰|n|nikibi
+面皮|n|menpi|1
+面皰|n|nikibi|1
 面目|n|menboku
 面相|n|mensoo
 面積|n|menseki|1
