@@ -168,6 +168,7 @@ button:not(:disabled):hover {
     margin: auto;
     padding: 10px;
     user-select: none;
+    box-shadow: 5px 5px 15px var(--fg-color);
     background: var(--bg-color);
     color: var(--fg-color);
 }
@@ -399,7 +400,8 @@ button:not(:disabled):hover {
     position-area: bottom right;
     margin: 0;
     border: none;
-    box-shadow: 0 0 10px var(--fg-color);
+    border-radius: 8px;
+    box-shadow: 5px 5px 15px var(--fg-color);
     overflow-y: scroll;
     background: var(--bg2-color);
 }
