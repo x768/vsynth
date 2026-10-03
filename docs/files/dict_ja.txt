@@ -6278,6 +6278,10 @@
 たんなる|n//|tannaru|1
 だれ|n//|dare|1
 ついて|n//|tsuite|1
+できた|n//|dekita|1
+できて|n//|dekite|1
+できない|n//|dekinai|2
+できる|n//|dekiru|2
 では|n//|dewa|1
 どういう|n//|dooyuu|1
 どこ|n//|doko|1
