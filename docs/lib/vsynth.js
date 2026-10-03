@@ -984,8 +984,8 @@ export class VoiceSynth
         let pitch = pitch_val + (VoiceSynth.flutter_tab[this.flutter_ix] - 0x80) * this.voice.flutter * flutter_fac;
         if (pitch < 51200) pitch = 51200;       // min pitch, 12.5 Hz  (12.5 << 12)
         if (pitch > 25600000) pitch = 25600000; // max pitch, 6250 Hz
-        if (v > 1.5) {
-            pitch = (pitch * (v - 0.5) * 1.4) | 0;
+        if (v > 1.5) {  // glottal pitch
+            pitch = (pitch * (v - 0.5) * 1.2) | 0;
         }
         this.current_pitch = pitch;
         this.flutter_ix++;
