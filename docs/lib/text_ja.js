@@ -755,34 +755,46 @@ export class JaReading
                     i--;
                     len--;
                 }
-                switch (word.a[i]) {
-                case 'su':
-                    if (word.a[i - 1] === 'de' || word.a[i - 1] === 'ma') {
-                        // です/ます
+                if (i >= 2) {
+                    const c3 = word.a[i - 1];
+                    switch (word.a[i]) {
+                    case 'o':
+                        if (c3 === 'sho') {
+                            // しょう
+                            word.accent = len - 2;
+                        }
+                        break;
+                    case 'su':
+                        if (c3 === 'de') {
+                            // です
+                            word.accent = len - 3;
+                        } else if (c3 === 'ma') {
+                            // ます
+                            word.accent = len - 2;
+                        }
+                        break;
+                    case 'ta':
+                        if (c3 === 'shi') {
+                            // した
+                            word.accent = len - 3;
+                        }
+                        break;
+                    case 'n':
                         word.accent = len - 2;
+                        break;
+                    case 'ru':
+                        if (c3 === 'a' || c3 === 'na') {
+                            // ある/なる
+                            word.accent = len - 2;
+                        }
+                        break;
                     }
-                    break;
-                case 'ta':
-                    if (word.a[i - 1] === 'shi') {
-                        // した
-                        word.accent = len - 3;
-                    }
-                    break;
-                case 'o':
-                    if (word.a[i - 1] === 'sho') {
-                        // しょう
-                        word.accent = len - 2;
-                    }
-                    break;
-                case 'n':
-                    word.accent = len - 2;
-                    break;
-                }
-                if (word.accent === -1) {
-                    for (let j = i; j >= 2; j--) {
-                        if (word.a[j] === 'no') {
-                            word.accent = j - 1;
-                            break;
+                    if (word.accent === -1) {
+                        for (let j = i; j >= 2; j--) {
+                            if (word.a[j] === 'no') {
+                                word.accent = j - 1;
+                                break;
+                            }
                         }
                     }
                 }
@@ -831,14 +843,14 @@ export class JaReading
                 ret.push(hi ? c.toUpperCase() : c);
                 if (accent === 0) {
                     hi = false;
-                } else if ((prev === '' || word.type !== 'z') && i === 0) {
+                } else if ((prev === '' || word.type !== 'z' || accent > 0) && i === 0) {
                     hi = true;
                 }
                 if (accent >= 0) accent--;
                 prev = c;
             }
         }
-        return ret.join('');
+        return ret;
     }
 
     conv(src) {
@@ -848,6 +860,6 @@ export class JaReading
         this.debug2 = a2.join('');
         const a3 = this.#postprocess(a2);
         this.debug1 = a3.join('');
-        return JaReading.#to_str(a3);
+        return JaReading.#to_str(a3).join('');
     }
 }
