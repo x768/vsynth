@@ -107,3 +107,6 @@ th {
 .phoneme td {
     width: 100px;
 }
+.arpabet-list td {
+    width: 30px;
+}
