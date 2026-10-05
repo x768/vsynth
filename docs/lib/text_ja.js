@@ -43,15 +43,13 @@ class JaWord
         return i;
     }
     allow_prefix() {
-        return 'nMsZvV'.indexOf(this.type) >= 0 && this.right;
+        return 'nMsZ'.indexOf(this.type) >= 0 && this.right;
     }
     #keep_accent(w2) {
         this.accent = w2.accent !== -1 ? this.a.length + w2.accent : this.accent;
     }
     #border_accent(w2) {
-        if (w2.a.length <= 1) {
-            this.accent = -1;
-        } else if (w2.a.length <= 1) {
+        if (w2.a.length <= 2) {
             this.accent = this.a.length - 1;
         } else {
             this.accent = this.a.length;
@@ -697,6 +695,8 @@ export class JaReading
         } else {
             w.accent = w.a.length - 2;
         }
+        w.left = false;
+        w.right = false;
         ret.push(w);
     }
     #number_reading(ret, src, begin, end) {
@@ -785,7 +785,9 @@ export class JaReading
                     case 'n':
                         word.accent = len - 2;
                         break;
+                    case 'ri':
                     case 'ru':
+                    case 're':
                         if (c3 === 'a' || c3 === 'na') {
                             // ある/なる
                             word.accent = len - 2;
@@ -836,7 +838,7 @@ export class JaReading
             }
             if (word.type !== 'z' || word.accent >= 0) {
                 accent = word.accent;
-                hi = word.accent === 0;
+                if (word.type !== 'z' || !hi) hi = word.accent === 0;
             }
             for (let i = 0; i < word.a.length; i++) {
                 const c = word.a[i];
