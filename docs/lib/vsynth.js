@@ -318,6 +318,7 @@ class ResonatorSet
         if (c0 > 0.95 && c1 <= 0.95) {
             this.stp_last = 4;
             this.prev_L = fmt.prm.L;
+            this.seed = 0x732F732F;
         }
     }
     set_peaklist(list) {
