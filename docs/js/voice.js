@@ -69,15 +69,15 @@ class VoicesPage
 {
     // 皆さんこんにちは
     static SAMPLE_JA = [
-        'fLnv +30 fv +20 fv 7 ! 5 p0 0 A0 +10 A 7 A8',
+        'fLnv +30 fv 7 ! 5 p0 0 A0 +10 A 7 A8',
         'Fnv +60 f5o9v 7 ! 5 p',
         'Fv0c5s +40 c5s +10 v0c0 +10 f5o9v 7 ! 5 p0',
         '=0.8 f0nv 7 ! 5 p0',
-        'o2v0cL7 +30 v0 +10 o5L7v 7 ! 5 p0',
-        '=0.8 Fnv 7 ! 5 p6',
-        'fnv +30 fv +20 fv 7 ! 5 p6',
-        'Fv0c +10 fv0c5 +40 c5 +10 v0 +10 fv 7 ! 5 p6',
-        'f5o5L8v +50 f5o9v 7 ! 5 p6  7 A8 ^ A0',
+        'L7o2v0c +40 v0 +10 o5L7v 7 ! 5 p0',
+        '=0.8 Fnv 7 ! 5 p5',
+        'fnv +30 fv 7 ! 5 p5',
+        'Fv0cs +20 fv0c3s +40 v0 +10 fv 7 ! 5 p5',
+        'f5L8v +50 f5o9v 7 ! 5 p5  7 A8 ^ A0',
         '.'];
 
     constructor(db, player, dialog) {
@@ -733,7 +733,7 @@ class LanguagePage
                 'ninbos-voice-intro': 'NinbosVoice 是在網頁瀏覽器上運行的語音合成器。',
                 'software-license': '軟件授權條款',
                 'language-support-info': '中文語音合成功能尚無法使用。',
-                'software-descript1': 'NinbosVoice 根據 GPL 版本 3 版本的授權協議發布。',
+                'software-descript1': 'NinbosVoice 根據 GPL 版本 3 的授權協議發布。',
                 'software-descript2': '本軟件使用了 eSpeak NG 原始碼和音訊資料的修改版本。',
             },
         };
