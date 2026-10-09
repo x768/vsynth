@@ -106,10 +106,10 @@ class Voice
         this.fricative = voice.fricative;
     }
 
-    static #merge(dst, f1, f2, r, upper) {
-        const lo = (upper ? 2 : 0) * 4;
-        const hi = (upper ? 7 : 2) * 4;
-        for (let i = lo; i < hi; i++) {
+    static #merge(dst, f1, f2, r, lo, hi) {
+        const lo4 = lo * 4;
+        const hi4 = hi * 4;
+        for (let i = lo4; i < hi4; i++) {
             dst[i] = f1[i] + f2[i] * r;
         }
     }
@@ -123,14 +123,14 @@ class Voice
     get_formant(f, fmt) {
         const tmp = this.tmp;
         if (fmt.e > 1) {
-            Voice.#merge(tmp, this.i, this.x2, fmt.e - 1, false);
+            Voice.#merge(tmp, this.i, this.x2, fmt.e - 1, 2, 7);
         } else {
-            Voice.#merge(tmp, this.u, this.x1, fmt.e, false);
+            Voice.#merge(tmp, this.u, this.x1, fmt.e, 2, 7);
         }
         if (fmt.f > 1) {
-            Voice.#merge(tmp, this.i, this.x2, fmt.f - 1, true);
+            Voice.#merge(tmp, this.i, this.x2, fmt.f - 1, 0, 2);
         } else {
-            Voice.#merge(tmp, this.u, this.x1, fmt.f, true);
+            Voice.#merge(tmp, this.u, this.x1, fmt.f, 0, 2);
         }
         if (fmt.o > 0) {
             Voice.#append(tmp, this.y1, this.yx, fmt.o, fmt.f);
