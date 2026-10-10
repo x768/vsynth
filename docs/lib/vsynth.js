@@ -585,7 +585,7 @@ export class VoiceSynth
         }
         return p;
     }
-    static parse_pfn(src, pitch, accent, volume) {
+    static parse_pfn(src_list, pitch, accent) {
         const MILLISEC_T = SAMPLING_RATE / 1000;
         const ret = [];
         const fmt = {};
@@ -597,7 +597,7 @@ export class VoiceSynth
         let total_fwd = 0;
         let first = true;
 
-        for (let chunk of src) {
+        for (let chunk of src_list) {
             let fwd = 0;
             let off = 0;
             let sy_len = 1;
@@ -660,10 +660,8 @@ export class VoiceSynth
                             break;
                         }
                         if (fmt_keys.indexOf(cmd) >= 0) {
-                            if (!fmt_exist) {
-                                fmt_exist = true;
-                            }
-                            if (!articulation && (cmd === 'f' || cmd === 'e' || cmd === 'o')) {
+                            fmt_exist = true;
+                            if (!articulation && 'feo'.indexOf(cmd) >= 0) {
                                 for (const k of fmt_keys) {
                                     fmt[k] = 0;
                                 }
@@ -673,22 +671,9 @@ export class VoiceSynth
                             if (cmd === 'f') {
                                 fmt.e = val;
                             }
-                        } else if (cmd === 'A') {
-                            ret.push({cmd:cmd, fwd:fwd2, off:off, val: val * volume});
                         } else if (p_keys.indexOf(cmd) >= 0) {
                             ret.push({cmd:cmd, fwd:fwd2, off:off, val: val});
                             if (cmd === 'v') prev_v = val;
-                        } else if (cmd === 'b') {
-                            // prev articulation
-                            if (!articulation) {
-                                for (const k of "Lrancs") {
-                                    fmt[k] = 0;
-                                }
-                                articulation = true;
-                            }
-                        } else if (cmd === 'B') {
-                            // next articulation
-                            articulation = true;
                         } else {
                             throw new Error('unknown cmd: ' + cmd);
                         }
@@ -704,7 +689,7 @@ export class VoiceSynth
         return ret;
     }
 
-    static calc_ticks(cmd, ut, init_ticks) {
+    static calc_ticks(cmd, ut, init_ticks, volume) {
         const ret = [];
         const prev = {};
         for (let k of p_keys) prev[k] = -1;
@@ -728,14 +713,13 @@ export class VoiceSynth
                 if (t2 >= 0) ret.push({cmd:'fmt', ticks:t2, len:len, val:c.val});
                 prev.fmt = ticks;
             } else if (c.cmd === 'A') {
-                const k = c.cmd;
-                const pre = prev[k];
+                const pre = prev.A;
                 const t2 = pre >= 0 ? pre : last_ticks;
                 const len = pre >= 0 ? ticks - t2 : 0;
-                if (len > 0 && t2 >= 0) ret.push({cmd:k, ticks:t2, len:len, val:c.val});
-                prev[k] = ticks;
+                if (len > 0 && t2 >= 0) ret.push({cmd:'A', ticks:t2, len:len, val:c.val * volume});
+                prev.A = ticks;
                 if (c.val === 0 && pre >= 0) {
-                    for (let k of p_keys) prev[k] = -1;
+                    for (const k of p_keys) prev[k] = -1;
                     prev.fmt = -1;
                     last_ticks = ticks;
                 }
@@ -818,9 +802,9 @@ export class VoiceSynth
         this.prm.P.set(0, pitch);
         this.current_pitch = this.#get_current_pitch();
 
-        const cmd = VoiceSynth.parse_pfn(src, pitch, accent, volume);
+        const cmd = VoiceSynth.parse_pfn(src, pitch, accent);
         const ut = (SAMPLING_RATE * 60 / speed) | 0;
-        const cmd2 = VoiceSynth.calc_ticks(cmd, ut, this.cmd_list.at(-1).ticks);
+        const cmd2 = VoiceSynth.calc_ticks(cmd, ut, this.cmd_list.at(-1).ticks, volume);
         if (this.cmd_list.length === 1) {
             this.cmd_list = cmd2;
         } else {
