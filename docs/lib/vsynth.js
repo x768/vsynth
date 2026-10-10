@@ -595,6 +595,8 @@ export class VoiceSynth
         }
         let prev_v = 0;
         let total_fwd = 0;
+        let first = true;
+
         for (let chunk of src) {
             let fwd = 0;
             let off = 0;
@@ -606,6 +608,10 @@ export class VoiceSynth
                 chunk = chunk.substring(i_note + 1);
             } else {
                 ret.push({cmd:'chunk', fwd:total_fwd, off:0, val:null});
+            }
+            if (first) {
+                ret.push({cmd: 'A', fwd:total_fwd, off:0, val:0});
+                first = false;
             }
             for (const seg of chunk.split(' ')) {
                 if (seg.length === 0) continue;

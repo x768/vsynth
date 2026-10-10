@@ -147,7 +147,7 @@ export class JaToPFN
             r: 'F' + v + 'c4 +10 c0 +60',
             ry: 'Fe' + v + 'c4 +20',
             w: 'L8' + v + ' +50',
-            q: 'g +40 +g +30',
+            q: 'g +40 g +30',
         };
         this.vwl_to_cns = {
             k: 'L',
@@ -214,7 +214,7 @@ export class JaToPFN
                             ret[i].pitch = 6;
                         }
                     }
-                    prev_mola.amp += ' 7 A8 ^ A0';
+                    if (prev_mola.amp === '') prev_mola.amp = '7 A8';
                     prev_mola = null;
                     prev_q = false;
                     edge_count = 0;
@@ -331,7 +331,7 @@ export class JaToPFN
                 prev_mola.set_vowel_voiceless(mola);
             }
             if (!prev_mola) {
-                mola.amp = '0 A0 +10 A 7 A8';
+                mola.amp = '0 +10 A 7 A8';
             }
             ret.push(mola);
             prev_mola = mola;
@@ -340,7 +340,7 @@ export class JaToPFN
             if (this.voiceless) {
                 prev_mola.set_vowel_voiceless(null);
             }
-            prev_mola.amp += ' 7 A8 ^ A0';
+            if (prev_mola.amp === '') prev_mola.amp = '7 A8';
         }
         if (edge_count >= 2 && this.reduce_pitch) {
             for (let i = edge; i < ret.length && ret[i].pitch === 10; i++) {

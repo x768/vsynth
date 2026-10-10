@@ -84,19 +84,16 @@ function update_c_info(elem, pfn)
 
     document.getElementById('pfn').textContent = pfn;
 
-    let vowel = "f5o9v";
     const m = pfn.match(/r\d?/);
-    if (m) {
-        vowel = "f5o9v" + m[0] + " 6 f5o9v";
-    }
+    const vowel = m ? `f5o9v${m[0]} 6 f5o9v` : 'f5o9v';
 
     const synth = new VoiceSynth(VoiceSynth.default_voice());
     const src_list = [
-        pfn + " " + vowel + " 2 p 8 p0 0 A0 +10 A 9 A ^ A0",
-        "=0.75 .",
-        "=0.75 f5o9v 6 ! 9 p0 0 A0 +10 A",
-        pfn + " " + vowel + " 0 p 2 p 8 p0 9 A ^ A0",
-        "=0.25 .",
+        `${pfn} ${vowel} 2 p 8 p0 0 +10 A 9 A`,
+        '=0.75 .',
+        '=0.75 f5o9v 6 ! 9 p0 0 +10 A',
+        `${pfn} ${vowel} 0 p 2 p 8 p0 9 A`,
+        '=0.25 .',
     ];
     synth.set_pfn(src_list, 180, 4800, 600, 1.0);
     const buf = new Float32Array(synth.get_remaining());
@@ -171,8 +168,8 @@ function update_v_info(elem, pfn)
 
     const synth = new VoiceSynth(VoiceSynth.default_voice());
     const src_list = [
-        pfn + " 5 ! 2 p 8 p0 0 A0 +5 A 9 A ^ A0",
-        "=0.25 .",
+        `${pfn} 5 ! 2 p 8 p0 0 +10 A 9 A`,
+        '=0.25 .',
     ];
     synth.set_pfn(src_list, 180, 4800, 600, 1.0);
     const buf = new Float32Array(synth.get_remaining());
@@ -217,7 +214,6 @@ document.addEventListener('DOMContentLoaded', () =>
         }
     });
     play_btn.addEventListener('click', e => {
-        const t = e.currentTarget;
         if (wavebuf) {
             const t = e.currentTarget;
             t.disabled = true;
