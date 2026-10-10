@@ -140,7 +140,7 @@ export class JaToPFN
             v: 'L' + v + 'c8 +20 c8 +30',
             vy: 'fL' + v + 'c8 +20 c8 +30',
             hy: 'fv0c7 +20 v0c7 +40',
-            f: 'L7v0c5 +30 c5 +10 v0 +10',
+            f: 'Lv0c5 +30 c5 +10 v0 +10',
             m: 'Ln' + v + ' +70',
             my: 'fLn' + v + ' +30',
             y: 'f' + v + ' +70',
