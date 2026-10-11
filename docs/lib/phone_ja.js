@@ -146,7 +146,7 @@ export class JaToPFN
             y: 'f' + v + ' +70',
             r: 'F' + v + 'c4 +10 c0 +60',
             ry: 'Fe' + v + 'c4 +20',
-            w: 'L8' + v + ' +50',
+            w: 'L' + v + ' +50',
             q: 'g +40 g +30',
         };
         this.vwl_to_cns = {
