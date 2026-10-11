@@ -133,6 +133,9 @@ button:not(:disabled):hover {
     background: var(--hilight-color);
 }
 
+.ipa {
+    font-family: 'Charis SIL', 'Doulos SIL', 'DejaVu Sans', sans-serif;
+}
 .warning {
     color: var(--warning-color);
 }
@@ -260,7 +263,7 @@ button:not(:disabled):hover {
 }
 .file-list-close path {
     stroke: var(--fg-color);
-    stroke-width: 1px;
+    stroke-width: 2px;
     fill: none;
 }
 .file-list-add {

@@ -7,16 +7,15 @@ class SpeechInc
         this.last = 0;
     }
     set(c) {
-        if (c.len > 0) {
+        if (c.ticks === 0 && c.len === 0) {
+            this.base = c.val;
+            this.ticks = 0;
+            this.len = 0;
+        } else {
             this.base += this.diff;
             this.diff = c.val - this.base;
             this.ticks = c.ticks;
-            this.len = c.len;
-        } else {
-            this.base = c.val;
-            this.diff = 0;
-            this.ticks = c.ticks;
-            this.len = 0;
+            this.len = c.len > 0.125 ? c.len : 0.125;
         }
     }
     get(ticks) {
@@ -48,7 +47,8 @@ export class SpeechNote
         return e;
     }
 
-    constructor(vsynth) {
+    constructor(vsynth, sampling_rate) {
+        this.sampling_rate = sampling_rate;
         this.total_ticks = vsynth.get_remaining();
         const chunks = vsynth.get_chunk_count();
         this.scale = chunks > 0 ? 80 * vsynth.get_chunk_count() / this.total_ticks : 1;
@@ -75,26 +75,224 @@ export class SpeechNote
             vp.add(c.ticks);
             if (c.len > 0) vp.add(c.ticks + c.len);
         }
+        vp.add(this.total_ticks);
         for (const t of vp) {
             this.commands.push({ticks:t, key:'pt'});
         }
-        this.#get_ipa(vsynth.cmd_list.filter(c => c.cmd === 'fmt' || c.cmd === 'v' || (c.cmd === 'A' && c.val === 0)));
+        this.#get_ipa(vsynth.cmd_list.filter(c => c.cmd === 'fmt' || c.cmd === 'v' || c.cmd === 'A'));
         this.commands.sort((a, b) => {
             const t = a.ticks - b.ticks;
             if (t !== 0) return t;
-            if (a.key === 'pt') return 1;
-            if (b.key === 'pt') return -1;
-            return 0;
+            return a.key === 'pt' ? 1 : b.key === 'pt' ? -1 : 0;
         });
     }
     #get_ipa(cmd) {
+        const a = [];
+        let vcd = 0;
+        let vcd_next = 0;
+        let vcd_ticks = -1;
+        let amp = false;
+        let amp0_ticks = -1;
+        let amp1_ticks = -1;
         let fmt = null;
-        let v = 0;
 
-        for (let i = 0; i < cmd.length; i++) {
-            const c = cmd[i];
-            const next = i < cmd.length - 1 ? cmd[i + 1] : null;
+        for (const c of cmd) {
+            switch (c.cmd) {
+            case 'fmt':
+                if (vcd_ticks !== -1 && c.ticks + c.len >= vcd_ticks) {
+                    vcd = vcd_next;
+                    vcd_ticks = -1;
+                }
+                if (amp0_ticks !== -1 && c.ticks + c.len >= amp0_ticks) {
+                    amp = false;
+                    amp0_ticks = -1;
+                }
+                if (amp1_ticks !== -1 && c.ticks + c.len >= amp1_ticks) {
+                    a.push({ticks:amp1_ticks, vcd, f:fmt});
+                    amp1_ticks = -1;
+                }
+                fmt = c.val;
+                if (amp || c.len > 0) {
+                    a.push({ticks:c.ticks + c.len, vcd, f:c.val});
+                }
+                break;
+            case 'v':
+                if (vcd_ticks !== -1 && c.ticks >= vcd_ticks) {
+                    vcd = vcd_next;
+                }
+                if (amp1_ticks !== -1 && c.ticks + c.len >= amp1_ticks) {
+                    a.push({ticks:amp1_ticks, vcd, f:fmt});
+                    amp1_ticks = -1;
+                }
+                vcd_next = c.val;
+                vcd_ticks = c.ticks + c.len;
+                break;
+            case 'A':
+                if (c.val > 0) {
+                    if (c.ticks > 0 && !amp) {
+                        if (vcd_ticks !== -1 && c.ticks >= vcd_ticks) {
+                            vcd = vcd_next;
+                            vcd_ticks = -1;
+                        }
+                        amp1_ticks = c.ticks;
+                    }
+                    amp = true;
+                } else {
+                    amp0_ticks = c.ticks + c.len;
+                }
+                break;
+            }
         }
+        const semivowel_thres = (this.sampling_rate * 0.1) | 0;
+        for (let i = 0; i < a.length; i++) {
+            const f0 = i > 0 ? a[i - 1] : null;
+            const f1 = a[i];
+            const f2 = i < a.length - 1 ? a[i + 1] : null;
+            let c = null;
+            if (f0 === null || !SpeechNote.#eq(f1.f, f0.f)) {
+                if (SpeechNote.#is_consonant(f1.f) || (f2 !== null && f2.ticks - f1.ticks < semivowel_thres && !SpeechNote.#eq(f1.f, f2.f) && !SpeechNote.#is_consonant(f2.f))) {
+                    c = SpeechNote.#get_consonant(f1.f, f1.vcd >= 0.5);
+                } else {
+                    c = SpeechNote.#get_vowel(f1.f, f1.vcd);
+                }
+            }
+            if (c !== null) {
+                this.commands.push({ticks:f1.ticks, len:0, key:'phone', val:c});
+            }
+        }
+    }
+    static #is_consonant(f) {
+        return f.f > 1.0 ||
+            f.n > 0.7 ||
+            f.a > 0.2 ||
+            f.s > 0.2 ||
+            f.c > 0.2;
+    }
+    static #eq(f1, f2) {
+        return Math.abs(f1.f - f2.f) < 0.1 &&
+            Math.abs(f1.e - f2.e) < 0.1 &&
+            Math.abs(f1.o - f2.o) < 0.1 &&
+            Math.abs(f1.L - f2.L) < 0.1 &&
+            Math.abs(f1.r - f2.r) < 0.1 &&
+            Math.abs(f1.a - f2.a) < 0.1 &&
+            Math.abs(f1.s - f2.s) < 0.1 &&
+            Math.abs(f1.n - f2.n) < 0.1 &&
+            Math.abs(f1.c - f2.c) < 0.1;
+    }
+    static #get_vowel(fmt, v) {
+        let i;
+        if (fmt.f > 0.6) {
+            i = 0;
+        } else if (fmt.f > 0.4) {
+            i = 2;
+        } else {
+            i = 4;
+        }
+        if (fmt.L > 0.4) i++;
+        let c;
+        if (fmt.o < 0.15) {
+            c = ['i', 'y', 'ɨ', 'ʉ', 'ɯ', 'u'][i];
+        } else if (fmt.o < 0.35) {
+            c = ['ɪ', 'ʏ', 'ɪ̈', 'ʊ̈', 'ɯ̽', 'ʊ'][i];
+        } else if (fmt.o < 0.45) {
+            c = ['e', 'ø', 'ɘ', 'ɵ', 'ɤ', 'o'][i];
+        } else if (fmt.o < 0.55) {
+            c = ['e̞', 'ø̞', 'ə', 'ɵ̞', 'ɤ̞', 'o̞'][i];
+        } else if (fmt.o < 0.65) {
+            c = ['ɛ', 'œ', 'ɜ', 'ɞ', 'ʌ', 'ɔ'][i];
+        } else if (fmt.o < 0.85) {
+            c = ['æ', 'æ̹', 'ɐ', 'ɐ̹', 'ʌ̞', 'ɔ̞'][i];
+        } else {
+            c = ['a', 'ɶ', 'ä', 'ɶ̈', 'ɑ', 'ɒ'][i];
+        }
+        if (fmt.r > 0.4) {
+            c += "\u02DE"; // rzd
+        }
+        if (fmt.n > 0.3) {
+            c += "\u0303"; // nzd
+        }
+        if (v < 0.3) {
+            c += "\u0325"; // vls
+        } else if (v < 0.7) {
+            c += "\u0324"; // mrm
+        } else if (v < 1.3) {
+        } else if (v < 1.7) {
+            c += "\u0330"; // crk
+        } else {
+            c += 'ʔ';
+        }
+        return c;
+    }
+    static #get_consonant(fmt, v) {
+        let c = '';
+        const r = fmt.r >= 0.5;
+        if (fmt.L > 0.8) { // blb/lbd
+            if (fmt.n > 0.8) {
+                c = 'm';
+                if (!v) c += "\u0325";
+            } else if (fmt.c > 0.8) {
+                c = v ? 'b' : 'p';
+            } else if (fmt.c > 0.2) {
+                c = v ? 'v' : 'f';
+            } else {
+                c = 'β̞';
+                if (!v) c += "\u0325";
+            }
+        } else if (fmt.f > 1.5) { // alv
+            if (fmt.n > 0.8) {
+                c = r ? 'ɳ' : 'n';
+                if (!v) c += "\u0325";
+            } else if (fmt.c > 0.8) {
+                c = v ? (r ? 'ɖ' : 'd') : (r ? 'ʈ' : 't');
+            } else if (fmt.c > 0.2) {
+                c = v ? (r ? 'ʐ' : 'z') : (r ? 'ʂ' : 's');
+            } else {
+                c = r ? 'ɻ' : 'ɹ';
+                if (!v) c += "\u0325";
+            }
+        } else if (fmt.f > 0.5) { // pal
+            if (fmt.n > 0.8) {
+                c = 'ɲ';
+                if (!v) c += "\u0325";
+            } else if (fmt.c > 0.8) {
+                c = v ? 'ɟ' : 'c';
+            } else if (fmt.c > 0.2) {
+                c = v ? 'ʝ' : 'ç';
+            } else {
+                c = 'j';
+                if (!v) c += "\u0325";
+            }
+        } else if (fmt.o < 0.5) { // vel
+            if (fmt.n > 0.8) {
+                c = 'ŋ';
+                if (!v) c += "\u0325";
+            } else if (fmt.c > 0.8) {
+                c = v ? 'g' : 'k';
+            } else if (fmt.c > 0.2) {
+                c = v ? 'ɣ' : 'x';
+            } else {
+                c = 'ɰ';
+                if (!v) c += "\u0325";
+            }
+            if (fmt.e > 0.5) {
+                c += "ʲ";
+            }
+        } else { // uvl
+            if (fmt.n > 0.8) {
+                c = 'ɴ';
+                if (!v) c += "\u0325";
+            } else if (fmt.c > 0.8) {
+                c = v ? 'ɢ' : 'q';
+            } else if (fmt.c > 0.2) {
+                c = v ? 'χ' : 'x';
+            } else {
+                c = v ? 'ʁ̞' : 'χ˕';
+            }
+            if (fmt.e > 0.5) {
+                c += "ʲ";
+            }
+        }
+        return c;
     }
 
     draw(svg) {
@@ -143,8 +341,11 @@ export class SpeechNote
             } else if (c.key === 'title') {
                 const x = c.ticks * this.scale + SpeechNote.MARGIN;
                 const y = BASE - prm.P.get(c.ticks) * HEIGHT - 20;
-                svg.appendChild(SpeechNote.#svg('text', {x:x, y:y}, c.val));
+                svg.appendChild(SpeechNote.#svg('text', {x:(x | 0), y:(y | 0), 'class':'ipa'}, c.val));
             } else if (c.key === 'phone') {
+                const x = c.ticks * this.scale + SpeechNote.MARGIN;
+                const y = BASE - prm.P.get(c.ticks) * HEIGHT + 30;
+                svg.appendChild(SpeechNote.#svg('text', {x:(x | 0), y:(y | 0), 'class':'ipa'}, c.val));
             } else if (c.key in prm) {
                 prm[c.key].set(c);
             }
@@ -162,20 +363,20 @@ export class SpeechNote
             const x = c.ticks * this.scale + SpeechNote.MARGIN;
             const y = BASE - c.P * HEIGHT;
             const v = c.A * (1 - c.c);
-            d.push('L' + x + ',' + (y - v * 10));
+            d.push('L' + (x | 0) + ',' + ((y - v * 10) | 0));
         }
         {
             const c = ret.at(-1);
             const x = c.ticks * this.scale + SpeechNote.MARGIN;
             const y = BASE - c.P * HEIGHT;
-            d.push('L' + x + ',' + y);
+            d.push('L' + (x | 0) + ',' + (y | 0));
         }
         for (let i = ret.length - 2; i >= 1; i--) {
             const c = ret[i];
             const x = c.ticks * this.scale + SpeechNote.MARGIN;
             const y = BASE - c.P * HEIGHT;
             const v = c.A * (1 - c.c);
-            d.push('L' + x + ',' + (y + v * 10));
+            d.push('L' + (x | 0) + ',' + ((y + v * 10) | 0));
         }
         d.push('z');
         svg.appendChild(SpeechNote.#svg('path', {'class':'note-tone', d:d.join(' ')}));

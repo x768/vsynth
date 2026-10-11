@@ -530,7 +530,7 @@ export class TtsPage
         for (const item of items) {
             synth.set_pfn(item.pfn, item.speed, 4800, 400, 1.0);
         }
-        const note = new SpeechNote(synth);
+        const note = new SpeechNote(synth, SAMPLING_RATE);
         const chunk = note.draw(document.getElementById('tts-note-svg'));
         if (keep) {
             for (const ch of chunk) {
