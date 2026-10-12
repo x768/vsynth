@@ -311,8 +311,8 @@ export class JaToPFN
                 case 's': case 'z': case 'sh': case 'j':
                     prev_mola.c = 'Fn' + v;
                     break;
-                case 'p': case 'b': case 'm':
-                case 'py': case 'by': case 'my': case 'w':
+                case 'p': case 'b': case 'v': case 'm':
+                case 'py': case 'by': case 'vy': case 'my': case 'w':
                     prev_mola.c = 'f0Ln' + v;
                     break;
                 case 'y':
