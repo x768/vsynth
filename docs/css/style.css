@@ -23,7 +23,7 @@ body {
     fill: var(--fg-color);
 }
 .ipa {
-    font-family: 'Charis SIL', 'Doulos SIL', 'DejaVu Sans', sans-serif;
+    font-family: 'Charis SIL', 'Doulos SIL', 'DejaVu Sans', 'Sagoe UI', sans-serif;
 }
 #container {
     width: 1200px;
