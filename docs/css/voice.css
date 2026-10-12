@@ -134,7 +134,7 @@ button:not(:disabled):hover {
 }
 
 .ipa {
-    font-family: 'Charis SIL', 'Doulos SIL', 'DejaVu Sans', sans-serif;
+    font-family: 'Charis SIL', 'Doulos SIL', 'DejaVu Sans', 'Sagoe UI', sans-serif;
 }
 .warning {
     color: var(--warning-color);

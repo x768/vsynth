@@ -29,7 +29,7 @@ button {
     width: 32px;
 }
 .ipa, #ipa {
-    font-family: 'Charis SIL', 'Doulos SIL', 'DejaVu Sans', sans-serif;
+    font-family: 'Charis SIL', 'Doulos SIL', 'DejaVu Sans', 'Sagoe UI', sans-serif;
 }
 #ipa {
     font-size: 150%;
