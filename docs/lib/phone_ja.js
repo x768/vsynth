@@ -297,7 +297,7 @@ export class JaToPFN
 
             if (prev_mola && prev_mola.c_name === 'n' && prev_mola.v_name === '') {
                 // 「ん」の異音
-                switch (cns_l[0]) {
+                switch (cns_l) {
                 case '':
                     // 鼻母音
                     prev_mola.c = mola.v + 'n6';
@@ -311,8 +311,8 @@ export class JaToPFN
                 case 's': case 'z': case 'sh': case 'j':
                     prev_mola.c = 'Fn' + v;
                     break;
-                case 'p': case 'b': case 'v': case 'm':
-                case 'py': case 'by': case 'vy': case 'my': case 'w':
+                case 'p': case 'b': case 'm':
+                case 'py': case 'by': case 'my': case 'w':
                     prev_mola.c = 'f0Ln' + v;
                     break;
                 case 'y':
