@@ -36,7 +36,7 @@ class TtsItem
         this.speed = 480;
         this.pitch = 0;
         this.accent = 400;
-        this.volume = 100;
+        this.volume = 0; // dB
         this.pfn = [];
         this.set_image(voice.icon);
     }
@@ -65,6 +65,10 @@ class TtsItem
     }
     get_text() {
         return this.text !== '' ? this.text : this.phonetic;
+    }
+    get_volume_linear() {
+        if (this.volume > 0) return 1;
+        return Math.pow(10, this.volume * 0.1);
     }
     to_json_object() {
         return {
@@ -619,7 +623,7 @@ export class TtsPage
             const item = sel_items.shift();
             if (!item) return null;
             const synth = new VoiceSynth(item.voice);
-            synth.set_pfn(item.pfn, item.speed, item.pitch + 4800, item.accent, item.volume / 100);
+            synth.set_pfn(item.pfn, item.speed, item.pitch + 4800, item.accent, item.get_volume_linear());
             const buf = new Float32Array(synth.get_remaining());
             synth.generate(buf);
             return buf;
@@ -650,7 +654,7 @@ export class TtsPage
         let filename = '';
         for (const item of sel_items) {
             const synth = new VoiceSynth(item.voice);
-            synth.set_pfn(item.pfn, item.speed, item.pitch + 4800, item.accent, item.volume / 100);
+            synth.set_pfn(item.pfn, item.speed, item.pitch + 4800, item.accent, item.get_volume_linear());
             const buf = new Float32Array(synth.get_remaining());
             synth.generate(buf);
             list.push(buf);
@@ -672,7 +676,7 @@ export class TtsPage
         for (let i = 0; i < sel_items.length; i++) {
             const item = sel_items[i];
             const synth = new VoiceSynth(item.voice);
-            synth.set_pfn(item.pfn, item.speed, item.pitch + 4800, item.accent, item.volume / 100);
+            synth.set_pfn(item.pfn, item.speed, item.pitch + 4800, item.accent, item.get_volume_linear());
             const buf = new Float32Array(synth.get_remaining());
             synth.generate(buf);
 

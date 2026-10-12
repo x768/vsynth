@@ -804,7 +804,7 @@ export class VoiceSynth
 
         const cmd = VoiceSynth.parse_pfn(src, pitch, accent);
         const ut = (SAMPLING_RATE * 60 / speed) | 0;
-        const cmd2 = VoiceSynth.calc_ticks(cmd, ut, this.cmd_list.at(-1).ticks, volume);
+        const cmd2 = VoiceSynth.calc_ticks(cmd, ut, this.cmd_list.at(-1).ticks, Math.sqrt(volume));
         if (this.cmd_list.length === 1) {
             this.cmd_list = cmd2;
         } else {
