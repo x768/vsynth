@@ -14,12 +14,12 @@
     :root {
         --bg-color: black;
         --bg2-color: #444;
-        --fg-color: white;
+        --fg-color: #ddd;
         --border-color: gray;
         --hover-color: #666;
-        --light-color: #0090bf;
-        --selected-color: #bfefff;
-        --light-hover-color: #8fbfdf;
+        --light-color: #004068;
+        --selected-color: #0090bf;
+        --light-hover-color: #006090;
         --hilight-color: #880;
     }
 }
