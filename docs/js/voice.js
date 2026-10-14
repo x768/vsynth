@@ -89,6 +89,7 @@ class VoicesPage
         this.sub_redo = document.getElementById('sub-redo');
         this.list = document.getElementById('voices-list');
         this.item_append = document.getElementById('voice-item-add');
+        this.update_btn = document.getElementById('voice-update');
 
         this.voice_pitch = document.getElementById('voice-pitch');
         this.voice_flutter = document.getElementById('voice-flutter');
@@ -103,7 +104,6 @@ class VoicesPage
         this.voice_name = template.getElementById('voice-name');
 
         this.selected_voice = null;
-        this.modified = false;
         this.on_list_change = null;
 
         const fmt_header = document.getElementById('voice-formant-header');
@@ -176,14 +176,25 @@ class VoicesPage
             const elem = e.target.closest('input');
             if (elem !== null) {
                 this.#update_from_input(elem);
+                this.update_btn.disabled = false;
             }
+        });
+        this.update_btn.addEventListener('click', e => {
+            const idx = Number.parseInt(this.selected_voice.elem.dataset.i);
+            const voice = this.get_voice();
+            for (const k in voice) {
+                this.selected_voice[k] = voice[k];
+            }
+            this.db.save_voice(this.selected_voice, idx);
+            e.currentTarget.disabled = true;
         });
         this.voice_name.addEventListener('change', e => {
             const t = e.currentTarget;
-            const s = this.#get_safe_name(t.value, this.selected_voice.name);
-            t.value = s;
-            this.selected_voice.name = s;
-            this.modified = true;
+            const new_name = this.#get_safe_name(t.value, this.selected_voice.name);
+            t.value = new_name;
+            this.selected_voice.name = new_name;
+            const idx = Number.parseInt(this.selected_voice.elem.dataset.i);
+            this.db.save_voice(this.selected_voice, idx);
         });
         this.voice_name.addEventListener('focus', () => {
             this.selected_voice.elem.removeAttribute('draggable');
@@ -200,13 +211,13 @@ class VoicesPage
             t.disabled = true;
             this.#play_sample(t);
         });
-        document.getElementById('sub-import-file').addEventListener('click', e => {
+        document.getElementById('sub-import-file').addEventListener('click', () => {
             this.dialog.show_upload('.json')
             .then(f => {
                 if (f) this.import_file(f);
             });
         });
-        document.getElementById('sub-export-file').addEventListener('click', e => {
+        document.getElementById('sub-export-file').addEventListener('click', () => {
             this.dialog.show_download(this.create_export_blob(), this.selected_voice.name + '.json');
         });
     }
@@ -229,13 +240,6 @@ class VoicesPage
             val = max;
             t.value = val;
         }
-        this.modified = true;
-        const v = this.selected_voice;
-        if (t.dataset.i !== undefined) {
-            v[t.dataset.key][Number.parseInt(t.dataset.i)] = val;
-        } else {
-            v[t.dataset.key] = val;
-        }
     }
 
     #play_sample(button) {
@@ -257,11 +261,6 @@ class VoicesPage
         this.sub_redo.disabled = true;
     }
     hide() {
-        if (this.modified) {
-            const idx = this.voices.indexOf(this.selected_voice);
-            this.db.save_voice(this.selected_voice, idx);
-            this.modified = false;
-        }
     }
     on_undo() {
     }
@@ -328,7 +327,7 @@ class VoicesPage
         const f = await this.dialog.show_upload('.png, .gif, .jpg, .jpeg', 'test');
         if (f !== null) {
             VoicesPage.load_icon_file(this.voices[idx], f);
-            this.modified = true;
+            this.db.save_voice(this.voices[idx], idx);
             if (this.on_list_change) {
                 this.on_list_change();
             }
@@ -365,11 +364,6 @@ class VoicesPage
         }
     }
     #select_profile(voice) {
-        if (this.modified) {
-            const idx = this.voices.indexOf(this.selected_voice);
-            this.db.save_voice(this.selected_voice, idx);
-            this.modified = false;
-        }
         if (this.selected_voice) {
             const item = this.selected_voice.elem;
             this.voice_name.remove();
@@ -391,6 +385,7 @@ class VoicesPage
         VoicesPage.#set_formant_values(this.voice_formant_h, voice.height);
         VoicesPage.#set_formant_values(this.voice_formant_f, voice.freq);
         VoicesPage.#set_formant_values(this.voice_formant_a, voice.freqadd);
+        this.update_btn.disabled = true;
         this.selected_voice = voice;
     }
     #get_safe_name(n, self) {
@@ -559,6 +554,7 @@ class LanguagePage
                 'cancel':'Cancel',
                 'close':'Close',
                 'execute': 'Execute',
+                'update': 'Update',
 
                 'upload-area1': 'Drop the file here',
                 'upload-area2': 'Click here to choose the file',
@@ -609,6 +605,7 @@ class LanguagePage
                 'cancel':'キャンセル',
                 'close':'閉じる',
                 'execute': '実行',
+                'update': '更新',
 
                 'upload-area1': 'ファイルをここにドロップ',
                 'upload-area2': 'ここをクリックしてファイルを選択',
@@ -660,6 +657,7 @@ class LanguagePage
                 'open':'打开',
                 'save':'储存',
                 'execute': '执行',
+                'update': '更新',
 
                 'upload-area1': '在此处拖放文件',
                 'upload-area2': '单击此处以选择文件',
@@ -708,6 +706,7 @@ class LanguagePage
                 'open':'打開',
                 'save':'儲存',
                 'execute': '執行',
+                'update': '更新',
 
                 'upload-area1': '在此處拖放文件',
                 'upload-area2': '單擊這裡以選擇文件',

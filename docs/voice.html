@@ -18,8 +18,8 @@
 </nav>
 
 <div id="sub">
-<button class="sub-tts sub-voices" id="sub-undo"><svg class="icon24" viewBox="-12,0,24,24"><path stroke-width="2" d="M-11,18 Q0,2,11,18 M-11,12 L-11,18 L-5,18" /></svg></button>
-<button class="sub-tts sub-voices" id="sub-redo"><svg class="icon24" viewBox="-12,0,24,24"><path stroke-width="2" d="M-11,18 Q0,2,11,18 M11,12 L11,18 L5,18" /></svg></button>
+<button class="sub-tts sub-voices" id="sub-undo"><svg class="icon24" viewBox="-12,0,24,24"><path stroke-width="2" d="M-10,18 Q0,-2,11,18 M-11,12 L-10,18 L-5,18" /></svg></button>
+<button class="sub-tts sub-voices" id="sub-redo"><svg class="icon24" viewBox="-12,0,24,24"><path stroke-width="2" d="M-11,18 Q0,-2,10,18 M11,12 L10,18 L5,18" /></svg></button>
 <button class="sub-tts" id="sub-open-proj" data-res="open-proj"></button>
 <button class="sub-tts" id="sub-save-proj" data-res="save-proj"></button>
 <button class="sub-tts" id="sub-save-as" data-res="save-as"></button>
@@ -69,17 +69,18 @@
 <div class="page" id="page-voices">
 <div id="voices-list"><div id="voice-item-add"><svg class="icon16" viewBox="-8,-8,16,16"><path d="M0,-8 L0,8 M-8,0 L8,0" /></svg></div></div>
 <div id="voice-profile">
+<div><button id="voice-update" data-res="update" disabled></button></div>
 <table>
 <tr><th>Base Pitch</th><td><input type="number" id="voice-pitch" min="50" max="500" value="50" size="5" step="10" data-key="pitch"> Hz</td></tr>
 <tr><th>Flutter</th><td><input type="number" id="voice-flutter" min="0" max="256" value="0" size="5" step="16" data-key="flutter"> / 256</td></tr>
-<tr><th>Fricative Amplitude</th><td><input type="number" id="voice-fricative" min="0" max="256" value="0" size="5" step="16" data-key="fricative"> / 256</td></tr>
+<tr><th>Fricative Amp.</th><td><input type="number" id="voice-fricative" min="0" max="256" value="0" size="5" step="16" data-key="fricative"> / 256</td></tr>
 </table>
 <table>
 <tr id="voice-formant-header"><th></th></tr>
-<tr id="voice-formant-h"><th>height</th></tr>
-<tr id="voice-formant-w"><th>width</th></tr>
-<tr id="voice-formant-f"><th>freq</th></tr>
-<tr id="voice-formant-a"><th>freqadd</th></tr>
+<tr id="voice-formant-h"><th>Height</th></tr>
+<tr id="voice-formant-w"><th>Width</th></tr>
+<tr id="voice-formant-f"><th>Freq.</th></tr>
+<tr id="voice-formant-a"><th>Freq. Add</th></tr>
 </table>
 <p class="warning" data-res="warning-laud"></p>
 <div><button class="enabled" id="voice-sample-ja" data-res="voice-sample-ja"></button></div>
