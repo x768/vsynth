@@ -507,11 +507,13 @@ button:not(:disabled):hover {
 .voice-name {
     font-size: 140%;
 }
-#voice-name {
-    width: 200px;
-}
-.voice-item-icon {
+#voice-icon {
     cursor: pointer;
+    vertical-align: middle;
+}
+#voice-name {
+    font-size: 140%;
+    width: 300px;
 }
 .voice-item-del {
     padding: 8px 0;

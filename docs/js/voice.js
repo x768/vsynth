@@ -91,6 +91,8 @@ class VoicesPage
         this.item_append = document.getElementById('voice-item-add');
         this.update_btn = document.getElementById('voice-update');
 
+        this.voice_icon = document.getElementById('voice-icon');
+        this.voice_name = document.getElementById('voice-name');
         this.voice_pitch = document.getElementById('voice-pitch');
         this.voice_flutter = document.getElementById('voice-flutter');
         this.voice_fricative = document.getElementById('voice-fricative');
@@ -99,9 +101,6 @@ class VoicesPage
         this.voice_formant_w = document.getElementById('voice-formant-w');
         this.voice_formant_f = document.getElementById('voice-formant-f');
         this.voice_formant_a = document.getElementById('voice-formant-a');
-
-        const template = document.getElementById('voice-editor-template').content;
-        this.voice_name = template.getElementById('voice-name');
 
         this.selected_voice = null;
         this.on_list_change = null;
@@ -121,7 +120,7 @@ class VoicesPage
             this.voices = [
                 {
                     name: 'Default',
-                    icon: VoicesPage.create_default_icon(),
+                    icon: VoicesPage.create_default_icon(this.voice_icon),
                     ...VoiceSynth.default_voice(),
                 }
             ];
@@ -139,8 +138,6 @@ class VoicesPage
             if ((elem = e.target.closest('.voice-item-del')) !== null) {
                 const idx = Number.parseInt(elem.parentNode.dataset.i);
                 this.delete_item(idx);
-            } else if ((elem = e.target.closest('.voice-item-icon')) !== null) {
-                this.#select_voice_icon(elem.parentNode);
             } else if ((elem = e.target.closest('.voice-item')) !== null) {
                 if (!elem.classList.contains('voice-selected')) {
                     const idx = Number.parseInt(elem.dataset.i);
@@ -172,35 +169,24 @@ class VoicesPage
                 }
             }
         });
+        this.voice_icon.addEventListener('click', () => {
+            this.#select_voice_icon();
+        });
         document.getElementById('voice-profile').addEventListener('change', e => {
             const elem = e.target.closest('input');
             if (elem !== null) {
-                this.#update_from_input(elem);
+                if (elem.getAttribute('type') === 'number') {
+                    this.#update_from_input(elem);
+                } else {
+                    elem.value = this.#get_safe_name(elem.value, this.selected_voice.name);
+                }
                 this.update_btn.disabled = false;
             }
         });
         this.update_btn.addEventListener('click', e => {
-            const idx = Number.parseInt(this.selected_voice.elem.dataset.i);
-            const voice = this.get_voice();
-            for (const k in voice) {
-                this.selected_voice[k] = voice[k];
-            }
-            this.db.save_voice(this.selected_voice, idx);
-            e.currentTarget.disabled = true;
-        });
-        this.voice_name.addEventListener('change', e => {
-            const t = e.currentTarget;
-            const new_name = this.#get_safe_name(t.value, this.selected_voice.name);
-            t.value = new_name;
-            this.selected_voice.name = new_name;
-            const idx = Number.parseInt(this.selected_voice.elem.dataset.i);
-            this.db.save_voice(this.selected_voice, idx);
-        });
-        this.voice_name.addEventListener('focus', () => {
-            this.selected_voice.elem.removeAttribute('draggable');
-        });
-        this.voice_name.addEventListener('blur', () => {
-            this.selected_voice.elem.setAttribute('draggable', 'true');
+            const item = this.selected_voice;
+            const idx = Number.parseInt(item.elem.dataset.i);
+            this.#update_profile(item, idx);
         });
         this.item_append.addEventListener('click', () => {
             this.create_new_voice();
@@ -266,7 +252,7 @@ class VoicesPage
     }
     create_new_voice() {
         const voice = {
-            icon: VoicesPage.create_default_icon(),
+            icon: VoicesPage.create_default_icon(this.voice_icon),
             ...VoiceSynth.default_voice()
         };
         voice.name = this.#get_safe_name('Untitled', null);
@@ -297,7 +283,7 @@ class VoicesPage
         const voice = JSON.parse(src);
         voice.name = this.#get_safe_name(name, null);
         if (!voice.icon) {
-            voice.icon = VoicesPage.create_default_icon();
+            voice.icon = VoicesPage.create_default_icon(this.voice_icon);
         }
         this.voices.push(voice);
         this.#append(voice);
@@ -315,6 +301,21 @@ class VoicesPage
         return new Blob([JSON.stringify(v)]);
     }
 
+    #update_profile(item, idx) {
+        const voice = this.get_voice();
+        for (const k in voice) {
+            item[k] = voice[k];
+        }
+        item.icon = this.voice_icon.toDataURL('image/png');
+        item.name = this.voice_name.value;
+        item.elem.getElementsByTagName('img')[0].src = item.icon;
+        item.elem.getElementsByClassName('voice-name')[0].textContent = item.name;
+        this.db.save_voice(item, idx);
+        this.update_btn.disabled = true;
+        if (this.on_list_change) {
+            this.on_list_change();
+        }
+    }
     #renumber() {
         for (let i = 0; i < this.voices.length; i++) {
             const elem = this.list.childNodes[i];
@@ -322,15 +323,11 @@ class VoicesPage
             this.voices[i].elem = elem;
         }
     }
-    async #select_voice_icon(elem) {
-        const idx = Number.parseInt(elem.dataset.i);
+    async #select_voice_icon() {
         const f = await this.dialog.show_upload('.png, .gif, .jpg, .jpeg', 'test');
         if (f !== null) {
-            VoicesPage.load_icon_file(this.voices[idx], f);
-            this.db.save_voice(this.voices[idx], idx);
-            if (this.on_list_change) {
-                this.on_list_change();
-            }
+            VoicesPage.load_icon_file(this.voice_icon, f);
+            this.update_btn.disabled = false;
         }
     }
     #append(voice) {
@@ -363,19 +360,14 @@ class VoicesPage
             i++;
         }
     }
-    #select_profile(voice) {
+    async #select_profile(voice) {
         if (this.selected_voice) {
             const item = this.selected_voice.elem;
-            this.voice_name.remove();
-            item.getElementsByClassName('voice-name')[0].textContent = this.selected_voice.name;
             item.classList.remove('voice-selected');
             item.removeAttribute('draggable');
         }
         voice.elem.classList.add('voice-selected');
         voice.elem.setAttribute('draggable', 'true');
-        const voice_name = voice.elem.getElementsByClassName('voice-name')[0];
-        voice_name.textContent = '';
-        voice_name.appendChild(this.voice_name);
 
         this.voice_name.value = voice.name;
         this.voice_pitch.value = voice.pitch;
@@ -387,6 +379,13 @@ class VoicesPage
         VoicesPage.#set_formant_values(this.voice_formant_a, voice.freqadd);
         this.update_btn.disabled = true;
         this.selected_voice = voice;
+
+        const res = await fetch(voice.icon);
+        const blob = await res.blob();
+        const image = await window.createImageBitmap(blob);
+        const ctx = this.voice_icon.getContext('2d');
+        ctx.clearRect(0, 0, this.voice_icon.width, this.voice_icon.height);
+        ctx.drawImage(image, 0, 0, this.voice_icon.width, this.voice_icon.height);
     }
     #get_safe_name(n, self) {
         const names = new Set();
@@ -429,17 +428,13 @@ class VoicesPage
             freqadd: VoicesPage.#get_formant_values(this.voice_formant_a),
         };
     }
-    static async load_icon_file(item, file) {
+    static async load_icon_file(cv, file) {
         const image = await window.createImageBitmap(file);
-        const cv = document.getElementById('voice-icon');
         const ctx = cv.getContext('2d');
         ctx.clearRect(0, 0, cv.width, cv.height);
         ctx.drawImage(image, 0, 0, cv.width, cv.height);
-        item.icon = cv.toDataURL('image/png');
-        item.elem.getElementsByTagName('img')[0].setAttribute('src', item.icon);
     }
-    static create_default_icon() {
-        const cv = document.getElementById('voice-icon');
+    static create_default_icon(cv) {
         const ctx = cv.getContext('2d');
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, cv.width, cv.height);
@@ -805,6 +800,7 @@ document.addEventListener('DOMContentLoaded', async () =>
     const config_page = new ConfigPage(db, ja_reading, dialog);
 
     voices_page.set_change_handler(() => tts_page.refresh_icon = true);
+
     {
         const [alias, dic] = await db.get_ja_dic();
         ja_reading.load(alias, dic);

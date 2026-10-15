@@ -70,6 +70,7 @@
 <div id="voices-list"><div id="voice-item-add"><svg class="icon16" viewBox="-8,-8,16,16"><path d="M0,-8 L0,8 M-8,0 L8,0" /></svg></div></div>
 <div id="voice-profile">
 <div><button id="voice-update" data-res="update" disabled></button></div>
+<div><canvas id="voice-icon" width="32" height="32"></canvas> <input type="text" id="voice-name" value="" autocomplete="off"></div>
 <table>
 <tr><th>Base Pitch</th><td><input type="number" id="voice-pitch" min="50" max="500" value="50" size="5" step="10" data-key="pitch"> Hz</td></tr>
 <tr><th>Flutter</th><td><input type="number" id="voice-flutter" min="0" max="256" value="0" size="5" step="16" data-key="flutter"> / 256</td></tr>
@@ -85,9 +86,6 @@
 <p class="warning" data-res="warning-laud"></p>
 <div><button class="enabled" id="voice-sample-ja" data-res="voice-sample-ja"></button></div>
 </div>
-<template id="voice-editor-template">
-<input type="text" id="voice-name" value="" autocomplete="off">
-</template>
 </div>
 
 <div class="page" id="page-config">
@@ -161,7 +159,6 @@
 </dialog>
 
 <div class="hidden">
-<canvas id="voice-icon" width="32" height="32"></canvas>
 <input type="file" id="input-file-open">
 </div>
 
