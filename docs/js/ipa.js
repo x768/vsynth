@@ -162,11 +162,14 @@ function update_v_info(elem, pfn, rhotic, nasalize)
 {
     if (rhotic) pfn += 'r7';
     if (nasalize) pfn += 'n5';
+    let xsampa = elem.dataset.xsampa ?? elem.textContent.replaceAll(/[\u02DE\u0303]/g, '');
+    if (rhotic) xsampa += '`';
+    if (nasalize) xsampa += '~';
 
     document.getElementById('en').textContent = get_v_en_name(pfn);
     document.getElementById('ja').textContent = get_v_ja_name(pfn);
     document.getElementById('ipa').textContent = elem.textContent;
-    document.getElementById('xsampa').textContent = elem.dataset.xsampa ?? elem.textContent;
+    document.getElementById('xsampa').textContent = xsampa;
     document.getElementById('pfn').textContent = pfn;
 
     const synth = new VoiceSynth(VoiceSynth.default_voice());
