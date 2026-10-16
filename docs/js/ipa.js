@@ -158,8 +158,11 @@ function get_v_ja_name(pfn)
     ret.push('母音');
     return ret.join('');
 }
-function update_v_info(elem, pfn)
+function update_v_info(elem, pfn, rhotic, nasalize)
 {
+    if (rhotic) pfn += 'r7';
+    if (nasalize) pfn += 'n5';
+
     document.getElementById('en').textContent = get_v_en_name(pfn);
     document.getElementById('ja').textContent = get_v_ja_name(pfn);
     document.getElementById('ipa').textContent = elem.textContent;
@@ -176,26 +179,37 @@ function update_v_info(elem, pfn)
     synth.generate(buf);
     return buf;
 }
+function toggle_vowel_opt(opt)
+{
+    for (const td of document.getElementById('vowel-table').getElementsByClassName('ipa')) {
+        let s = td.textContent.replaceAll(/[\u02DE\u0303]/g, '');
+        td.textContent = s + opt;
+    }
+}
 
 document.addEventListener('DOMContentLoaded', () =>
 {
     const spectrum = document.getElementById('spectrum');
     const play_btn = document.getElementById('play');
+    const rhotic = document.getElementById('rhotic');
+    const nasalize = document.getElementById('nasalize');
     const player = new WavPlayer(SAMPLING_RATE, 0.3, 0.9);
     let wavebuf = null;
     let selected_cell = null;
 
     function select_cell(target) {
-        if (selected_cell) selected_cell.classList.remove('selected');
-        selected_cell = target;
-        selected_cell.classList.add('selected');
+        if (selected_cell !== target) {
+            if (selected_cell) selected_cell.classList.remove('selected');
+            selected_cell = target;
+            selected_cell.classList.add('selected');
+        }
         const pfn = selected_cell.dataset.pfn;
         if (!pfn) {
             wavebuf = null;
             return;
         }
         if (selected_cell.dataset.vowel) {
-            wavebuf = update_v_info(selected_cell, pfn);
+            wavebuf = update_v_info(selected_cell, pfn, rhotic.checked, nasalize.checked);
         } else {
             wavebuf = update_c_info(selected_cell, pfn);
         }
@@ -219,6 +233,13 @@ document.addEventListener('DOMContentLoaded', () =>
             t.disabled = true;
             player.play(wavebuf).then(() => t.disabled = false);
         }
+    });
+    document.getElementById('vowel-opt').addEventListener('change', () => {
+        let opt = '';
+        if (nasalize.checked) opt += "\u0303";
+        if (rhotic.checked) opt += "\u02DE";
+        toggle_vowel_opt(opt);
+        select_cell(selected_cell);
     });
 
     select_cell(document.getElementById('phone-def'));

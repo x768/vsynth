@@ -50,6 +50,9 @@ button {
 .note-hover {
     background: yellow;
 }
+#vowel-opt {
+    margin: 4px 10px;
+}
 #flow {
     display: flex;
     align-items: flex-start;
