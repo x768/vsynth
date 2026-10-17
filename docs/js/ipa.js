@@ -293,7 +293,7 @@ const resources = {
 
         unr: [1, '비원순'],
         rnd: [1, '원순'],
-        rzd: [5, 'R을'],
+        rzd: [5, 'R-착색된'],
         nzd: [6, '비음화'],
         vowel: null,
 
