@@ -5,7 +5,9 @@ import { show_spectrum } from './spectrum.js';
 
 const resources = {
     ar: {
+        title: 'جداول الأبجدية الصوتية الدولية مع الصوت',
         ipa: [0, 'ألفبائية صوتية دولية'],
+        pfn: [0, 'تدوين السمات الصوتية'],
         name: [0, 'اسم'],
         consonant: null,
 
@@ -56,7 +58,9 @@ const resources = {
         o:  [2, 'مفتوح'],
     },
     en: {
+        title: 'IPA Charts with Audio',
         ipa: [0, 'International Phonetic Alphabet'],
+        pfn: [0, 'Phonetic Feature Notation'],
         name: [0, 'name'],
         consonant: null,
 
@@ -107,7 +111,9 @@ const resources = {
         o:  [1, 'open'],
     },
     es: {
+        title: 'Tablas del AFI con audio',
         ipa: [0, 'Alfabeto Fonético Internacional'],
+        pfn: [0, 'Notación de rasgos fonéticos'],
         name: [0, 'nombre'],
         consonant: null,
 
@@ -158,7 +164,9 @@ const resources = {
         o:  [1, 'abierta'],
     },
     fr: {
+        title: 'Tableaux de l’API avec audio',
         ipa: [0, 'alphabet phonétique international'],
+        pfn: [0, 'Notation des traits phonétiques'],
         name: [0, 'nom'],
         consonant: [0, 'consonne'],
 
@@ -209,7 +217,9 @@ const resources = {
         o:  [1, 'ouvertes'],
     },
     ja: {
+        title: '音声付きIPA一覧表',
         ipa: [0, '国際音声記号'],
+        pfn: [0, '弁別素性表記'],
         name: [0, '名称'],
         consonant: [3, '音'],
 
@@ -260,7 +270,9 @@ const resources = {
         o:  [2, '広'],
     },
     ko: {
+        title: '음성 포함 IPA 목록표',
         ipa: [0, '국제 음성 기호'],
+        pfn: [0, '음성적 자질 표기'],
         name: [0, '이름'],
         consonant: null,
 
@@ -311,7 +323,9 @@ const resources = {
         o:  [2, '저모음'],
     },
     ru: {
+        title: 'Таблицы МФА с аудио',
         ipa: [0, 'международный фонетический алфавит'],
+        pfn: [0, 'Обозначение фонетических признаков'],
         name: [0, 'имя'],
         consonant: null,
 
@@ -362,7 +376,9 @@ const resources = {
         o:  [2, 'нижнего подъёма'],
     },
     zh: {
+        title: '带音频的国际音标表',
         ipa: [0, '国际音标'],
+        pfn: [0, '语音特徵记谱'],
         name: [0, '名称'],
         consonant: [3, '音'],
 
@@ -413,7 +429,9 @@ const resources = {
         o:  [1, '开'],
     },
     'zh-Hant': {
+        title: '附音訊的IPA音標圖表',
         ipa: [0, '國際音標'],
+        pfn: [0, '語音特徵記譜'],
         name: [0, '名稱'],
         consonant: [3, '音'],
 
@@ -627,7 +645,7 @@ function update_text(lang)
 {
     const res = resources[lang];
     const opt = option[lang];
-    document.title = opt.capitalize ? capitalize(res.ipa[1]) : res.ipa[1];
+    document.title = res.title;
     document.body.setAttribute('lang', lang);
     document.body.setAttribute('dir', opt.dir);
     update_text_main(document.body, res, opt);
