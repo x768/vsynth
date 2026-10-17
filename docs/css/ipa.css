@@ -3,6 +3,7 @@
     padding: 0;
 }
 body {
+    font-family: sans-serif;
     padding: 0.5em 1em;
 }
 table {
@@ -30,12 +31,15 @@ button {
 }
 .ipa, #ipa {
     font-family: 'Charis SIL', 'Doulos SIL', 'DejaVu Sans', 'Segoe UI', sans-serif;
+    direction: ltr;
 }
-#ipa {
+#ipa, #xsampa {
     font-size: 150%;
+    padding: 0 16px;
 }
 #pfn, #xsampa {
     font-family: "Courier", monospace;
+    direction: ltr;
 }
 .na {
     background: silver;
@@ -52,6 +56,10 @@ button {
 }
 #vowel-opt {
     margin: 4px 10px;
+}
+#language {
+    font-size: 100%;
+    margin: 14px 8px;
 }
 #flow {
     display: flex;

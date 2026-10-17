@@ -2,81 +2,542 @@ import { SAMPLING_RATE, VoiceSynth } from '../lib/vsynth.js';
 import { WavPlayer } from './player.js';
 import { show_spectrum } from './spectrum.js';
 
-function get_c_en_name(k)
+
+const resources = {
+    ar: {
+        ipa: [0, 'ألفبائية صوتية دولية'],
+        name: [0, 'اسم'],
+        consonant: null,
+
+        v:  [3, 'مجهور'],
+        vl: [3, 'مهموس'],
+
+        blb: [1, 'شفوي'],
+        lbd: [1, 'أسناني شفوي'],
+        dnt: [1, 'أسناني'],
+        alv: [1, 'لثوي'],
+        pla: [1, 'لثوي غاري'],
+        rfx: [1, 'ارتدادي'],
+        pal: [1, 'غاري'],
+        vel: [1, 'طبقي'],
+        uvl: [1, 'لهوي'],
+        glt: [1, 'حنجري'],
+
+        stp: [2, 'وقفي'],
+        frc: [2, 'احتكاكي'],
+        sib: [2, 'صفير'],
+        afr: [2, 'المزجي'],
+        nas: [2, 'أنفي'],
+        apr: [2, 'متقارب'],
+        flp: [2, 'متقارب'],
+        trl: [2, 'تكراري'],
+        lap: [2, 'جانبي متقارب'],
+        lfr: [2, 'جانبي احتكاكي'],
+        laf: [2, 'جانبي المزجي'],
+        lfl: [2, 'جانبي مستل'],
+
+        unr: [3, 'غير مدور'],
+        rnd: [3, 'مدور'],
+        rzd: [4, 'رائي'],
+        nzd: [5, 'مؤنف'],
+        vowel: [0, 'صائت'],
+
+        f0: [1, 'خلفي'],
+        f2: [1, 'شبه خلفي'],
+        f5: [1, 'مركزي'],
+        f8: [1, 'شبه أمامي'],
+        f:  [1, 'أمامي'],
+        o0: [2, 'مغلق'],
+        o2: [2, 'شبه مغلق'],
+        o4: [2, 'متوسط مغلق'],
+        o5: [2, 'متوسط'],
+        o6: [2, 'متوسط مفتوح'],
+        o8: [2, 'شبه مفتوح'],
+        o:  [2, 'مفتوح'],
+    },
+    en: {
+        ipa: [0, 'International Phonetic Alphabet'],
+        name: [0, 'name'],
+        consonant: null,
+
+        v:  [0, 'voiced'],
+        vl: [0, 'voiceless'],
+
+        blb: [1, 'bilabial'],
+        lbd: [1, 'labiodental'],
+        dnt: [1, 'dental'],
+        alv: [1, 'alveolar'],
+        pla: [1, 'postalveolar'],
+        rfx: [1, 'retroflex'],
+        pal: [1, 'palatal'],
+        vel: [1, 'velar'],
+        uvl: [1, 'uvular'],
+        glt: [1, 'glottal'],
+
+        stp: [2, 'plosive', 'plosives'],
+        frc: [2, 'fricative', 'fricatives'],
+        sib: [2, 'sibilant fricative', 'sibilant fricatives'],
+        afr: [2, 'affricate', 'affricates'],
+        nas: [2, 'nasal', 'nasals'],
+        apr: [2, 'approximant', 'approximants'],
+        flp: [2, 'flap', 'flaps'],
+        trl: [2, 'trill', 'trills'],
+        lap: [2, 'lateral approximant', 'lateral approximants'],
+        lfr: [2, 'lateral fricative', 'lateral fricatives'],
+        laf: [2, 'lateral affricate', 'lateral affricates'],
+        lfl: [2, 'lateral flap', 'lateral flaps'],
+
+        unr: [3, 'unrounded'],
+        rnd: [3, 'rounded'],
+        rzd: [4, 'rhotic'],
+        nzd: [5, 'nasalized'],
+        vowel: [6, 'vowel'],
+
+        f0: [2, 'back'],
+        f2: [2, 'near back'],
+        f5: [2, 'central'],
+        f8: [2, 'near front'],
+        f:  [2, 'front'],
+        o0: [1, 'close'],
+        o2: [1, 'near close'],
+        o4: [1, 'close mid'],
+        o5: [1, 'mid'],
+        o6: [1, 'open mid'],
+        o8: [1, 'near open'],
+        o:  [1, 'open'],
+    },
+    es: {
+        ipa: [0, 'Alfabeto Fonético Internacional'],
+        name: [0, 'nombre'],
+        consonant: null,
+
+        v:  [3, 'sonora'],
+        vl: [3, 'sorda'],
+
+        blb: [2, 'bilabial'],
+        lbd: [2, 'labiodental'],
+        dnt: [2, 'dental'],
+        alv: [2, 'alveolar'],
+        pla: [2, 'palatoalveolar'],
+        rfx: [2, 'retrofleja'],
+        pal: [2, 'palatal'],
+        vel: [2, 'velar'],
+        uvl: [2, 'uvular'],
+        glt: [2, 'glotal'],
+
+        stp: [1, 'oclusiva'],
+        frc: [1, 'fricativa'],
+        sib: [1, 'fricativa sibilante'],
+        afr: [1, 'africada'],
+        nas: [1, 'nasal'],
+        apr: [1, 'aproximante'],
+        flp: [1, 'vibrante simple'],
+        trl: [1, 'vibrante múltiple'],
+        lap: [1, 'aproximante lateral'],
+        lfr: [1, 'fricativa lateral'],
+        laf: [1, 'africada lateral'],
+        lfl: [1, 'vibrante simple lateral'],
+
+        unr: [3, 'no redondeada'],
+        rnd: [3, 'redondeada'],
+        rzd: [4, 'rotización'],
+        nzd: [5, 'nasalizada'],
+        vowel: [0, 'vocal'],
+
+        f0: [2, 'posterior'],
+        f2: [2, 'semiposterior'],
+        f5: [2, 'central'],
+        f8: [2, 'semianterior'],
+        f:  [2, 'anterior'],
+        o0: [1, 'cerrada'],
+        o2: [1, 'casi cerrada'],
+        o4: [1, 'semicerrada'],
+        o5: [1, 'media'],
+        o6: [1, 'semiabierta'],
+        o8: [1, 'casi abierta'],
+        o:  [1, 'abierta'],
+    },
+    fr: {
+        ipa: [0, 'alphabet phonétique international'],
+        name: [0, 'nom'],
+        consonant: [0, 'consonne'],
+
+        v:  [4, 'voisée'],
+        vl: [4, 'sourde'],
+
+        blb: [2, 'bilabiale'],
+        lbd: [2, 'labio-dentale'],
+        dnt: [2, 'dentale'],
+        alv: [2, 'alvéolaire'],
+        pla: [2, 'palato-alvéolaire'],
+        rfx: [2, 'rétroflexe'],
+        pal: [2, 'palatale'],
+        vel: [2, 'vélaire'],
+        uvl: [2, 'uvulaire'],
+        glt: [2, 'glottale'],
+
+        stp: [1, 'occlusive', 'occlusives'],
+        frc: [1, 'fricative', 'fricatives'],
+        sib: [1, 'sibilante', 'sibilantes'],
+        afr: [1, 'affriquée', 'affriquées'],
+        nas: [1, 'nasale', 'nasales'],
+        apr: [1, 'spirante', 'spirantes'],
+        flp: [1, 'battue', 'battues'],
+        trl: [1, 'roulée', 'roulées'],
+        lap: [1, 'latérale spirante', 'latérale spirantes'],
+        lfr: [1, 'latérale fricative', 'latérale fricatives'],
+        laf: [1, 'latérale affriquée', 'latérale affriquées'],
+        lfl: [1, 'latérale battue', 'latérale battues'],
+
+        unr: [3, 'non arrondie'],
+        rnd: [3, 'arrondie'],
+        rzd: [4, 'rhotique'],
+        nzd: [5, 'nasalisé'],
+        vowel: [0, 'voyelles'],
+
+        f0: [2, 'postérieure'],
+        f2: [2, 'mi-postérieure'],
+        f5: [2, 'centrale'],
+        f8: [2, 'mi-antérieure'],
+        f:  [2, 'antérieure'],
+        o0: [1, 'fermée'],
+        o2: [1, 'pré-fermées'],
+        o4: [1, 'mi-fermées'],
+        o5: [1, 'moyenne'],
+        o6: [1, 'mi-ouverte'],
+        o8: [1, 'pré-ouvertes'],
+        o:  [1, 'ouvertes'],
+    },
+    ja: {
+        ipa: [0, '国際音声記号'],
+        name: [0, '名称'],
+        consonant: [3, '音'],
+
+        v:  [0, '有声'],
+        vl: [0, '無声'],
+
+        blb: [1, '両唇'],
+        lbd: [1, '唇歯'],
+        dnt: [1, '歯'],
+        alv: [1, '歯茎'],
+        pla: [1, '後部歯茎'],
+        rfx: [1, 'そり舌'],
+        pal: [1, '硬口蓋'],
+        vel: [1, '軟口蓋'],
+        uvl: [1, '口蓋垂'],
+        glt: [1, '声門'],
+
+        stp: [2, '破裂'],
+        frc: [2, '摩擦'],
+        afr: [2, '破擦'],
+        sib: [2, '歯擦'],
+        nas: [2, '鼻'],
+        apr: [2, '接近'],
+        flp: [2, 'はじき'],
+        trl: [2, 'ふるえ'],
+        lap: [2, '側面接近'],
+        lfr: [2, '側面摩擦'],
+        laf: [2, '側面破擦'],
+        lfl: [2, '側面はじき'],
+
+        unr: [0, '非円唇'],
+        rnd: [0, '円唇'],
+        rzd: [5, 'そり舌'],
+        nzd: [6, '鼻音化'],
+        vowel: [7, '母音'],
+
+        f0: [1, '後舌'],
+        f2: [1, '準後舌'],
+        f5: [1, '中舌'],
+        f8: [1, '準前舌'],
+        f:  [1, '前舌'],
+        o0: [2, '狭'],
+        o2: [2, '広めの狭'],
+        o4: [2, '半狭'],
+        o5: [2, '中央'],
+        o6: [2, '半広'],
+        o8: [2, '狭めの広'],
+        o:  [2, '広'],
+    },
+    ko: {
+        ipa: [0, '국제 음성 기호'],
+        name: [0, '이름'],
+        consonant: null,
+
+        v:  [0, '유성'],
+        vl: [0, '무성'],
+
+        blb: [1, '양순'],
+        lbd: [1, '순치'],
+        dnt: [1, '치'],
+        alv: [1, '치경'],
+        pla: [1, '후치경'],
+        rfx: [1, '권설'],
+        pal: [1, '경구개'],
+        vel: [1, '연구개'],
+        uvl: [1, '구개수'],
+        glt: [1, '성문'],
+
+        stp: [2, '파열음'],
+        frc: [2, '마찰음'],
+        afr: [2, '파찰음'],
+        sib: [2, '치찰'],
+        nas: [2, '비음'],
+        apr: [2, '접근음'],
+        flp: [2, '탄음'],
+        trl: [2, '전동음'],
+        lap: [2, '설측 접근음'],
+        lfr: [2, '설측 마찰음'],
+        laf: [2, '설측 파찰음'],
+        lfl: [2, '설측 탄음'],
+
+        unr: [1, '비원순'],
+        rnd: [1, '원순'],
+        rzd: [5, 'R을'],
+        nzd: [6, '비음화'],
+        vowel: null,
+
+        f0: [0, '후설'],
+        f2: [0, '근후설'],
+        f5: [0, '중설'],
+        f8: [0, '근전설'],
+        f:  [0, '전설'],
+        o0: [2, '고모음'],
+        o2: [2, '근고모음'],
+        o4: [2, '중고모음'],
+        o5: [2, '중모음'],
+        o6: [2, '중저모음'],
+        o8: [2, '근저모음'],
+        o:  [2, '저모음'],
+    },
+    ru: {
+        ipa: [0, 'международный фонетический алфавит'],
+        name: [0, 'имя'],
+        consonant: null,
+
+        v: [0, 'звонкий'],
+        vl: [0, 'глухой'],
+
+        blb: [1, 'губно-губной', 'губно-губные'],
+        lbd: [1, 'губно-зубной', 'губно-зубные'],
+        dnt: [1, 'зубной', 'зубные'],
+        alv: [1, 'альвеолярный', 'альвеолярные'],
+        pla: [1, 'постальвеолярный', 'палато-альвеолярные'],
+        rfx: [1, 'ретрофлексный', 'ретрофлексные'],
+        pal: [1, 'палатальный', 'палатальные'],
+        vel: [1, 'велярный', 'велярные'],
+        uvl: [1, 'увулярный', 'увулярные'],
+        glt: [1, 'гортанная', 'глоттальные'],
+
+        stp: [2, 'взрывной согласный', 'взрывные'],
+        frc: [2, 'фрикатив согласный', 'фрикативы'],
+        sib: [2, 'сибилянт', 'сибилянты'],
+        afr: [2, 'аффриката', 'аффрикаты'],
+        nas: [2, 'носовой согласный', 'носовые'],
+        apr: [2, 'аппроксимант', 'аппроксиманты'],
+        flp: [2, 'одноударный согласный', 'одноударные'],
+        trl: [2, 'дрожащие согласные', 'дрожащие'],
+        lap: [2, 'латеральный аппроксимант', 'латеральные аппроксиманты'],
+        lfr: [2, 'латеральный спирант', 'латеральные фрикативы'],
+        laf: [2, 'латеральный аффриката', 'латеральные аффрикаты'],
+        lfl: [2, 'латеральный одноударный согласный', 'латеральные одноударные'],
+
+        unr: [3, 'неогублённый гласный'],
+        rnd: [3, 'огублённый гласный'],
+        rzd: [4, 'эризованный'],
+        nzd: [5, 'нисходяще-восходящий'],
+        vowel: null,
+
+        f0: [1, 'заднего ряда'],
+        f2: [1, 'ненапряжённые задние'],
+        f5: [1, 'среднего ряда'],
+        f8: [1, 'ненапряжённые передние'],
+        f:  [1, 'переднего ряда'],
+        o0: [2, 'верхнего подъёма'],
+        o2: [2, 'верхнего подъёма', 'ненапряжённые верхние'],
+        o4: [2, 'средне-верхнего подъёма', 'средне‐верхние'],
+        o5: [2, 'среднего подъёма'],
+        o6: [2, 'средне-нижнего подъёма', 'средне‐нижние'],
+        o8: [2, 'нижнего подъёма', 'ненапряжённые нижние'],
+        o:  [2, 'нижнего подъёма'],
+    },
+    zh: {
+        ipa: [0, '国际音标'],
+        name: [0, '名称'],
+        consonant: [3, '音'],
+
+        v:  [1, '浊'],
+        vl: [1, '清'],
+
+        blb: [0, '双唇'],
+        lbd: [0, '唇齿'],
+        dnt: [0, '齿'],
+        alv: [0, '龈'],
+        pla: [0, '龈后'],
+        rfx: [0, '卷舌'],
+        pal: [0, '硬腭'],
+        vel: [0, '软腭'],
+        uvl: [0, '小舌'],
+        glt: [0, '声门'],
+
+        stp: [2, '爆发'],
+        frc: [2, '擦'],
+        afr: [2, '塞擦'],
+        sib: [2, '咝擦'],
+        nas: [2, '鼻'],
+        apr: [2, '近'],
+        flp: [2, '闪'],
+        trl: [2, '颤'],
+        lap: [2, '边近'],
+        lfr: [2, '边擦'],
+        laf: [2, '边塞擦'],
+        lfl: [2, '边闪'],
+
+        unr: [3, '不圆唇'],
+        rnd: [3, '圆唇'],
+        rzd: [5, '儿化'],
+        nzd: [6, '鼻音化'],
+        vowel: [7, '元音'],
+
+        f0: [2, '后'],
+        f2: [2, '次后'],
+        f5: [2, '央'],
+        f8: [2, '次前'],
+        f:  [2, '前'],
+        o0: [1, '闭'],
+        o2: [1, '次闭'],
+        o4: [1, '半闭'],
+        o5: [1, '中'],
+        o6: [1, '半开'],
+        o8: [1, '次开'],
+        o:  [1, '开'],
+    },
+    'zh-Hant': {
+        ipa: [0, '國際音標'],
+        name: [0, '名稱'],
+        consonant: [3, '音'],
+
+        v:  [1, '濁'],
+        vl: [1, '清'],
+
+        blb: [0, '雙唇'],
+        lbd: [0, '唇齒'],
+        dnt: [0, '齒'],
+        alv: [0, '齦'],
+        pla: [0, '齦後'],
+        rfx: [0, '捲舌'],
+        pal: [0, '硬腭'],
+        vel: [0, '軟腭'],
+        uvl: [0, '小舌'],
+        glt: [0, '聲門'],
+
+        stp: [2, '爆發'],
+        frc: [2, '擦'],
+        afr: [2, '塞擦'],
+        sib: [2, '咝擦'],
+        nas: [2, '鼻'],
+        apr: [2, '近'],
+        flp: [2, '閃'],
+        trl: [2, '颤'],
+        lap: [2, '邊近'],
+        lfr: [2, '邊擦'],
+        laf: [2, '邊塞擦'],
+        lfl: [2, '邊閃'],
+
+        unr: [3, '不圓唇'],
+        rnd: [3, '圓唇'],
+        rzd: [5, '兒化'],
+        nzd: [6, '鼻音化'],
+        vowel: [7, '母音'],
+
+        f0: [2, '後'],
+        f2: [2, '次後'],
+        f5: [2, '央'],
+        f8: [2, '次前'],
+        f:  [2, '前'],
+        o0: [1, '閉'],
+        o2: [1, '次閉'],
+        o4: [1, '半閉'],
+        o5: [1, '中'],
+        o6: [1, '半開'],
+        o8: [1, '次開'],
+        o:  [1, '開'],
+    },
+};
+const option = {
+    ar: {
+        dir: 'rtl',
+        separator: ' ',
+        capitalize: false,
+    },
+    en: {
+        dir: 'ltr',
+        separator: ' ',
+        capitalize: true,
+    },
+    es: {
+        dir: 'ltr',
+        separator: ' ',
+        capitalize: true,
+    },
+    fr: {
+        dir: 'ltr',
+        separator: ' ',
+        capitalize: true,
+    },
+    ja:  {
+        dir: 'ltr',
+        separator: '',
+        capitalize: false,
+    },
+    ko:  {
+        dir: 'ltr',
+        separator: ' ',
+        capitalize: false,
+    },
+    ru: {
+        dir: 'ltr',
+        separator: ' ',
+        capitalize: true,
+    },
+    zh:  {
+        dir: 'ltr',
+        separator: '',
+        capitalize: false,
+    },
+    'zh-Hant':  {
+        dir: 'ltr',
+        separator: '',
+        capitalize: false,
+    },
+};
+
+function capitalize(s)
 {
+    return s.substring(0, 1).toUpperCase() + s.substring(1);
+}
+function array_to_name(ret, opt)
+{
+    ret.sort((a, b) => a[0] - b[0]);
+    const s = ret.map(a => a[1]).join(opt.separator);
+    return opt.capitalize ? capitalize(s) : s;
+}
+
+function get_c_name(k, lang)
+{
+    const d = resources[lang];
     const ret = [];
     for (const s of k.split('-')) {
-        switch (s) {
-        case 'v':   ret.push('voiced'); break;
-        case 'vl':  ret.push('voiceless'); break;
-
-        case 'blb': ret.push('bilabial'); break;
-        case 'lbd': ret.push('labiodental'); break;
-        case 'dnt': ret.push('dental'); break;
-        case 'alv': ret.push('alveolar'); break;
-        case 'pla': ret.push('postalveolar'); break;
-        case 'rfx': ret.push('retroflex'); break;
-        case 'pal': ret.push('palatal'); break;
-        case 'vel': ret.push('velar'); break;
-        case 'uvl': ret.push('uvular'); break;
-        case 'glt': ret.push('glottal'); break;
-
-        case 'stp': ret.push('plosive'); break;
-        case 'frc': ret.push('fricative'); break;
-        case 'afr': ret.push('affricate'); break;
-        case 'nas': ret.push('nasal'); break;
-        case 'apr': ret.push('approximant'); break;
-        case 'flp': ret.push('flap'); break;
-        case 'trl': ret.push('trill'); break;
-        case 'lap': ret.push('lateral approximant'); break;
-        case 'lfr': ret.push('lateral fricative'); break;
-        case 'laf': ret.push('lateral affricate'); break;
-        case 'lfl': ret.push('lateral flap'); break;
-        }
+        ret.push(d[s]);
     }
-    return ret.join(' ');
-}
-function get_c_ja_name(k)
-{
-    const ret = [];
-    for (const s of k.split('-')) {
-        switch (s) {
-        case 'v':   ret.push('有声'); break;
-        case 'vl':  ret.push('無声'); break;
-
-        case 'blb': ret.push('両唇'); break;
-        case 'lbd': ret.push('唇歯'); break;
-        case 'dnt': ret.push('歯'); break;
-        case 'alv': ret.push('歯茎'); break;
-        case 'pla': ret.push('後部歯茎'); break;
-        case 'rfx': ret.push('そり舌'); break;
-        case 'pal': ret.push('硬口蓋'); break;
-        case 'vel': ret.push('軟口蓋'); break;
-        case 'uvl': ret.push('口蓋垂'); break;
-        case 'glt': ret.push('声門'); break;
-
-        case 'stp': ret.push('破裂音'); break;
-        case 'frc': ret.push('摩擦音'); break;
-        case 'afr': ret.push('破擦音'); break;
-        case 'nas': ret.push('鼻音'); break;
-        case 'apr': ret.push('接近音'); break;
-        case 'flp': ret.push('はじき音'); break;
-        case 'trl': ret.push('ふるえ音'); break;
-        case 'lap': ret.push('側面接近音'); break;
-        case 'lfr': ret.push('側面摩擦音'); break;
-        case 'laf': ret.push('側面破擦音'); break;
-        case 'lfl': ret.push('側面はじき音'); break;
-        }
-    }
-    return ret.join('');
+    if (d.consonant !== null) ret.push(d.consonant);
+    return array_to_name(ret, option[lang]);
 }
 
-function update_c_info(elem, pfn)
+function update_c_info(elem, pfn, lang)
 {
     const k = elem.dataset.smp;
-    const en = get_c_en_name(k);
-    document.getElementById('en').textContent = en[0].toUpperCase() + en.substring(1);
-    document.getElementById('ja').textContent = get_c_ja_name(k);
+    document.getElementById('name').textContent = get_c_name(k, lang);
     document.getElementById('ipa').textContent = elem.textContent;
     document.getElementById('xsampa').textContent = elem.dataset.xsampa ?? elem.textContent;
 
@@ -101,64 +562,24 @@ function update_c_info(elem, pfn)
     return buf;
 }
 
-function get_v_en_name(pfn)
+function get_v_name(pfn, lang)
 {
+    const d = resources[lang];
     const ret = [];
 
     const m1 = pfn.match(/o\d?/);
-    switch (m1 ? m1[0] : 'o0') {
-    case 'o0': ret.push('Close'); break;
-    case 'o2': ret.push('Near close'); break;
-    case 'o4': ret.push('Close mid'); break;
-    case 'o5': ret.push('Mid'); break;
-    case 'o6': ret.push('Open mid'); break;
-    case 'o8': ret.push('Near open'); break;
-    case 'o':  ret.push('Open'); break;
-    }
-
+    const s1 = m1 ? m1[0] : 'o0';
+    ret.push(d[s1]);
     const m2 = pfn.match(/f\d?/);
-    switch (m2 ? m2[0] : 'f0') {
-    case 'f0': ret.push('back'); break;
-    case 'f2': ret.push('near back'); break;
-    case 'f5': ret.push('central'); break;
-    case 'f8': ret.push('near front'); break;
-    case 'f':  ret.push('front'); break;
-    }
+    const s2 = m2 ? m2[0] : 'f0';
+    ret.push(d[s2]);
+    const s3 = pfn.indexOf('L') >= 0 ? 'rnd' : 'unr';
+    ret.push(d[s3]);
+    if (d.vowel !== null) ret.push(d.vowel);
 
-    ret.push(pfn.indexOf('L') >= 0.3 ? 'rounded' : 'unrounded');
-    ret.push('vowel');
-    return ret.join(' ');
+    return array_to_name(ret, option[lang]);
 }
-function get_v_ja_name(pfn)
-{
-    const ret = [];
-
-    ret.push(pfn.indexOf('L') >= 0.3 ? '円唇' : '非円唇');
-
-    const m1 = pfn.match(/f\d?/);
-    switch (m1 ? m1[0] : 'f0') {
-    case 'f0': ret.push('後舌'); break;
-    case 'f2': ret.push('準後舌'); break;
-    case 'f5': ret.push('中舌'); break;
-    case 'f8': ret.push('準前舌'); break;
-    case 'f':  ret.push('前舌'); break;
-    }
-
-    const m2 = pfn.match(/o\d?/);
-    switch (m2 ? m2[0] : 'o0') {
-    case 'o0': ret.push('狭'); break;
-    case 'o2': ret.push('広めの狭'); break;
-    case 'o4': ret.push('半狭'); break;
-    case 'o5': ret.push('中央'); break;
-    case 'o6': ret.push('半広'); break;
-    case 'o8': ret.push('狭めの広'); break;
-    case 'o':  ret.push('広'); break;
-    }
-
-    ret.push('母音');
-    return ret.join('');
-}
-function update_v_info(elem, pfn, rhotic, nasalize)
+function update_v_info(elem, pfn, rhotic, nasalize, lang)
 {
     if (rhotic) pfn += 'r7';
     if (nasalize) pfn += 'n5';
@@ -166,8 +587,7 @@ function update_v_info(elem, pfn, rhotic, nasalize)
     if (rhotic) xsampa += '`';
     if (nasalize) xsampa += '~';
 
-    document.getElementById('en').textContent = get_v_en_name(pfn);
-    document.getElementById('ja').textContent = get_v_ja_name(pfn);
+    document.getElementById('name').textContent = get_v_name(pfn, lang);
     document.getElementById('ipa').textContent = elem.textContent;
     document.getElementById('xsampa').textContent = xsampa;
     document.getElementById('pfn').textContent = pfn;
@@ -189,6 +609,49 @@ function toggle_vowel_opt(opt)
         td.textContent = s + opt;
     }
 }
+function update_text_main(node, res, opt)
+{
+    for (const elem of node.childNodes) {
+        if (elem instanceof Element) {
+            const k = elem.dataset.res;
+            if (k in res) {
+                const s = res[k].at(-1);
+                elem.textContent = opt.capitalize ? capitalize(s) : s;
+            } else {
+                update_text_main(elem, res, opt);
+            }
+        }
+    }
+}
+function update_text(lang)
+{
+    const res = resources[lang];
+    const opt = option[lang];
+    document.title = opt.capitalize ? capitalize(res.ipa[1]) : res.ipa[1];
+    document.body.setAttribute('lang', lang);
+    document.body.setAttribute('dir', opt.dir);
+    update_text_main(document.body, res, opt);
+}
+function get_default_lang()
+{
+    const list = [
+        'en', 'ja', 'zh',
+    ];
+    const zh_hant = [
+        'zh-tw', 'zh-hk', 'zh-mo'
+    ];
+    for (const ln of window.navigator.languages) {
+        const k = ln.toLowerCase();
+        if (zh_hant.indexOf(k) >= 0) {
+            return 'zh-Hant';
+        }
+        const s = k.split('-')[0];
+        if (list.indexOf(s) >= 0) {
+            return s;
+        }
+    }
+    return 'en';
+}
 
 document.addEventListener('DOMContentLoaded', () =>
 {
@@ -196,11 +659,14 @@ document.addEventListener('DOMContentLoaded', () =>
     const play_btn = document.getElementById('play');
     const rhotic = document.getElementById('rhotic');
     const nasalize = document.getElementById('nasalize');
+    const language = document.getElementById('language');
     const player = new WavPlayer(SAMPLING_RATE, 0.3, 0.9);
     let wavebuf = null;
     let selected_cell = null;
 
-    function select_cell(target) {
+    language.value = get_default_lang();
+
+    function select_cell(target, update_wave) {
         if (selected_cell !== target) {
             if (selected_cell) selected_cell.classList.remove('selected');
             selected_cell = target;
@@ -212,24 +678,30 @@ document.addEventListener('DOMContentLoaded', () =>
             return;
         }
         if (selected_cell.dataset.vowel) {
-            wavebuf = update_v_info(selected_cell, pfn, rhotic.checked, nasalize.checked);
+            wavebuf = update_v_info(selected_cell, pfn, rhotic.checked, nasalize.checked, language.value);
         } else {
-            wavebuf = update_c_info(selected_cell, pfn);
+            wavebuf = update_c_info(selected_cell, pfn, language.value);
         }
-        if (wavebuf) {
-            show_spectrum(spectrum, wavebuf);
-        } else {
-            spectrum.getContext('2d').clearRect(0, 0, spectrum.width, spectrum.height);
+        if (update_wave) {
+            if (wavebuf) {
+                show_spectrum(spectrum, wavebuf);
+            } else {
+                spectrum.getContext('2d').clearRect(0, 0, spectrum.width, spectrum.height);
+            }
+            play_btn.disabled = !wavebuf;
         }
-        play_btn.disabled = !wavebuf;
     }
 
     document.getElementById('flow').addEventListener('click', e => {
         const target = e.target;
         if (target.classList.contains('ipa')) {
-            select_cell(target);
+            select_cell(target, true);
         }
     });
+    language.addEventListener('change', () => {
+        update_text(language.value);
+        select_cell(selected_cell, false);
+    })
     play_btn.addEventListener('click', e => {
         if (wavebuf) {
             const t = e.currentTarget;
@@ -242,8 +714,9 @@ document.addEventListener('DOMContentLoaded', () =>
         if (nasalize.checked) opt += "\u0303";
         if (rhotic.checked) opt += "\u02DE";
         toggle_vowel_opt(opt);
-        select_cell(selected_cell);
+        select_cell(selected_cell, true);
     });
 
-    select_cell(document.getElementById('phone-def'));
+    update_text(language.value);
+    select_cell(document.getElementById('phone-def'), true);
 });
