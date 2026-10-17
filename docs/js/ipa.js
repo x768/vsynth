@@ -635,7 +635,7 @@ function update_text(lang)
 function get_default_lang()
 {
     const list = [
-        'en', 'ja', 'zh',
+        'ar', 'en', 'es', 'fr', 'ja', 'ko', 'ru', 'zh',
     ];
     const zh_hant = [
         'zh-tw', 'zh-hk', 'zh-mo'
