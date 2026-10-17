@@ -23,6 +23,12 @@ button {
     padding: 0.1em 0.4em;
     width: 100%;
 }
+a {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
 .ipa {
     font-size: 150%;
     text-align: center;
