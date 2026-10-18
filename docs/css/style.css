@@ -26,6 +26,7 @@ body {
     background: var(--bg-color);
     color: var(--fg-color);
     fill: var(--fg-color);
+    font-family: sans-serif;
 }
 .ipa {
     font-family: 'Charis SIL', 'Doulos SIL', 'DejaVu Sans', 'Segoe UI', sans-serif;
