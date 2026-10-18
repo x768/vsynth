@@ -57,6 +57,59 @@ const resources = {
         o8: [2, 'شبه مفتوح'],
         o:  [2, 'مفتوح'],
     },
+    de: {
+        title: 'IPA-Tabellen mit Audio',
+        ipa: [0, 'Internationales Phonetisches Alphabet'],
+        pfn: [0, 'Notation Phonetischer Merkmale'],
+        name: [0, 'name'],
+        consonant: null,
+
+        v:  [0, 'stimmhafter'],
+        vl: [0, 'stimmloser'],
+
+        blb: [1, 'bilabialer', 'bilabial'],
+        lbd: [1, 'labiodentaler', 'labiodental'],
+        dnt: [1, 'dentaler', 'dental'],
+        alv: [1, 'alveolarer', 'alveolar'],
+        pla: [1, 'postalveolare', 'postalveolar'],
+        rfx: [1, 'retroflexer', 'retroflex'],
+        pal: [1, 'palataler', 'palatal'],
+        vel: [1, 'velarer', 'velar'],
+        uvl: [1, 'uvularer', 'uvular'],
+        glt: [1, 'glottaler', 'glottal'],
+
+        stp: [2, 'Plosiv', 'Plosive'],
+        frc: [2, 'Frikativ', 'Frikative'],
+        sib: [2, 'sibilante Frikativ', 'sibilante Frikative'],
+        afr: [2, 'Affrikate'],
+        nas: [2, 'Nasal', 'Nasale'],
+        apr: [2, 'Approximant', 'Approximanten'],
+        flp: [2, 'Flap', 'Flaps'],
+        trl: [2, 'Vibrant', 'Vibranten'],
+        lap: [2, 'laterale Approximant', 'laterale Approximanten'],
+        lfr: [2, 'laterale Frikativ', 'laterale Frikative'],
+        laf: [2, 'laterale Approximant', 'laterale Approximanten'],
+        lfl: [2, 'laterale Flap', 'laterale Flaps'],
+
+        unr: [0, 'Ungerundeter'],
+        rnd: [0, 'Gerundeter'],
+        rzd: [4, 'rhotisch'],
+        nzd: [5, 'nasaliert'],
+        vowel: null,
+
+        f0: [2, 'Hinterzungenvokal', 'hinten'],
+        f2: [2, 'Hinterzungenvokal', 'fast hinten'],
+        f5: [2, 'Zentralvokal', 'zentral'],
+        f8: [2, 'Vorderzungenvokal', 'fast vorn'],
+        f:  [2, 'Vorderzungenvokal', 'vorn'],
+        o0: [1, 'geschlossener', 'geschlossen'],
+        o2: [1, 'fast geschlossener', 'fast geschlossen'],
+        o4: [1, 'halbgeschlossener', 'halbgeschlossen'],
+        o5: [1, 'mittlerer', 'mittel'],
+        o6: [1, 'halboffener', 'halboffen'],
+        o8: [1, 'fast offener', 'fast offen'],
+        o:  [1, 'offener', 'offen'],
+    },
     en: {
         title: 'IPA Charts with Audio',
         ipa: [0, 'International Phonetic Alphabet'],
@@ -488,6 +541,11 @@ const option = {
         separator: ' ',
         capitalize: false,
     },
+    de: {
+        dir: 'ltr',
+        separator: ' ',
+        capitalize: true,
+    },
     en: {
         dir: 'ltr',
         separator: ' ',
@@ -652,9 +710,6 @@ function update_text(lang)
 }
 function get_default_lang()
 {
-    const list = [
-        'ar', 'en', 'es', 'fr', 'ja', 'ko', 'ru', 'zh',
-    ];
     const zh_hant = [
         'zh-tw', 'zh-hk', 'zh-mo'
     ];
@@ -664,7 +719,7 @@ function get_default_lang()
             return 'zh-Hant';
         }
         const s = k.split('-')[0];
-        if (list.indexOf(s) >= 0) {
+        if (s in option) {
             return s;
         }
     }
