@@ -535,7 +535,7 @@ const resources = {
         o:  [1, '开'],
     },
     'zh-Hant': {
-        title: '附音訊的IPA音標圖表',
+        title: '附音訊的國際音標圖表',
         ipa: [0, '國際音標'],
         pfn: [0, '語音特徵記譜'],
         name: [0, '名稱'],
