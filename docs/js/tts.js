@@ -129,8 +129,6 @@ export class TtsPage
         this.ja_reading = ja_reading;
  
         this.list = document.getElementById('tts-list');
-        this.sub_undo = document.getElementById('sub-undo');
-        this.sub_redo = document.getElementById('sub-redo');
         this.sub_save = document.getElementById('sub-save-proj');
         const sub_open = document.getElementById('sub-open-proj');
         const sub_save_as = document.getElementById('sub-save-as');
@@ -374,13 +372,15 @@ export class TtsPage
             }
             this.refresh_icon = false;
         }
-        this.sub_undo.disabled = true;
-        this.sub_redo.disabled = true;
+        document.getElementById('sub-undo').disabled = true;
+        document.getElementById('sub-redo').disabled = true;
     }
     hide() {
         this.#end_edit();
     }
     on_undo() {
+    }
+    on_redo() {
     }
     #add_item(item) {
         item.elem.dataset.i = this.items.length;

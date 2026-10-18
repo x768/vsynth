@@ -59,7 +59,6 @@ export class DataHolder
                 this.filename_seq = row.value;
             }
         }
-        this.voices = await this.get_voices();
     }
     delete_database() {
         window.indexedDB.deleteDatabase('NinbosVoice');
