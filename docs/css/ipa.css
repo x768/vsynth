@@ -1,3 +1,19 @@
+:root {
+    --bg-color: white;
+    --fg-color: black;
+    --border-color: silver;
+    --th-color: #eee;
+    --link-color: #44f;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: black;
+        --fg-color: #ddd;
+        --border-color: gray;
+        --th-color: #666;
+        --link-color: #aaf;
+    }
+}
 * {
     margin: 0;
     padding: 0;
@@ -5,6 +21,8 @@
 body {
     font-family: sans-serif;
     padding: 0.5em 1em;
+    background: var(--bg-color);
+    color: var(--fg-color);
 }
 table {
     border-collapse: collapse;
@@ -12,11 +30,11 @@ table {
 }
 th {
     font-weight: normal;
-    background: #e0e0e0;
+    background: var(--th-color);
     vertical-align: bottom;
 }
 td, th {
-    border: 1px solid silver;
+    border: 1px solid var(--border-color);
     padding: 0.2em 0.2em;
 }
 button {
@@ -25,9 +43,14 @@ button {
 }
 a {
     text-decoration: none;
+    color: var(--link-color);
 }
 a:hover {
     text-decoration: underline;
+}
+select {
+    background: var(--bg-color);
+    color: var(--fg-color);
 }
 .ipa {
     font-size: 150%;
@@ -48,17 +71,11 @@ a:hover {
     direction: ltr;
 }
 .na {
-    background: silver;
-}
-.ipa:not([data-pfn]) {
-    background: #e0e0e0;
+    background: var(--border-color);
 }
 .selected {
-    color: white;
-    background: #66f;
-}
-.note-hover {
-    background: yellow;
+    color: var(--bg-color);
+    background: var(--link-color);
 }
 #vowel-opt {
     margin: 4px 10px;

@@ -1,13 +1,18 @@
 :root {
     --bg-color: white;
     --fg-color: black;
-    --border-color: gray;
+    --border-color: silver;
+    --th-color: #eee;
+    --code-color: #f8f8f8;
     --link-color: #44f;
 }
 @media (prefers-color-scheme: dark) {
     :root {
         --bg-color: black;
         --fg-color: white;
+        --border-color: gray;
+        --th-color: #666;
+        --code-color: #333;
         --link-color: #aaf;
     }
 }
@@ -34,15 +39,15 @@ h1 {
     padding: 0 0.2em;
     font-size: 160%;
     font-weight: bold;
-    border-bottom: 1px solid gray;
-    border-left: 3px solid gray;
+    border-bottom: 1px solid var(--border-color);
+    border-left: 3px solid var(--border-color);
 }
 h2 {
     margin: 0.8em 0;
     padding: 0 0.2em;
     font-size: 140%;
     font-weight: bold;
-    border-bottom: 1px solid gray;
+    border-bottom: 1px solid var(--border-color);
 }
 h3 {
     margin: 1.4em 0 0.8em;
@@ -71,27 +76,27 @@ table {
     border-collapse: collapse;
 }
 th, td {
-    border: 1px solid silver;
+    border: 1px solid var(--border-color);
     padding: 4px 6px;
 }
 th {
-    background: #ddd;
+    background: var(--th-color);
     font-weight: normal;
 }
 .code {
-    border: 1px solid silver;
-    background: #f4f4f4;
+    border: 1px solid var(--border-color);
+    background: var(--code-color);
     font-family: "Courier", monospace;
 }
 .chart text {
     font-size: 16px;
-    fill: black;
+    fill: var(--fg-color);
 }
 .not-impl {
-    color: silver;
+    color: var(--border-color);
 }
 .na {
-    background: #eee;
+    background: var(--th-color);
 }
 
 .button-style-link {
@@ -102,7 +107,7 @@ th {
     font-size: 130%;
 }
 .b {
-    border-bottom: 2px solid gray;
+    border-bottom: 2px solid var(--border-color);
 }
 .phoneme td {
     width: 100px;
