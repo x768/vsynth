@@ -18,12 +18,13 @@
 </nav>
 
 <div id="sub">
-<button class="sub-tts sub-voices" id="sub-undo"><svg class="icon24" viewBox="-12,0,24,24"><path stroke-width="2" d="M-10,18 Q0,-2,11,18 M-11,12 L-10,18 L-5,18" /></svg></button>
-<button class="sub-tts sub-voices" id="sub-redo"><svg class="icon24" viewBox="-12,0,24,24"><path stroke-width="2" d="M-11,18 Q0,-2,10,18 M11,12 L10,18 L5,18" /></svg></button>
+<button class="sub-tts" id="sub-undo"><svg class="icon24" viewBox="-12,0,24,24"><path stroke-width="2" d="M-10,18 Q0,-2,11,18 M-11,12 L-10,18 L-5,18" /></svg></button>
+<button class="sub-tts" id="sub-redo"><svg class="icon24" viewBox="-12,0,24,24"><path stroke-width="2" d="M-11,18 Q0,-2,10,18 M11,12 L10,18 L5,18" /></svg></button>
 <button class="sub-tts" id="sub-open-proj" data-res="open-proj"></button>
 <button class="sub-tts" id="sub-save-proj" data-res="save-proj"></button>
 <button class="sub-tts" id="sub-save-as" data-res="save-as"></button>
 <button class="sub-tts" id="sub-manage-proj" data-res="manage-proj"></button>
+<button class="sub-voices" id="sub-voice-update" data-res="update" disabled></button>
 <button class="sub-voices" id="sub-import-file" data-res="import-file"></button>
 <button class="sub-voices" id="sub-export-file" data-res="export-file"></button>
 </div>
@@ -69,7 +70,6 @@
 <div class="page" id="page-voices">
 <div id="voices-list"><div id="voice-item-add"><svg class="icon16" viewBox="-8,-8,16,16"><path d="M0,-8 L0,8 M-8,0 L8,0" /></svg></div></div>
 <div id="voice-profile">
-<div><button id="voice-update" data-res="update" disabled></button></div>
 <div><canvas id="voice-icon" width="32" height="32"></canvas> <input type="text" id="voice-name" value="" autocomplete="off"></div>
 <table>
 <tr><th>Base Pitch</th><td><input type="number" id="voice-pitch" min="50" max="500" value="50" size="5" step="10" data-key="pitch"> Hz</td></tr>
@@ -154,7 +154,7 @@
 </div>
 <div id="dialog-filelist"></div>
 <div id="dialog-filename"><input type="text" id="dialog-filename-input" autocomplete="off"></div>
-<p id="dialog-warning-message" data-res="confirm-delete-all" class="warning"></p>
+<p id="dialog-warning-message" class="warning"></p>
 <div id="dialog-button-row"><button id="dialog-ok"></button> <button id="dialog-cancel"></button></div>
 </dialog>
 

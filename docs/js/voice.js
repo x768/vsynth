@@ -91,13 +91,14 @@ class VoicesPage
         }
     }
 
-    constructor(db, voices, player, dialog) {
+    constructor(db, voices, player, res, dialog) {
         this.db = db;
         this.player = player;
+        this.res = res;
         this.dialog = dialog;
         this.list = document.getElementById('voices-list');
         this.item_append = document.getElementById('voice-item-add');
-        this.update_btn = document.getElementById('voice-update');
+        this.update_btn = document.getElementById('sub-voice-update');
 
         this.voice_icon = document.getElementById('voice-icon');
         this.voice_name = document.getElementById('voice-name');
@@ -110,8 +111,6 @@ class VoicesPage
         this.voice_formant_f = document.getElementById('voice-formant-f');
         this.voice_formant_a = document.getElementById('voice-formant-a');
 
-        this.undo_list = [];
-        this.undo_cursor = 0;
         this.selected_voice = null;
         this.on_list_change = null;
 
@@ -167,13 +166,11 @@ class VoicesPage
         });
         this.list.addEventListener('drop', e => {
             const elem = e.target.closest('.voice-item');
-            if (elem !== null) {
-                const data = e.dataTransfer.getData('text/plain');
-                if (data !== null) {
-                    const src = Number.parseInt(data);
-                    const dst = Number.parseInt(elem.dataset.i);
-                    this.#swap_item(src, dst);
-                }
+            const data = e.dataTransfer.getData('text/plain');
+            if (elem !== null && data !== null) {
+                const src = Number.parseInt(data);
+                const dst = Number.parseInt(elem.dataset.i);
+                this.#swap_item(src, dst);
             }
         });
         this.voice_icon.addEventListener('click', () => {
@@ -204,11 +201,9 @@ class VoicesPage
             t.disabled = true;
             this.#play_sample(t);
         });
-        document.getElementById('sub-import-file').addEventListener('click', () => {
-            this.dialog.show_upload('.json')
-            .then(f => {
-                if (f) this.import_file(f);
-            });
+        document.getElementById('sub-import-file').addEventListener('click', async () => {
+            const f = await this.dialog.show_upload('.json')
+            if (f) this.import_file(f);
         });
         document.getElementById('sub-export-file').addEventListener('click', () => {
             this.dialog.show_download(this.create_export_blob(), this.selected_voice.name + '.json');
@@ -238,30 +233,9 @@ class VoicesPage
     }
 
     show() {
-        document.getElementById('sub-undo').disabled = this.undo_cursor <= 0;
-        document.getElementById('sub-redo').disabled = this.undo_cursor >= this.undo_list.length - 1;
     }
     hide() {
         this.#select_profile(this.selected_voice);
-    }
-    on_undo() {
-        if (this.undo_cursor <= 0) return;
-    }
-    on_redo() {
-        if (this.undo_cursor >= this.undo_list.length - 1) return;
-    }
-    push_undo(p) {
-        if (p.v) {
-            const v = {};
-            for (const k in p.v) {
-                if (k !== 'elem') v[k] = p.v[k];
-            }
-            p.v = v;
-        }
-        this.undo_list.splice(this.undo_cursor);
-        this.undo_list.push(p);
-        this.undo_cursor++;
-        this.show();
     }
     create_new_voice() {
         const voice = {
@@ -270,19 +244,18 @@ class VoicesPage
         };
         voice.name = this.#get_safe_name('Untitled', null);
         this.voices.push(voice);
-        this.push_undo({type:'-', i:this.voices.length - 1});
         this.#append(voice);
         this.#select_profile(voice);
         this.db.save_voice(voice, this.voices.length - 1);
     }
-    delete_item(idx) {
+    async delete_item(idx) {
         if (this.voices.length === 1) return;
+        if (!await this.dialog.show_confirm(this.res['confirm-delete-voice'].replace('{0}', this.voices[idx].name))) return;
 
         const item = this.list.childNodes[idx];
         const voice = this.voices.splice(idx, 1)[0];
         item.remove();
         this.#renumber();
-        this.push_undo({type:'+', i:idx, v:voice});
         if (voice === this.selected_voice) {
             this.selected_voice = null;
             this.#select_profile(this.voices[idx > 0 ? idx - 1 : 0]);
@@ -301,7 +274,6 @@ class VoicesPage
             voice.icon = VoicesPage.create_default_icon(this.voice_icon);
         }
         this.voices.push(voice);
-        this.push_undo({type:'-', i:this.voices.length - 1});
         this.#append(voice);
         this.#select_profile(voice);
         this.db.save_voice(voice, this.voices.length - 1);
@@ -324,7 +296,6 @@ class VoicesPage
         }
         item.icon = this.voice_icon.toDataURL('image/png');
         item.name = this.voice_name.value;
-        this.push_undo({type:'=', i:idx, v:item});
 
         item.elem.getElementsByTagName('img')[0].src = item.icon;
         item.elem.getElementsByClassName('voice-name')[0].textContent = item.name;
@@ -582,6 +553,8 @@ class LanguagePage
             'delete-all': 'Warning: Pressing this button will delete all stored data.',
             'confirm-delete-all': 'Are you sure to delete all stored data?',
             'delete-complete': 'All stored data has been deleted. Please close this page.',
+            'confirm-delete-voice': 'Are you sure to delete “{0}”?',
+
             'ninbos-voice-intro': 'NinbosVoice is a speech synthesizer works on a web browser.',
             'supported-browsers': 'Supported Browsers',
             'terms-of-use': 'Terms of Use',
@@ -633,6 +606,8 @@ class LanguagePage
             'delete-all': '警告: ボタンを押すと保存されているすべてのデータを削除します。',
             'confirm-delete-all': '保存されているすべてのデータを削除してもよろしいですか？',
             'delete-complete': '保存されているすべてのデータは削除されました。このままページを閉じてください。',
+            'confirm-delete-voice': '「{0}」を削除しますか？',
+
             'ninbos-voice-intro': 'NinbosVoice は、ブラウザで動作する音声合成ソフトウェアです。',
             'supported-browsers': '対応ブラウザ',
             'terms-of-use': '利用規約',
@@ -685,6 +660,8 @@ class LanguagePage
             'delete-all': '警告: 按下此按钮将删除所有已存储的数据。',
             'confirm-delete-all': '您确定要删除所有已存储的数据吗？',
             'delete-complete': '所有已存储的数据均已删除。请关闭此页面。',
+            'confirm-delete-voice': '确定要删除“{0}”吗？',
+
             'ninbos-voice-intro': 'NinbosVoice 是在网页浏览器上运行的语音合成器。',
             'supported-browsers': '浏览器支持',
             'terms-of-use': '使用条款',
@@ -734,6 +711,8 @@ class LanguagePage
             'delete-all': '警告: 按下此按鈕將刪除所有已儲存的資料。',
             'confirm-delete-all': '您確定要刪除所有已儲存的資料嗎？',
             'delete-complete': '所有已儲存的資料均已刪除。請關閉此頁面。',
+            'confirm-delete-voice': '確定要刪除「{0}」嗎？',
+
             'supported-browsers': '瀏覽器支持',
             'terms-of-use': '使用條款',
             'ninbos-voice-intro': 'NinbosVoice 是在網頁瀏覽器上運行的語音合成器。',
@@ -805,8 +784,8 @@ document.addEventListener('DOMContentLoaded', async () =>
     const ja_reading = new JaReading();
     const player = new WavPlayer(SAMPLING_RATE, 0.4, 0.9);
     const lang_page = new LanguagePage();
-    const dialog = new FileDialogSet(lang_page);
-    const voices_page = new VoicesPage(db, await db.get_voices(), player, dialog);
+    const dialog = new FileDialogSet(lang_page.res);
+    const voices_page = new VoicesPage(db, await db.get_voices(), player, lang_page.res, dialog);
     const tts_page = new TtsPage(db, voices_page.voices, dialog, player, ja_reading);
     const config_page = new ConfigPage(db, ja_reading, dialog);
 
@@ -843,26 +822,5 @@ document.addEventListener('DOMContentLoaded', async () =>
     } else {
         tab.init('config');
     }
-
-    document.getElementById('sub-undo').addEventListener('click', () => {
-        switch (tab.current_page) {
-        case 'tts':
-            tts_page.on_undo();
-            break;
-        case 'voices':
-            voices_page.on_undo();
-            break;
-        }
-    });
-    document.getElementById('sub-redo').addEventListener('click', () => {
-        switch (tab.current_page) {
-        case 'tts':
-            tts_page.on_redo();
-            break;
-        case 'voices':
-            voices_page.on_redo();
-            break;
-        }
-    });
     document.body.style.display = 'grid';
 });
