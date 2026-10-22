@@ -91,10 +91,10 @@ class VoicesPage
         }
     }
 
-    constructor(db, voices, player, res, dialog) {
+    constructor(db, voices, player, lang, dialog) {
         this.db = db;
         this.player = player;
-        this.res = res;
+        this.lang = lang;
         this.dialog = dialog;
         this.list = document.getElementById('voices-list');
         this.item_append = document.getElementById('voice-item-add');
@@ -250,7 +250,7 @@ class VoicesPage
     }
     async delete_item(idx) {
         if (this.voices.length === 1) return;
-        if (!await this.dialog.show_confirm(this.res['confirm-delete-voice'].replace('{0}', this.voices[idx].name))) return;
+        if (!await this.dialog.show_confirm(this.lang.res['confirm-delete-voice'].replace('{0}', this.voices[idx].name))) return;
 
         const item = this.list.childNodes[idx];
         const voice = this.voices.splice(idx, 1)[0];
@@ -592,7 +592,7 @@ class LanguagePage
             'click-enter-text': 'クリックしてテキストを入力...',
 
             'tts-speed': '話速',
-            'tts-pitch': '音高',
+            'tts-pitch': 'ピッチ',
             'tts-accent': '抑揚',
             'tts-volume': '音量',
             'voice-sample-ja': '試聴',
@@ -784,8 +784,8 @@ document.addEventListener('DOMContentLoaded', async () =>
     const ja_reading = new JaReading();
     const player = new WavPlayer(SAMPLING_RATE, 0.4, 0.9);
     const lang_page = new LanguagePage();
-    const dialog = new FileDialogSet(lang_page.res);
-    const voices_page = new VoicesPage(db, await db.get_voices(), player, lang_page.res, dialog);
+    const dialog = new FileDialogSet(lang_page);
+    const voices_page = new VoicesPage(db, await db.get_voices(), player, lang_page, dialog);
     const tts_page = new TtsPage(db, voices_page.voices, dialog, player, ja_reading);
     const config_page = new ConfigPage(db, ja_reading, dialog);
 

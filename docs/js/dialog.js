@@ -3,8 +3,8 @@ import { create_icon } from './voice.js';
 
 export class FileDialogSet
 {
-    constructor(res) {
-        this.res = res;
+    constructor(lang) {
+        this.lang = lang;
 
         this.dialog = document.getElementById('dialog');
         this.file_input = document.getElementById('input-file-open');
@@ -114,17 +114,17 @@ export class FileDialogSet
     }
 
     show_delete_conform(db) {
-        this.ok_button.textContent = this.res.ok;
+        this.ok_button.textContent = this.lang.res.ok;
         this.ok_button.style.display = '';
         this.ok_button.disabled = false;
-        this.cancel_button.textContent = this.res.cancel;
-        this.warning_message.textContent = this.res['confirm-delete-all'];
+        this.cancel_button.textContent = this.lang.res.cancel;
+        this.warning_message.textContent = this.lang.res['confirm-delete-all'];
         this.warning_message.style.display = '';
         this.on_press_ok = () => {
             this.dialog.setAttribute('closedby', 'none');
             this.ok_button.disabled = true;
             this.cancel_button.disabled = true;
-            this.warning_message.textContent = this.res['delete-complete'];
+            this.warning_message.textContent = this.lang.res['delete-complete'];
             db.delete_database();
         };
 
@@ -132,10 +132,10 @@ export class FileDialogSet
     }
 
     show_confirm(message) {
-        this.ok_button.textContent = this.res.ok;
+        this.ok_button.textContent = this.lang.res.ok;
         this.ok_button.style.display = '';
         this.ok_button.disabled = false;
-        this.cancel_button.textContent = this.res.cancel;
+        this.cancel_button.textContent = this.lang.res.cancel;
         this.warning_message.style.display = '';
         this.warning_message.textContent = message;
         this.on_press_ok = () => {
@@ -147,14 +147,14 @@ export class FileDialogSet
     }
 
     show_upload(filter) {
-        this.cancel_button.textContent = this.res.close;
+        this.cancel_button.textContent = this.lang.res.close;
         this.upload_area.style.display = '';
         this.file_input.setAttribute('accept', filter);
         return this.#show_dialog();
     }
 
     show_download(file, filename) {
-        this.cancel_button.textContent = this.res.close;
+        this.cancel_button.textContent = this.lang.res.close;
         this.download_area.style.display = '';
 
         this.url = URL.createObjectURL(file);
@@ -166,7 +166,7 @@ export class FileDialogSet
     }
 
     show_download_list(files) {
-        this.cancel_button.textContent = this.res.close;
+        this.cancel_button.textContent = this.lang.res.close;
         this.filelist_area.style.display = '';
         this.filename_area.style.display = '';
 
@@ -200,10 +200,10 @@ export class FileDialogSet
     }
 
     select_project(list, is_save) {
-        this.ok_button.textContent = is_save ? this.res.save : this.res.open;
+        this.ok_button.textContent = is_save ? this.lang.res.save : this.lang.res.open;
         this.ok_button.style.display = '';
         this.ok_button.disabled = true;
-        this.cancel_button.textContent = this.res.cancel;
+        this.cancel_button.textContent = this.lang.res.cancel;
         this.filelist_area.style.display = '';
         this.filename_area.style.display = '';
 
@@ -236,7 +236,7 @@ export class FileDialogSet
     }
 
     manage_project(list, db) {
-        this.cancel_button.textContent = this.res.close;
+        this.cancel_button.textContent = this.lang.res.close;
         this.filelist_area.style.display = '';
         this.file_input.setAttribute('accept', '.nvtts');
 
@@ -244,7 +244,7 @@ export class FileDialogSet
         this.filelist_area.replaceChildren();
 
         const upload_row = $e('div', {'class':'file-list-add'},
-            $e('div'), $e('div', null, this.res['upload-area2']), $e('div', null, create_icon('+')));
+            $e('div'), $e('div', null, this.lang.res['upload-area2']), $e('div', null, create_icon('+')));
         upload_row.addEventListener('click', () => {
             this.file_input.click();
         });
