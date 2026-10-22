@@ -845,7 +845,9 @@ document.addEventListener('DOMContentLoaded', () =>
         if (nasalize.checked) opt += "\u0303";
         if (rhotic.checked) opt += "\u02DE";
         toggle_vowel_opt(opt);
-        select_cell(selected_cell, true);
+        if (selected_cell.dataset.vowel) {
+            select_cell(selected_cell, true);
+        }
     });
 
     update_text(language.value);
