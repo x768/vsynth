@@ -38,10 +38,10 @@ class TtsItem
         this.accent = 400;
         this.volume = 0; // dB
         this.pfn = [];
-        this.set_image(voice.icon);
+        this.update_icon();
     }
-    set_image(data_uri) {
-        this.elem.getElementsByTagName('img')[0].setAttribute('src', data_uri);
+    update_icon() {
+        this.elem.getElementsByTagName('img')[0].setAttribute('src', this.voice.icon);
     }
     begin_edit(edit_root) {
         this.text_area.textContent = '';
@@ -133,6 +133,8 @@ export class TtsPage
         const sub_open = document.getElementById('sub-open-proj');
         const sub_save_as = document.getElementById('sub-save-as');
         const sub_manage = document.getElementById('sub-manage-proj');
+        this.sub_undo = document.getElementById('sub-undo');
+        this.sub_redo = document.getElementById('sub-redo');
         this.filename_area = document.getElementById('filename');
         const template = document.getElementById('tts-editor-template').content;
         this.edit_root = template.getElementById('tts-editor');
@@ -156,6 +158,9 @@ export class TtsPage
         this.editing_item = null;
         this.selecting_item = null;
         this.selected_pfn = -1;
+        this.undo_list = [];
+        this.undo_cursor = 0;
+        this.saved_pos = 0;
         this.pfn_edit.value = '';
         this.pfn_edit.disabled = true;
         this.refresh_icon = false;
@@ -228,6 +233,7 @@ export class TtsPage
                 this.#end_edit();
 
                 const idx = Number.parseInt(elem.parentNode.dataset.i);
+                this.push_undo({type:'add', i:idx, v:this.items[idx].to_json_object()});
                 this.items[idx].elem.remove();
                 this.items.splice(idx, 1);
                 this.last_select = null;
@@ -288,6 +294,7 @@ export class TtsPage
                 }
                 this.set_filename(f);
                 this.#load_json_object(found);
+                this.clear_undo();
             }
         });
         this.sub_save.addEventListener('click', () => {
@@ -334,6 +341,7 @@ export class TtsPage
         });
         this.stop_mark.style.display = 'none';
         this.#enable_player_buttons();
+        this.#update_undo_button();
         this.set_filename('');
         this.is_playing = false;
     }
@@ -368,24 +376,52 @@ export class TtsPage
                     // not exist
                     item.voice = this.voices[0];
                 }
-                item.set_image(item.voice.icon);
+                item.update_icon();
             }
             this.refresh_icon = false;
         }
-        document.getElementById('sub-undo').disabled = true;
-        document.getElementById('sub-redo').disabled = true;
     }
     hide() {
         this.#end_edit();
     }
-    on_undo() {
+
+    undo() {
+        if (this.undo_cursor > 0) {
+            // TODO
+            this.#update_undo_button();
+        }
     }
-    on_redo() {
+    redo() {
+        if (this.undo_cursor < this.undo_list.length) {
+            // TODO
+            this.#update_undo_button();
+        }
     }
+    push_undo(p) {
+        if (this.undo_cursor < this.undo_list.length) {
+            this.undo_list.splice(this.undo_cursor);
+        }
+        this.undo_list.push(p);
+        this.undo_cursor = this.undo_list.length;
+        this.#update_undo_button();
+    }
+    clear_undo() {
+        this.undo_list = [];
+        this.undo_cursor = 0;
+        this.saved_pos = 0;
+        this.#update_undo_button();
+    }
+    #update_undo_button() {
+        this.sub_undo.disabled = this.undo_cursor === 0;
+        this.sub_redo.disabled = this.undo_cursor >= this.undo_list.length;
+        this.sub_save.disabled = this.saved_pos === this.undo_cursor;
+    }
+
     #add_item(item) {
         item.elem.dataset.i = this.items.length;
         this.items.push(item);
         this.list.insertBefore(item.elem, this.item_append);
+        this.push_undo({type:'del', i:this.items.length - 1});
         return item;
     }
     #swap_item(src, dst) {
@@ -400,6 +436,7 @@ export class TtsPage
             this.list.insertBefore(this.list.childNodes[src], this.list.childNodes[dst]);
             this.#renumber();
         }
+        this.push_undo({type:'swap', src:dst, dst:src});
     }
     #onclick_item(idx) {
         const item = this.items[idx];
@@ -451,8 +488,8 @@ export class TtsPage
         let count = 0;
         this.selecting_item = null;
         for (const item of this.items) {
-            if (item.pfn.length > 0 && item.is_selected()) {
-                count++;
+            if (item.is_selected()) {
+                if (item.pfn.length > 0) count++;
                 this.selecting_item = item;
             }
         }
@@ -599,7 +636,7 @@ export class TtsPage
             v_item.addEventListener('click', e => {
                 const idx = Number.parseInt(e.currentTarget.dataset.i);
                 item.voice = this.voices[idx];
-                item.set_image(item.voice.icon);
+                item.update_icon();
                 this.voice_select.hidePopover();
             });
         }
