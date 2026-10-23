@@ -279,7 +279,6 @@ class Resonator
     get(input) {
         const x = this.a * input + this.b * this.p1 + this.c * this.p2;
         this.p2 = this.p1;
-        //this.p1 = x < -0.4 ? -0.4 : x > 0.4 ? 0.4 : x;
         this.p1 = x;
         return x * this.amp;
     }
@@ -287,7 +286,7 @@ class Resonator
     get_limit(input) {
         const x = this.a * input + this.b * this.p1 + this.c * this.p2;
         this.p2 = this.p1;
-        this.p1 = x < -0.4 ? -0.4 : x > 0.4 ? 0.4 : x;
+        this.p1 = x < -0.25 ? -0.25 : x > 0.25 ? 0.25 : x;
         return x * this.amp;
     }
 
@@ -360,6 +359,11 @@ class ResonatorSet
             this.stp.set_param(pitch, pitch * w, prm.s * 0.04);
         } else {
             this.stp.clear();
+        }
+        if (prm.n > 0) {
+            for (const r of this.r) {
+                r.amp *= (1 * prm.n * 3);
+            }
         }
         this.prev_c = base_c;
     }
