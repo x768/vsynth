@@ -284,9 +284,10 @@ class Resonator
     }
 
     get_limit(input) {
-        const x = this.a * input + this.b * this.p1 + this.c * this.p2;
+        let x = this.a * input + this.b * this.p1 + this.c * this.p2;
+        x = x < -0.25 ? -0.25 : x > 0.25 ? 0.25 : x;
         this.p2 = this.p1;
-        this.p1 = x < -0.25 ? -0.25 : x > 0.25 ? 0.25 : x;
+        this.p1 = x;
         return x * this.amp;
     }
 
@@ -344,7 +345,7 @@ class ResonatorSet
                 amp = 0.15;
             } else if (prm.f > 1) {
                 pitch = (prm.f + 5) * 450;
-                amp = (5 - prm.f) * 0.025;
+                amp = (9 - prm.f) * 0.0125;
             } else {
                 pitch = (prm.f + 2) * 900;
                 amp = 0.10;
