@@ -1,8 +1,9 @@
-class JaWord
+class Word
 {
-    constructor(type, a) {
+    constructor(type, a, accent = -1) {
         // ' ':pause
         // n:noun
+        // N:noun (fix accent)
         // m:prefix
         // c:combined noun
         // v:verb V:verb noun
@@ -10,8 +11,16 @@ class JaWord
         // p:proper
         // z:hiragana(no dic), Z:katakana(no dic)
         this.type = type.length > 1 ? type[0] : type;
-        this.a = a ?? [];
-        this.accent = -1;
+        if (a instanceof Array) {
+            this.a = a;
+        } else if (a) {
+            const b = [];
+            Word.split(b, a);
+            this.a = b;
+        } else {
+            a = [];
+        }
+        this.accent = accent;
         this.left = type.length < 2 || type[1] !== '/';
         this.right = type.length < 3 || type[2] !== '/';
     }
@@ -22,8 +31,8 @@ class JaWord
     }
     static parse(type, s) {
         const a = [];
-        JaWord.split(a, s);
-        return new JaWord(type, a);
+        Word.split(a, s);
+        return new Word(type, a);
     }
     add(c) {
         this.a.push(c);
@@ -43,7 +52,7 @@ class JaWord
         return i;
     }
     allow_prefix() {
-        return 'nMsZ'.indexOf(this.type) >= 0 && this.right;
+        return this.right && 'nNsZ'.indexOf(this.type) >= 0;
     }
     #keep_accent(w2) {
         this.accent = w2.accent !== -1 ? this.a.length + w2.accent : this.accent;
@@ -62,7 +71,7 @@ class JaWord
         switch (this.type + w2.type) {
         case 'ns':
             this.#border_accent(w2);
-            this.type = 'n';
+            this.type = 'N';
             break;
         case 'nn':
         case 'sn':
@@ -71,6 +80,12 @@ class JaWord
         case 'Zn':
         case 'Zs':
             this.#border_accent(w2);
+            this.type = 'c';
+            break;
+        case 'nN':
+        case 'sN':
+        case 'ZN':
+            this.#keep_accent(w2);
             this.type = 'c';
             break;
         case 'sV':
@@ -83,9 +98,7 @@ class JaWord
             break;
         case 'nv':
         case 'nc':
-            if (this.accent !== -1) {
-                return false;
-            }
+            if (this.accent !== -1) return false;
             this.#keep_accent(w2);
             this.type = 'v';
             break;
@@ -107,12 +120,38 @@ class JaWord
             this.type = 'c';
             break;
         case 'Vz':
-        case 'Vv':
             this.accent = -1;
+            this.type = 'v';
+            break;
+        case 'Vv':
+            this.#keep_accent(w2);
             this.type = 'v';
             break;
         case 'VV':
             this.accent = -1;
+            break;
+        case '11':
+            this.accent = 2;
+            this.type = '2';
+            break;
+        case '10':
+            this.type = '2';
+            break;
+        case '17':
+            this.#keep_accent(w2);
+            this.type = '2';
+            break;
+        case '18': // 千
+            this.accent = this.a.length;
+            this.type = '2';
+            break;
+        case '19':
+            this.accent = this.a.length;
+            this.type = '2';
+            break;
+        case '09':
+            this.accent = this.a.length - 1;
+            this.type = '7';
             break;
         default:
             return false;
@@ -158,8 +197,7 @@ class JaWord
 export class JaReading
 {
     static ALIAS = {
-        ',':' ', '.':' ',
-        '，':' ', '．':' ',
+        ',':' ',
         '[':'(', ']':')',
         '{':'(', '}':')',
         '　':' ', '・':' ',
@@ -229,9 +267,12 @@ export class JaReading
         V:'bui', W:'daburu', X:'ekkusu', Y:'wai', Z:'zetto',
     };
     static DIGIT_READING = {
-        '0': 'ree', '1': 'ichi', '2': 'ni', '3': 'san', '4': 'yon',
-        '5': 'go', '6': 'roku', '7': 'nana', '8': 'hachi', '9': 'kyuu',
+        '0': [0, 're', 'e'], '1': [-1, 'i', 'chi'], '2': [-1, 'ni'], '3': [0, 'sa', 'n'], '4': [0, 'yo', 'n'],
+        '5': [-1, 'go'], '6': [-1, 'ro', 'ku'], '7': [0, 'na', 'na'], '8': [-1, 'ha', 'chi'], '9': [0, 'kyu', 'u'],
     };
+    static NUMBER_GROUP_READING = [
+        [0, 'ju', 'u'], [-1, 'hya', 'ku'], [0, 'se', 'n'], [0, 'ma', 'n'], [-1, 'o', 'ku'], [-1, 'cho', 'o'], [-1, 'ke', 'e'],
+    ];
 
     static is_kanji(c) {
         return c >= 0x3400;
@@ -281,7 +322,27 @@ export class JaReading
     }
     static add_break(ret) {
         if (ret.length > 0 && ret.at(-1).type !== ' ') {
-            ret.push(new JaWord(' ', [' ']));
+            ret.push(new Word(' ', [' ']));
+        }
+    }
+    static sound_change(w1, w2) {
+        switch (w1.a.at(-1) + w2.a[0]) {
+        case 'nhya':
+            if (w1.a[0] === 'sa') w2.a[0] = 'bya';
+            break;
+        case 'kuhya': case 'chihya':
+            w1.a[1] = 'p';
+            w2.a[0] = 'pya';
+            break;
+        case 'nse':
+            if (w1.a[0] === 'sa') w2.a[0] = 'ze';
+            break;
+        case 'chise':
+            w1.a[1] = 's';
+            break;
+        case 'chicho':
+            w1.a[1] = 't';
+            break;
         }
     }
 
@@ -493,8 +554,7 @@ export class JaReading
                     k++;
                 }
                 if (last) {
-                    const word = JaWord.parse(type, last);
-                    word.accent = accent;
+                    const word = new Word(type, last, accent);
                     if (prev && prev.type === 's' && type === 's') {
                         // 単一漢字を連結
                         prev.type = 'n';
@@ -563,12 +623,12 @@ export class JaReading
                     if (ch === 'ー' || prev.test_katakana_seg(new_ch)) {
                         prev.a.push(new_ch);
                     } else if (new_ch !== null) {
-                        const w = new JaWord('Z', [new_ch]);
+                        const w = new Word('Z', [new_ch]);
                         w.accent = 0;
                         ret.push(w);
                     }
                 } else if (ch !== 'ー') {
-                    const w = new JaWord(is_hiragana ? 'z' : 'Z', [new_ch]);
+                    const w = new Word(is_hiragana ? 'z' : 'Z', [new_ch]);
                     if (is_katakana) w.accent = 0;
                     ret.push(w);
                 } else {
@@ -597,19 +657,26 @@ export class JaReading
                 } else {
                     this.#roman_reading(ret, src, begin, end);
                 }
-            } else if (JaReading.is_digit(chc)) {
+            } else if (JaReading.is_digit(chc) || (i + 1 < src.length && chc == 0x2E && JaReading.is_digit(src[i + 1].charCodeAt(0)))) {
                 const begin = i;
                 i++;
+                let digits = chc === 0x30 || chc == 0x2E; // 0 or .
                 while (i < src.length) {
                     const c = src[i].charCodeAt(0);
-                    if (!JaReading.is_digit(c) && c !== 0x2D) {
+                    if (c === 0x2D) { // -
+                        digits = true;
+                    } else if (!JaReading.is_digit(c)) {
                         break;
                     }
                     i++;
                 }
                 const end = i;
                 i--;
-                this.#digit_reading(ret, src, begin, end);
+                if (digits) {
+                    this.#digit_reading(ret, src, begin, end);
+                } else {
+                    this.#number_reading(ret, src, begin, end);
+                }
             }
         }
         JaReading.add_break(ret);
@@ -618,9 +685,9 @@ export class JaReading
     #latin_init_reading(ret, src, begin, end) {
         const a = [];
         for (let i = begin; i < end; i++) {
-            JaWord.split(a, JaReading.LATIN_READING[src[i]]);
+            Word.split(a, JaReading.LATIN_READING[src[i]]);
         }
-        const w = new JaWord('n', a);
+        const w = new Word('n', a);
         if (end - begin > 1) {
             w.accent = a.length - 2;
         } else {
@@ -687,7 +754,7 @@ export class JaReading
         }
         if (b.length === 0) return;
 
-        const w = JaWord.parse('n', b.join(''));
+        const w = new Word('n', b.join(''));
         if (w.a.length === 0) return;
 
         if (w.a.length <= 4) {
@@ -699,39 +766,67 @@ export class JaReading
         w.right = false;
         ret.push(w);
     }
+
     #number_reading(ret, src, begin, end) {
-        // TODO
+        const a = [];
+        let n = 0;
+        let m = 2;
+        let group = false;
+        for (let i = end - 1; i >= begin; i--) {
+            const ch = src[i];
+            if (ch !== '0') {
+                if (group) {
+                    const r = JaReading.NUMBER_GROUP_READING[m];
+                    a.unshift(new Word('9', r.slice(1), r[0]));
+                    group = false;
+                }
+                if (n > 0) {
+                    const r = JaReading.NUMBER_GROUP_READING[n - 1];
+                    a.unshift(new Word(n === 3 ? '8' : '0', r.slice(1), r[0]));
+                }
+                if (n === 0 || ch !== '1' || (n === 3 && m > 2)) {
+                    const r = JaReading.DIGIT_READING[ch];
+                    a.unshift(new Word('1', r.slice(1), r[0]));
+                }
+            }
+            n++;
+            if (n > 3) {
+                n = 0;
+                m++;
+                if (m < JaReading.NUMBER_GROUP_READING.length) {
+                    group = true;
+                }
+            }
+        }
+        for (let i = 0; i < a.length; i++) {
+            if (i < a.length - 1) {
+                JaReading.sound_change(a[i], a[i + 1]);
+            }
+            ret.push(a[i]);
+        }
     }
 
     #digit_reading(ret, src, begin, end) {
-        let a = [];
+        let odd = false;
         for (let i = begin; i < end; i++) {
             const ch = src[i];
             if (ch === '-') {
-                const w = new JaWord('n//', a);
-                w.accent = a.length - 2;
-                ret.push(w);
-                a = [];
-                ret.push(new JaWord('z', ['no']));
-                continue;
+                ret.push(new Word('z', ['no']));
+                odd = false;
+            } else if (ch === '.') {
+                ret.push(new Word('z', ['te', 'n']));
+                odd = false;
+            } else {
+                const r = JaReading.DIGIT_READING[ch];
+                const a = r.slice(1);
+                if (a.length % 2 !== 0) {
+                    // ni -> nii
+                    const c = a.at(-1).at(-1);
+                    a.push(c);
+                }
+                ret.push(new Word(odd ? '1 /' : '1/', a, r[0]));
+                odd = !odd;
             }
-            const s = JaReading.DIGIT_READING[ch];
-            JaWord.split(a, s);
-            if (a.length % 2 !== 0) {
-                const c = a.at(-1).at(-1);
-                a.push(c);
-            }
-            if (a.length >= 4) {
-                const w = new JaWord('n//', a);
-                w.accent = 2;
-                ret.push(w);
-                a = [];
-            }
-        }
-        if (a.length > 0) {
-            const w = new JaWord('n//', a);
-            w.accent = 0;
-            ret.push(w);
         }
     }
 
