@@ -45,7 +45,7 @@
 </div>
 <div id="tts-note"><svg id="tts-note-svg" viewBox="0,0,300,200"></svg></div>
 <div id="tts-chunk">
-<textarea id="tts-pfn-edit" rows="6"></textarea>
+<textarea id="tts-pfn-edit" rows="6" spellcheck="false"></textarea>
 </div>
 <div id="tts-parameter">
 <p><span data-res="tts-speed"></span> <input type="number" id="tts-speed-t" min="60" max="720" value="480" size="5" step="10"> syl/min</p>
@@ -62,7 +62,7 @@
 <template id="tts-editor-template">
 <div id="tts-editor">
 <div><input type="text" id="tts-text-src" value=""></div>
-<div><input type="text" id="tts-text-phonetic" value=""></div>
+<div><input type="text" id="tts-text-phonetic" value="" spellcheck="false"></div>
 </div>
 </template>
 </div>
@@ -92,8 +92,8 @@
 <div class="page-inner">
 <h1 data-res="wav-filename"></h1>
 <table>
-<tr><th data-res="filename-single"></th><td><input type="text" id="wav-filename-single" size="50" autocomplete="off">.wav</td></tr>
-<tr><th data-res="filename-seq"></th><td><input type="text" id="wav-filename-seq" size="50" autocomplete="off">.wav</td></tr>
+<tr><th data-res="filename-single"></th><td><input type="text" id="wav-filename-single" size="50" autocomplete="off" spellcheck="false">.wav</td></tr>
+<tr><th data-res="filename-seq"></th><td><input type="text" id="wav-filename-seq" size="50" autocomplete="off" spellcheck="false">.wav</td></tr>
 </table>
 <h1 data-res="dictionary-ja"></h1>
 <div>
