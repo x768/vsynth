@@ -84,6 +84,12 @@ th {
     background: var(--th-color);
     font-weight: normal;
 }
+path.border {
+    stroke: var(--border-color);
+}
+path.graph {
+    stroke: var(--fg-color);
+}
 .code {
     border: 1px solid var(--border-color);
     background: var(--code-color);
