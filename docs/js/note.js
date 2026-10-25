@@ -7,16 +7,10 @@ class SpeechInc
         this.last = 0;
     }
     set(c) {
-        if (c.ticks === 0 && c.len === 0) {
-            this.base = c.val;
-            this.ticks = 0;
-            this.len = 0;
-        } else {
-            this.base += this.diff;
-            this.diff = c.val - this.base;
-            this.ticks = c.ticks;
-            this.len = c.len > 0.125 ? c.len : 0.125;
-        }
+        this.base += this.diff;
+        this.diff = c.val - this.base;
+        this.ticks = c.ticks;
+        this.len = c.len;
     }
     get(ticks) {
         const t = ticks - this.ticks;
@@ -64,11 +58,14 @@ export class SpeechNote
                 }
                 continue;
             } else if (c.cmd === 'fmt') {
-                this.commands.push({ticks:c.ticks, len:c.len, key:'c', val:c.val.c});
+                this.commands.push({ticks:c.ticks, len:c.len, key:'fmt', val:c.val});
+                if (c.val.c !== undefined) {
+                    this.commands.push({ticks:c.ticks, len:c.len, key:'c', val:c.val.c});
+                }
             } else if (c.cmd === 'P') {
                 this.commands.push({ticks:c.ticks, len:c.len, key:'P', val:(c.val - 4800) / 400});
-            } else if (c.cmd === 'A') {
-                this.commands.push({ticks:c.ticks, len:c.len, key:'A', val:c.val});
+            } else if (c.cmd === 'A' || c.cmd === 'v') {
+                this.commands.push({ticks:c.ticks, len:c.len, key:c.cmd, val:c.val});
             } else {
                 continue;
             }
@@ -79,74 +76,59 @@ export class SpeechNote
         for (const t of vp) {
             this.commands.push({ticks:t, key:'pt'});
         }
-        this.#get_ipa(vsynth.cmd_list.filter(c => c.cmd === 'fmt' || c.cmd === 'v' || c.cmd === 'A'));
+        this.#add_ipa_commands();
         this.commands.sort((a, b) => {
             const t = a.ticks - b.ticks;
             if (t !== 0) return t;
             return a.key === 'pt' ? 1 : b.key === 'pt' ? -1 : 0;
         });
     }
-    #get_ipa(cmd) {
+    #add_ipa_commands() {
         const a = [];
-        let vcd = 0;
-        let vcd_next = 0;
-        let vcd_ticks = -1;
-        let amp = false;
-        let amp0_ticks = -1;
-        let amp1_ticks = -1;
+        const prm_v = new SpeechInc(0);
         let fmt = null;
+        let prev_fmt_ticks = -1;
+        let amp = true;
+        let amp1_ticks = -1;
 
-        for (const c of cmd) {
-            switch (c.cmd) {
+        for (const c of this.commands) {
+            switch (c.key) {
             case 'fmt':
-                if (vcd_ticks !== -1 && c.ticks + c.len >= vcd_ticks) {
-                    vcd = vcd_next;
-                    vcd_ticks = -1;
-                }
-                if (amp0_ticks !== -1 && c.ticks + c.len >= amp0_ticks) {
-                    amp = false;
-                    amp0_ticks = -1;
-                }
-                if (amp1_ticks !== -1 && c.ticks + c.len >= amp1_ticks) {
-                    a.push({ticks:amp1_ticks, vcd, f:fmt});
+                if (amp1_ticks >= 0 && amp1_ticks <= c.ticks) {
+                    if (a.length > 0) {
+                        a.push(null);
+                    }
                     amp1_ticks = -1;
+                }
+                if (fmt !== null) {
+                    if (prev_fmt_ticks === c.ticks) a.pop();
+                    prev_fmt_ticks = c.ticks;
+                    a.push({ticks:prev_fmt_ticks, vcd:prm_v.get(c.ticks), f:fmt});
+                }
+                if (fmt === null || c.len > 0) {
+                    prev_fmt_ticks = c.ticks + c.len;
+                    a.push({ticks:prev_fmt_ticks, vcd:prm_v.get(c.ticks + c.len), f:c.val});
                 }
                 fmt = c.val;
-                if (amp || c.len > 0) {
-                    a.push({ticks:c.ticks + c.len, vcd, f:c.val});
-                }
                 break;
             case 'v':
-                if (vcd_ticks !== -1 && c.ticks >= vcd_ticks) {
-                    vcd = vcd_next;
-                }
-                if (amp1_ticks !== -1 && c.ticks + c.len >= amp1_ticks) {
-                    a.push({ticks:amp1_ticks, vcd, f:fmt});
-                    amp1_ticks = -1;
-                }
-                vcd_next = c.val;
-                vcd_ticks = c.ticks + c.len;
+                prm_v.set(c);
                 break;
             case 'A':
-                if (c.val > 0) {
-                    if (c.ticks > 0 && !amp) {
-                        if (vcd_ticks !== -1 && c.ticks >= vcd_ticks) {
-                            vcd = vcd_next;
-                            vcd_ticks = -1;
-                        }
-                        amp1_ticks = c.ticks;
-                    }
+                if (c.val === 0) {
+                    amp = false;
+                } else if (!amp) {
+                    amp1_ticks = c.ticks;
                     amp = true;
-                } else {
-                    amp0_ticks = c.ticks + c.len;
                 }
                 break;
             }
         }
         const semivowel_thres = (this.sampling_rate * 0.1) | 0;
         for (let i = 0; i < a.length; i++) {
-            const f0 = i > 0 ? a[i - 1] : null;
             const f1 = a[i];
+            if (f1 === null) continue;
+            const f0 = i > 0 ? a[i - 1] : null;
             const f2 = i < a.length - 1 ? a[i + 1] : null;
             let c = null;
             if (f0 === null || !SpeechNote.#eq(f1.f, f0.f)) {
@@ -332,6 +314,14 @@ export class SpeechNote
 
         for (const c of this.commands) {
             if (c.key === 'pt') {
+                if (c.ticks > 0 && prm.P.len === 0 && prm.P.ticks === c.ticks) {
+                    ret.push({
+                        ticks: c.ticks,
+                        c:prm.c.get(c.ticks),
+                        P:prm.P.base,
+                        A:prm.A.get(c.ticks),
+                    });
+                }
                 ret.push({
                     ticks: c.ticks,
                     c:prm.c.get(c.ticks),
