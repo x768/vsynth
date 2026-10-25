@@ -11,11 +11,20 @@
 <h1>Modified ARPABET</h1>
 <p><b>Modified ARPABET</b> is a set of phonetic transcription codes based on <b>ARPABET</b>. It represents phonemes of English (GA) with ASCII characters.</p>
 
+<h2>Differences from ARPANET</h2>
+<ul>
+    <li>Use <span class="code">-</span> as syllable breaks.</li>
+    <li>Do not include delimiters (spaces) between phonemes.</li>
+    <li>The primary stress is indicated using capital letters.</li>
+    <li>The secondary stress is indicated by capitalizing the initial letter.</li>
+    <li>Unstressed syllables are written in lowercase letters.</li>
+</ul>
+
 <h2>Examples</h2>
 <table>
-<tr><th></th><th>IPA</th><th colspan="2">ARPABET</th></tr>
-<tr><td>Hello</td><td>[hɛlˈoʊ]</td><td class="code">heh-LOW</td><td class="code">heh-low1</td></tr>
-<tr><td>Speech</td><td>[spˈiːtʃ]</td><td class="code">SPIYCH</td><td class="code">spiych1</td></tr>
+<tr><th></th><th>IPA</th><th>Mod. ARPABET</th><th>ARPABET</th></tr>
+<tr><td>Hello</td><td>[hɛlˈoʊ]</td><td class="code">heh-LOW</td><td class="code">H EH0 L OW1</td></tr>
+<tr><td>Speech</td><td>[spˈiːtʃ]</td><td class="code">SPIYCH</td><td class="code">S P IY1 CH</td></tr>
 </table>
 
 <h2>Consonants</h2>
@@ -489,11 +498,12 @@
 
 <h2>Syllables</h2>
 <table>
-<tr><th></th><th>ARPANET</th><th>IPA</th></tr>
-<tr><th>Primary stress</th><td class="code">AE / ae1</td><td class="ipa">ˈæ</td></tr>
-<tr><th>Secondary stress</th><td class="code">Ae / ae2</td><td class="ipa">ˌæ</td></tr>
-<tr><th>Syllable break</th><td class="code">-</td><td class="ipa">.</td></tr>
-<tr><th>Silence</th><td class="code"> </td><td class="ipa"></td></tr>
+<tr><th></th><th>Mod. ARPANET</th><th>ARPANET</th><th>IPA</th></tr>
+<tr><th>Primary stress</th><td class="code">AE</td><td class="code">AE1</td><td class="ipa">ˈæ</td></tr>
+<tr><th>Secondary stress</th><td class="code">Ae</td><td class="code">AE2</td><td class="ipa">ˌæ</td></tr>
+<tr><th>Phonemes break</th><td class="na"></td><td>(Space)</td><td class="na"></td></tr>
+<tr><th>Syllable break</th><td class="code">-</td><td class="na"></td><td class="ipa">.</td></tr>
+<tr><th>Silence</th><td>(Space)</td><td class="code">-</td><td class="na"></td></tr>
 </table>
 
 </div>
