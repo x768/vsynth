@@ -172,6 +172,7 @@ export class TtsPage
         this.shiftkey = false;
         this.ctrlkey = false;
         this.text_changed = false;
+        this.is_page_showing = false;
 
         this.sub_undo.addEventListener('click', () => {
             this.undo();
@@ -353,6 +354,8 @@ export class TtsPage
             this.dialog.manage_project(list, this.db);
         });
         document.body.addEventListener('keydown', e => {
+            if (!this.is_page_showing) return;
+
             switch (e.code) {
             case 'ShiftLeft': case 'ShiftRight':
                 this.shiftkey = true;
@@ -364,10 +367,10 @@ export class TtsPage
                 this.#end_edit();
                 break;
             case 'KeyZ':
-                if (this.ctrlkey) this.undo();
+                if (this.ctrlkey && this.editing_item === null) this.undo();
                 break;
             case 'KeyY':
-                if (this.ctrlkey) this.redo();
+                if (this.ctrlkey && this.editing_item === null) this.redo();
                 break;
             }
         });
@@ -412,6 +415,7 @@ export class TtsPage
         return ret;
     }
     show() {
+        this.is_page_showing = true;
         if (this.refresh_icon) {
             for (const item of this.items) {
                 if (this.voices.indexOf(item.voice) < 0) {
@@ -424,6 +428,7 @@ export class TtsPage
         }
     }
     hide() {
+        this.is_page_showing = false;
         this.#end_edit();
     }
     undo() {
