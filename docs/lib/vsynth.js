@@ -363,7 +363,7 @@ class ResonatorSet
         }
         if (prm.n > 0) {
             for (const r of this.r) {
-                r.amp *= (1 * prm.n * 3);
+                r.amp *= (1 + prm.n);
             }
         }
         this.prev_c = base_c;
