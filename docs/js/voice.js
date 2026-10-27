@@ -442,16 +442,10 @@ class ConfigPage
         this.filename_seq.value = this.db.filename_seq;
 
         this.filename_single.addEventListener('change', e => {
-            if (this.db) {
-                this.db.filename_single = e.currentTarget.value;
-                this.db.config_save();
-            }
+            this.db.config_save('filename_single', e.currentTarget.value);
         });
         this.filename_seq.addEventListener('change', e => {
-            if (this.db) {
-                this.db.filename_seq = e.currentTarget.value;
-                this.db.config_save();
-            }
+            this.db.config_save('filename_seq', e.currentTarget.value);
         });
         document.getElementById('dic-import-ja').addEventListener('click', async () => {
             const f = await dialog.show_upload('.txt');
@@ -734,14 +728,16 @@ class LanguagePage
         return r;
     }
 
-    constructor() {
-        const lang = LanguagePage.#get_default_lang();
+    constructor(db) {
+        this.db = db;
+        const lang = db.lang !== '' ? db.lang : LanguagePage.#get_default_lang();
         const lang_select = document.getElementById('setting-language');
         lang_select.value = lang;
         lang_select.addEventListener('change', e => {
             this.#select(e.currentTarget.value);
         });
         this.#select(lang);
+        if (db.lang !== '') db.config_save('lang', lang);
     }
     static #get_default_lang() {
         const zh_hant = ['zh-tw', 'zh-hk', 'zh-mo'];
@@ -762,6 +758,7 @@ class LanguagePage
         this.res = LanguagePage.get_resource(lang);
         document.body.setAttribute('lang', this.res.UI);
         LanguagePage.#update_text(document.body, this.res);
+        this.db.config_save('lang', lang);
     }
     static #update_text(node, res) {
         for (const elem of node.childNodes) {
@@ -783,7 +780,7 @@ document.addEventListener('DOMContentLoaded', async () =>
 
     const ja_reading = new JaReading();
     const player = new WavPlayer(SAMPLING_RATE, 0.4, 0.9);
-    const lang_page = new LanguagePage();
+    const lang_page = new LanguagePage(db);
     const dialog = new FileDialogSet(lang_page);
     const voices_page = new VoicesPage(db, await db.get_voices(), player, lang_page, dialog);
     const tts_page = new TtsPage(db, voices_page.voices, dialog, player, ja_reading);

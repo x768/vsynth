@@ -48,16 +48,13 @@ export class DataHolder
         this.db = db;
         this.filename_single = '{voice} - {text}';
         this.filename_seq = '{n}.{voice} - {text}';
+        this.lang = '';
     }
     async init() {
         const store = this.#open_read('config');
         const list = await DataHolder.#to_promise(store.getAll());
         for (const row of list) {
-            if (row.key === 'filename_single') {
-                this.filename_single = row.value;
-            } else if (row.key === 'filename_seq') {
-                this.filename_seq = row.value;
-            }
+            this[row.key] = row.value;
         }
     }
     delete_database() {
@@ -86,10 +83,10 @@ export class DataHolder
             return tr.objectStore(name);
         }
     }
-    config_save() {
+    config_save(key, value) {
         const store = this.#open_rw('config');
-        store.put({key: 'filename_single', value: this.filename_single});
-        store.put({key: 'filename_seq', value: this.filename_seq});
+        store.put({key, value});
+        this[key] = value;
     }
     async get_voices() {
         const store = this.#open_read('voices');
