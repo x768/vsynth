@@ -337,6 +337,8 @@ export class TtsPage
         this.sub_save.addEventListener('click', () => {
             if (this.filename !== '') {
                 this.db.save_project(this.filename, this.#save_json_object());
+                this.saved_pos = this.undo_cursor;
+                this.#update_undo_button();
             } else {
                 sub_save_as.click();
             }
@@ -347,6 +349,8 @@ export class TtsPage
             if (f !== null) {
                 this.set_filename(f);
                 this.db.save_project(f, this.#save_json_object());
+                this.saved_pos = this.undo_cursor;
+                this.#update_undo_button();
             }
         });
         sub_manage.addEventListener('click', async () => {
