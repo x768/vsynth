@@ -312,6 +312,7 @@ class ResonatorSet
         this.prev_L = 0;
     }
 
+    // eslint-disable-next-line no-unused-vars
     set_vertex(fmt, vp) {
         const c0 = fmt.prm.c;
         const c1 = fmt.prm_base.c;
@@ -330,6 +331,7 @@ class ResonatorSet
             this.r[ix].set_param(freq, width, height);
         }
     }
+    // eslint-disable-next-line no-unused-vars
     modify(fmt, vp) {
         const prm = fmt.prm;
         const c = prm.c;
@@ -572,7 +574,7 @@ export class VoiceSynth
         }
     }
 
-    static parse_frac(src) {
+    static #parse_frac(src) {
         if (src === '' || src === '^') {
             return 1;
         } else {
@@ -583,14 +585,14 @@ export class VoiceSynth
             return f;
         }
     }
-    static copy_obj(o) {
+    static #copy_obj(o) {
         const p = {};
         for (const k in o) {
             p[k] = o[k];
         }
         return p;
     }
-    static parse_pfn(src_list, pitch, accent) {
+    static #parse_pfn(src_list, pitch, accent) {
         const MILLISEC_T = SAMPLING_RATE / 1000;
         const ret = [];
         const fmt = {};
@@ -627,7 +629,7 @@ export class VoiceSynth
                 } else if (c === '+' || c === '-') {
                     off += (Number.parseInt(seg) * MILLISEC_T) | 0;
                 } else if (c >= '0' && c <= '9' || c === '^') {
-                    fwd = VoiceSynth.parse_frac(seg);
+                    fwd = VoiceSynth.#parse_frac(seg);
                     off = 0;
                 } else if (seg === '.') {
                     ret.push({cmd: 'A', fwd:total_fwd, off:0, val:0});
@@ -635,7 +637,7 @@ export class VoiceSynth
                 } else if (seg === '!') {
                     const fwd2 = total_fwd + fwd * sy_len;
                     ret.push({cmd: 'v', fwd:fwd2, off:off, val:prev_v});
-                    ret.push({cmd:'fmt', fwd:fwd2, off:off, val: VoiceSynth.copy_obj(fmt)});
+                    ret.push({cmd:'fmt', fwd:fwd2, off:off, val: VoiceSynth.#copy_obj(fmt)});
                 } else {
                     let fmt_exist = false;
                     let articulation = false;
@@ -649,19 +651,19 @@ export class VoiceSynth
                             val = Number.parseInt(m[2]);
                             break;
                         case 'p':
-                            val = (pitch + VoiceSynth.parse_frac(m[2]) * accent) | 0;
+                            val = (pitch + VoiceSynth.#parse_frac(m[2]) * accent) | 0;
                             cmd = 'P';
                             break;
                         case 'F':
                             cmd = 'f';
-                            val = 1 + VoiceSynth.parse_frac(m[2]);
+                            val = 1 + VoiceSynth.#parse_frac(m[2]);
                             break;
                         case 'g':
                             cmd = 'v';
-                            val = 1 + VoiceSynth.parse_frac(m[2]);
+                            val = 1 + VoiceSynth.#parse_frac(m[2]);
                             break;
                         default:
-                            val = VoiceSynth.parse_frac(m[2]);
+                            val = VoiceSynth.#parse_frac(m[2]);
                             break;
                         }
                         if (fmt_keys.indexOf(cmd) >= 0) {
@@ -684,7 +686,7 @@ export class VoiceSynth
                         }
                     }
                     if (fmt_exist) {
-                        ret.push({cmd:'fmt', fwd:fwd2, off:off, val: VoiceSynth.copy_obj(fmt)});
+                        ret.push({cmd:'fmt', fwd:fwd2, off:off, val: VoiceSynth.#copy_obj(fmt)});
                     }
                 }
             }
@@ -694,7 +696,7 @@ export class VoiceSynth
         return ret;
     }
 
-    static calc_ticks(cmd, ut, init_ticks, volume) {
+    static #calc_ticks(cmd, ut, init_ticks, volume) {
         const ret = [];
         const prev = {};
         for (let k of p_keys) prev[k] = -1;
@@ -750,6 +752,10 @@ export class VoiceSynth
         }
     }
 
+    /**
+     * Returns default male voice.
+     * @returns {object} voice profile
+     */
     static default_voice() {
         return {
             pitch: 100,
@@ -763,6 +769,10 @@ export class VoiceSynth
         };
     }
 
+    /**
+     * 
+     * @param {object} vp voice profile 
+     */
     constructor(vp) {
         const WAVEMUL_FACT = 60;
         const N_LOWHARM = 30;
@@ -803,13 +813,21 @@ export class VoiceSynth
         this.cmd_list_p = 0;
     }
 
+    /**
+     * 
+     * @param {string[]} src 
+     * @param {number} speed syl/min
+     * @param {number} pitch cents
+     * @param {number} accent cents
+     * @param {number} volume 0 ... 1
+     */
     set_pfn(src, speed, pitch, accent, volume) {
         this.prm.P.set(0, pitch);
         this.current_pitch = this.#get_current_pitch();
 
-        const cmd = VoiceSynth.parse_pfn(src, pitch, accent);
+        const cmd = VoiceSynth.#parse_pfn(src, pitch, accent);
         const ut = (SAMPLING_RATE * 60 / speed) | 0;
-        const cmd2 = VoiceSynth.calc_ticks(cmd, ut, this.cmd_list.at(-1).ticks, Math.sqrt(volume));
+        const cmd2 = VoiceSynth.#calc_ticks(cmd, ut, this.cmd_list.at(-1).ticks, Math.sqrt(volume));
         if (this.cmd_list.length === 1) {
             this.cmd_list = cmd2;
         } else {
@@ -818,10 +836,18 @@ export class VoiceSynth
         }
     }
 
+    /**
+     * 
+     * @returns {number} remining length in samples.
+     */
     get_remaining() {
         return this.cmd_list.at(-1).ticks - this.ticks;
     }
 
+    /**
+     * 
+     * @returns {number} total chunk count.
+     */
     get_chunk_count() {
         let count = 0;
         for (const c of this.cmd_list) {
@@ -830,6 +856,11 @@ export class VoiceSynth
         return count - 1;
     }
 
+    /**
+     * Generate waveform. if buffer is full, the remainder will be generated next time.
+     * @param {Float32Array} buffer 
+     * @returns {number} generated length in samples.
+     */
     generate(buffer) {
         const outbuf = new FloatBuffer(buffer);
         if (this.wait_count > 0) {

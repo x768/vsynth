@@ -5,24 +5,7 @@ import { WavPlayer } from './player.js';
 import { FileDialogSet } from './dialog.js';
 import { speech_langs, resources } from './lang.js';
 import { TtsPage } from './tts.js';
-import { $e } from './utils.js';
-
-export function create_icon(type)
-{
-    const e = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    e.setAttribute('viewBox', '-8,-8,16,16');
-    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    e.classList.add('icon16');
-    if (type === '+') {
-        p.setAttribute('d', 'M0,-8 L0,8 M-8,0 L8,0');
-    } else if (type === 'x') {
-        p.setAttribute('d', 'M-6,-6 L6,6 M-6,6 L6,-6');
-    } else {
-        p.setAttribute('d', 'M0,-8 L0,2 M-4,-2 L0,2 L4,-2 M-7,0 L-7,5 L7,5 L7,0');
-    }
-    e.appendChild(p);
-    return e;
-}
+import { create_icon, $e } from './utils.js';
 
 class TabPage
 {
@@ -92,6 +75,14 @@ class VoicesPage
         }
     }
 
+    /**
+     * 
+     * @param {DataHolder} db 
+     * @param {object} voices 
+     * @param {WavPlayer} player 
+     * @param {LanguagePage} lang 
+     * @param {FileDialogSet} dialog 
+     */
     constructor(db, voices, player, lang, dialog) {
         this.db = db;
         this.player = player;
@@ -118,7 +109,7 @@ class VoicesPage
         if (voices.length === 0) {
             const v = {
                 name: 'default',
-                icon: VoicesPage.create_default_icon(this.voice_icon),
+                icon: VoicesPage.#create_default_icon(this.voice_icon),
                 ...VoiceSynth.default_voice(),
             };
             voices.push(v);
@@ -238,9 +229,12 @@ class VoicesPage
     hide() {
         this.#select_profile(this.selected_voice);
     }
+    /**
+     * Append a default male voice below the last line.
+     */
     create_new_voice() {
         const voice = {
-            icon: VoicesPage.create_default_icon(this.voice_icon),
+            icon: VoicesPage.#create_default_icon(this.voice_icon),
             ...VoiceSynth.default_voice()
         };
         voice.name = this.#get_safe_name('Untitled', null);
@@ -249,6 +243,11 @@ class VoicesPage
         this.#select_profile(voice);
         this.db.save_voice(voice, this.voices.length - 1);
     }
+    /**
+     * Delete voice profile
+     * @param {number} idx voice profile index
+     * @returns {Promise<void>}
+     */
     async delete_item(idx) {
         if (this.voices.length === 1) return;
         if (!await this.dialog.show_confirm(this.lang.res['confirm-delete-voice'].replace('{0}', this.voices[idx].name))) return;
@@ -266,19 +265,27 @@ class VoicesPage
         }
         this.db.save_all_voices(this.voices);
     }
+    /**
+     * Append voice from file below the last line.
+     * @param {File} file 
+     */
     async import_file(file) {
         const name = file.name.replace(/\.json$/i, '');
         const src = await file.text();
         const voice = JSON.parse(src);
         voice.name = this.#get_safe_name(name, null);
         if (!voice.icon) {
-            voice.icon = VoicesPage.create_default_icon(this.voice_icon);
+            voice.icon = VoicesPage.#create_default_icon(this.voice_icon);
         }
         this.voices.push(voice);
         this.#append(voice);
         this.#select_profile(voice);
         this.db.save_voice(voice, this.voices.length - 1);
     }
+    /**
+     * Create selected voice profile as a JSON
+     * @returns {Blob}
+     */
     create_export_blob() {
         const v0 = this.selected_voice;
         const v = {};
@@ -316,7 +323,7 @@ class VoicesPage
     async #select_voice_icon() {
         const f = await this.dialog.show_upload('.png, .gif, .jpg, .jpeg', 'test');
         if (f !== null) {
-            VoicesPage.load_icon_file(this.voice_icon, f);
+            VoicesPage.#load_icon_file(this.voice_icon, f);
             this.update_btn.disabled = false;
         }
     }
@@ -401,6 +408,10 @@ class VoicesPage
         }
         return ret;
     }
+    /**
+     * Create voice profile from current input value
+     * @returns {object} voice profile except icon and name
+     */
     get_voice() {
         return {
             pitch: Number.parseInt(this.voice_pitch.value),
@@ -413,13 +424,13 @@ class VoicesPage
             freqadd: VoicesPage.#get_formant_values(this.voice_formant_a),
         };
     }
-    static async load_icon_file(cv, file) {
+    static async #load_icon_file(cv, file) {
         const image = await window.createImageBitmap(file);
         const ctx = cv.getContext('2d');
         ctx.clearRect(0, 0, cv.width, cv.height);
         ctx.drawImage(image, 0, 0, cv.width, cv.height);
     }
-    static create_default_icon(cv) {
+    static #create_default_icon(cv) {
         const ctx = cv.getContext('2d');
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, cv.width, cv.height);
@@ -435,6 +446,11 @@ class VoicesPage
 }
 class ConfigPage
 {
+    /**
+     * 
+     * @param {DataHolder} db 
+     * @param {FileDialogSet} dialog 
+     */
     constructor(db, dialog) {
         this.db = db;
         this.filename_single = document.getElementById('wav-filename-single');
@@ -581,6 +597,10 @@ class LanguagePage
         return 'en';
     }
 
+    /**
+     * 
+     * @param {DataHolder} db 
+     */
     constructor(db) {
         this.db = db;
         this.lang = db.lang !== '' ? db.lang : LanguagePage.#get_default_lang();
@@ -599,6 +619,10 @@ class LanguagePage
         document.body.setAttribute('lang', this.res.UI);
         LanguagePage.#update_text(document.body, this.res);
     }
+    /**
+     * 
+     * @returns {SpeechLang}
+     */
     get_speech_lang() {
         return speech_langs[this.res['speech-lang']]
     }

@@ -1,5 +1,9 @@
 export class DataHolder
 {
+    /**
+     * 
+     * @returns {Promise<DataHolder>}
+     */
     static async open() {
         const request = window.indexedDB.open('NinbosVoice', 1);
         return new Promise((resolve, reject) => {
@@ -23,7 +27,7 @@ export class DataHolder
             });
         });
     }
-    static to_promise(request) {
+    static #to_promise(request) {
         return new Promise((resolve, reject) => {
             request.addEventListener('error', e => {
                 reject(e);
@@ -33,7 +37,7 @@ export class DataHolder
             });
         });
     }
-    static split_format(s) {
+    static #split_format(s) {
         let prev = 0;
         const ret = [];
         for (const m of s.matchAll(/\{\w+\}/g)) {
@@ -51,24 +55,37 @@ export class DataHolder
         this.filename_seq = '{n}.{voice} - {text}';
         this.lang = '';
     }
+
+    /**
+     * @returns {Promise<void>}
+     */
     async init() {
-        const store = this.open_read('config');
-        const list = await DataHolder.to_promise(store.getAll());
+        const store = this.#open_read('config');
+        const list = await DataHolder.#to_promise(store.getAll());
         for (const row of list) {
             this[row.key] = row.value;
         }
     }
+
     delete_database() {
         window.indexedDB.deleteDatabase('NinbosVoice');
     }
 
+    /**
+     * 
+     * @returns {string} e.g. "{voice} - {text}.wav" => ["{voice}", " - ", "{text}", ".wav"]
+     */
     get_filename_single() {
-        return DataHolder.split_format(this.filename_single);
+        return DataHolder.#split_format(this.filename_single);
     }
+    /**
+     * 
+     * @returns {string} e.g. "{voice} - {text}.wav" => ["{voice}", " - ", "{text}", ".wav"]
+     */
     get_filename_seq() {
-        return DataHolder.split_format(this.filename_seq);
+        return DataHolder.#split_format(this.filename_seq);
     }
-    open_read(name) {
+    #open_read(name) {
         const tr = this.db.transaction(name, 'readonly');
         if (name instanceof Array) {
             return name.map(n => tr.objectStore(n));
@@ -76,7 +93,7 @@ export class DataHolder
             return tr.objectStore(name);
         }
     }
-    open_rw(name) {
+    #open_rw(name) {
         const tr = this.db.transaction(name, 'readwrite');
         if (name instanceof Array) {
             return name.map(n => tr.objectStore(n));
@@ -85,15 +102,24 @@ export class DataHolder
         }
     }
 
+    /**
+     * 
+     * @param {string} key 
+     * @param {string} value 
+     */
     config_save(key, value) {
-        const store = this.open_rw('config');
+        const store = this.#open_rw('config');
         store.put({key, value});
         this[key] = value;
     }
 
+    /**
+     * 
+     * @returns {object[]} Array of voice profile
+     */
     async get_voices() {
-        const store = this.open_read('voices');
-        const list = await DataHolder.to_promise(store.getAll());
+        const store = this.#open_read('voices');
+        const list = await DataHolder.#to_promise(store.getAll());
         list.sort((a, b) => a.order - b.order);
         const ret = [];
         for (const row of list) {
@@ -128,13 +154,24 @@ export class DataHolder
         }
         return v;
     }
+
+    /**
+     * 
+     * @param {object} voice voice profile
+     * @param {number} index 
+     */
     save_voice(voice, index) {
-        const store = this.open_rw('voices');
+        const store = this.#open_rw('voices');
         store.put({order: index, value: DataHolder.#trim_voice_data(voice)});
     }
+    /**
+     * 
+     * @param {object[]} voices Array of voice profile
+     * @returns {Promise<void>}
+     */
     async save_all_voices(voices) {
-        const store = this.open_rw('voices');
-        const count = await DataHolder.to_promise(store.count());
+        const store = this.#open_rw('voices');
+        const count = await DataHolder.#to_promise(store.count());
 
         for (let i = 0; i < voices.length; i++) {
             store.put({order: i, value: DataHolder.#trim_voice_data(voices[i])});
@@ -145,34 +182,34 @@ export class DataHolder
     }
 
     async get_all_projects() {
-        const store = this.open_read('projects');
-        const list = await DataHolder.to_promise(store.getAll());
+        const store = this.#open_read('projects');
+        const list = await DataHolder.#to_promise(store.getAll());
         list.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
         return list;
     }
     save_project(name, value) {
-        const store = this.open_rw('projects');
+        const store = this.#open_rw('projects');
         store.put({name, value});
     }
     delete_project(name) {
-        const store = this.open_rw('projects');
+        const store = this.#open_rw('projects');
         store.delete(name);
     }
 
     async get_dic_count(lang) {
-        const [alias_store, words_store] = this.open_read([`${lang}_alias`, `${lang}_words`]);
+        const [alias_store, words_store] = this.#open_read([`${lang}_alias`, `${lang}_words`]);
         const c = await Promise.all([
-            DataHolder.to_promise(alias_store.count()),
-            DataHolder.to_promise(words_store.count())
+            DataHolder.#to_promise(alias_store.count()),
+            DataHolder.#to_promise(words_store.count())
         ]);
         return c[0] + c[1];
     }
 
     async get_dic(lang) {
-        const [alias_store, words_store] = this.open_read([`${lang}_alias`, `${lang}_words`]);
+        const [alias_store, words_store] = this.#open_read([`${lang}_alias`, `${lang}_words`]);
         return await Promise.all([
-            DataHolder.to_promise(alias_store.getAll()),
-            DataHolder.to_promise(words_store.getAll())
+            DataHolder.#to_promise(alias_store.getAll()),
+            DataHolder.#to_promise(words_store.getAll())
         ]);
     }
     async get_dic_as_file(lang) {
@@ -191,11 +228,11 @@ export class DataHolder
         return new Blob(ret);
     }
     async set_dic(lang, dic) {
-        const [alias_store, words_store] = this.open_rw([`${lang}_alias`, `${lang}_words`]);
+        const [alias_store, words_store] = this.#open_rw([`${lang}_alias`, `${lang}_words`]);
 
         await Promise.all([
-            DataHolder.to_promise(alias_store.clear()),
-            DataHolder.to_promise(words_store.clear())
+            DataHolder.#to_promise(alias_store.clear()),
+            DataHolder.#to_promise(words_store.clear())
         ]);
 
         for (const obj of dic[0]) {

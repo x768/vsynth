@@ -3,6 +3,10 @@ import { create_icon } from './voice.js';
 
 export class FileDialogSet
 {
+    /**
+     * 
+     * @param {SpeechLang} lang 
+     */
     constructor(lang) {
         this.lang = lang;
 
@@ -55,12 +59,7 @@ export class FileDialogSet
         this.file_input.addEventListener('change', e => {
             const f = e.currentTarget.files;
             if (f.length === 1) {
-                if (this.on_upload_file) {
-                    this.on_upload_file(f[0]);
-                } else {
-                    this.result = f[0];
-                    this.dialog.close();
-                }
+                this.on_upload_file(f[0]);
             }
         });
         this.upload_area.addEventListener('click', () => {
@@ -82,12 +81,7 @@ export class FileDialogSet
             e.currentTarget.classList.remove('dialog-drop-active');
             const f = e.dataTransfer.files;
             if (f.length === 1) {
-                if (this.on_upload_file) {
-                    this.on_upload_file(f[0]);
-                } else {
-                    this.result = f[0];
-                    this.dialog.close();
-                }
+                this.on_upload_file(f[0]);
             }
         });
         this.#hide_controls();
@@ -113,6 +107,11 @@ export class FileDialogSet
         return promise;
     }
 
+    /**
+     * 
+     * @param {DataHolder} db 
+     * @returns {Promise<void>}
+     */
     show_delete_conform(db) {
         this.ok_button.textContent = this.lang.res.ok;
         this.ok_button.style.display = '';
@@ -131,6 +130,11 @@ export class FileDialogSet
         this.#show_dialog();
     }
 
+    /**
+     * 
+     * @param {string} message 
+     * @returns {Promise<boolean>} true or null
+     */
     show_confirm(message) {
         this.ok_button.textContent = this.lang.res.ok;
         this.ok_button.style.display = '';
@@ -146,13 +150,28 @@ export class FileDialogSet
         return this.#show_dialog();
     }
 
+    /**
+     * 
+     * @param {string} filter e.g. ".txt"
+     * @returns {Promise<File>}
+     */
     show_upload(filter) {
         this.cancel_button.textContent = this.lang.res.close;
         this.upload_area.style.display = '';
         this.file_input.setAttribute('accept', filter);
+        this.on_upload_file = file => {
+            this.result = file;
+            this.dialog.close();
+        };
         return this.#show_dialog();
     }
 
+    /**
+     * 
+     * @param {File} file File to download
+     * @param {string} filename Default filename
+     * @returns {Promise<void>}
+     */
     show_download(file, filename) {
         this.cancel_button.textContent = this.lang.res.close;
         this.download_area.style.display = '';
@@ -165,6 +184,11 @@ export class FileDialogSet
         return this.#show_dialog();
     }
 
+    /**
+     * 
+     * @param {[File, string][]} files Array of file and filenames
+     * @returns {Promise<void>}
+     */
     show_download_list(files) {
         this.cancel_button.textContent = this.lang.res.close;
         this.filelist_area.style.display = '';
@@ -199,6 +223,12 @@ export class FileDialogSet
         return this.#show_dialog();
     }
 
+    /**
+     * 
+     * @param {object[]} list 
+     * @param {boolean} is_save 
+     * @returns {Promise<string>}
+     */
     select_project(list, is_save) {
         this.ok_button.textContent = is_save ? this.lang.res.save : this.lang.res.open;
         this.ok_button.style.display = '';
@@ -235,6 +265,12 @@ export class FileDialogSet
         }
     }
 
+    /**
+     * 
+     * @param {object[]} list 
+     * @param {DataHolder} db 
+     * @returns {Promise<void>}
+     */
     manage_project(list, db) {
         this.cancel_button.textContent = this.lang.res.close;
         this.filelist_area.style.display = '';

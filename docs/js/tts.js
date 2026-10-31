@@ -1,12 +1,17 @@
 import { SAMPLING_RATE, VoiceSynth } from '../lib/vsynth.js';
 import { WavFile } from '../lib/misc.js';
 import { SpeechNote } from './note.js';
-import { create_icon } from './voice.js';
 import { speech_langs } from './lang.js';
-import { $e } from './utils.js';
+import { create_icon, $e } from './utils.js';
 
 class TtsItem
 {
+    /**
+     * 
+     * @param {object} voice 
+     * @param {SpeechLang} lang 
+     * @param {obj|null} obj to_json_object() created object or null
+     */
     constructor(voice, lang, obj) {
         this.voice = voice;
         if (obj) {
@@ -37,6 +42,10 @@ class TtsItem
         );
         this.update_icon();
     }
+    /**
+     * Load js module and dictionary
+     * @param {DataHolder} db 
+     */
     async load_speech_lang(db) {
         const lang = speech_langs[this.lang];
         if (!lang.is_loaded()) {
@@ -95,6 +104,10 @@ class TtsItem
 }
 class NumberControl
 {
+    /**
+     * Link a Number control and a Slider control.
+     * @param {string} id Control id except suffix
+     */
     constructor(id) {
         this.num = document.getElementById(id + '-t');
         this.range = document.getElementById(id + '-r');
@@ -109,6 +122,10 @@ class NumberControl
             this.num.value = this.range.value;
         });
     }
+    /**
+     * Set specified number to controls.
+     * @param {number} val 
+     */
     set(val) {
         const min = Number.parseInt(this.num.min);
         const max = Number.parseInt(this.num.max);
@@ -120,6 +137,10 @@ class NumberControl
         this.num.value = val;
         this.range.value = val;
     }
+    /**
+     * 
+     * @returns {number} returns number control's value as a number.
+     */
     get() {
         return Number.parseInt(this.num.value);
     }
@@ -130,6 +151,14 @@ class NumberControl
 }
 export class TtsPage
 {
+    /**
+     * 
+     * @param {DataHolder} db 
+     * @param {object} voices 
+     * @param {FileDialogSet} dialog 
+     * @param {SpeechLang} speech_lang 
+     * @param {WavPlayer} player 
+     */
     constructor(db, voices, dialog, speech_lang, player) {
         this.db = db;
         this.voices = voices;
@@ -340,7 +369,7 @@ export class TtsPage
                         break;
                     }
                 }
-                this.set_filename(f);
+                this.#set_filename(f);
                 this.#load_json_object(found);
                 this.clear_undo();
             }
@@ -358,7 +387,7 @@ export class TtsPage
             const list = await this.db.get_all_projects();
             const f = await this.dialog.select_project(list, true);
             if (f !== null) {
-                this.set_filename(f);
+                this.#set_filename(f);
                 this.db.save_project(f, this.#save_json_object());
                 this.saved_pos = this.undo_cursor;
                 this.#update_undo_button();
@@ -402,15 +431,19 @@ export class TtsPage
         this.stop_mark.style.display = 'none';
         this.#enable_player_buttons();
         this.#update_undo_button();
-        this.set_filename('');
+        this.#set_filename('');
         this.is_playing = false;
     }
 
-    set_filename(name) {
+    #set_filename(name) {
         this.filename = name;
         this.filename_area.textContent = name === '' ? '' : ': ' + name;
     }
 
+    /**
+     * Get selected items array.
+     * @returns {TtsItem[]} selected rows.
+     */
     get_selected_items() {
         const ret = [];
         for (const item of this.items) {
@@ -420,6 +453,10 @@ export class TtsPage
         }
         return ret;
     }
+    /**
+     * Get selected items except empty item.
+     * @returns {TtsItem[]} selected rows except empty.
+     */
     get_selected_contain_items() {
         const ret = [];
         for (const item of this.items) {
@@ -461,6 +498,11 @@ export class TtsPage
         }
     }
 
+    /**
+     * Delete items preceding the undo_cursor, and push undo item.
+     * @param {object} p Undo item
+     * @returns {void}
+     */
     push_undo(p) {
         if (this.undo_cursor > 0 && this.undo_cursor !== this.saved_pos) {
             const prev = this.undo_list[this.undo_cursor - 1];
@@ -473,6 +515,10 @@ export class TtsPage
         this.undo_cursor = this.undo_list.length;
         this.#update_undo_button();
     }
+    /**
+     * Apply undo at undo_cursor and reverse item (e.g. add -> del).
+     * This function do not move undo_cursor.
+     */
     exec_undo() {
         const p = this.undo_list[this.undo_cursor];
         let p2 = null;
