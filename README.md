@@ -15,9 +15,7 @@ https://x768.github.io/vsynth/
 
 # Using from node.js
 
-音声合成に関する処理は、`docs/lib/` にすべて入っています。
-各jsは単独で動作するので、ファイルを置いてimportすれば使えます。
-
+音声合成に関する処理は、`docs/lib/` `docs/lang/` に入っています。
 使用例は、`sample.js`をご覧ください。
 
 ライセンスは GPL ですので、利用の際はご注意ください。
