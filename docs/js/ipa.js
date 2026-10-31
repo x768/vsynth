@@ -775,6 +775,7 @@ function update_v_info(elem, pfn, rhotic, nasalize, lang)
 {
     if (rhotic) pfn += 'r7';
     if (nasalize) pfn += 'n5';
+    // eslint-disable-next-line no-misleading-character-class
     let xsampa = elem.dataset.xsampa ?? elem.textContent.replaceAll(/[\u02DE\u0303]/g, '');
     if (rhotic) xsampa += '`';
     if (nasalize) xsampa += '~';
@@ -797,6 +798,7 @@ function update_v_info(elem, pfn, rhotic, nasalize, lang)
 function toggle_vowel_opt(opt)
 {
     for (const td of document.getElementById('vowel-table').getElementsByClassName('ipa')) {
+        // eslint-disable-next-line no-misleading-character-class
         let s = td.textContent.replaceAll(/[\u02DE\u0303]/g, '');
         td.textContent = s + opt;
     }
