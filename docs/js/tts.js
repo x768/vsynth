@@ -1,44 +1,50 @@
-import { JaToPFN } from '../lib/phone_ja.js';
 import { SAMPLING_RATE, VoiceSynth } from '../lib/vsynth.js';
-import { WavFile } from '../lib/wavfile.js';
+import { WavFile } from '../lib/misc.js';
 import { SpeechNote } from './note.js';
 import { create_icon } from './voice.js';
+import { speech_langs } from './lang.js';
 import { $e } from './utils.js';
 
 class TtsItem
 {
-    static from_json_object(obj, voice) {
-        const item = new TtsItem(voice);
-        this.lang = obj.lang;
-        item.text = obj.text;
-        item.phonetic = obj.phonetic;
-        item.speed = obj.speed;
-        item.pitch = obj.pitch;
-        item.accent = obj.accent;
-        item.volume = obj.volume;
-        item.pfn = obj.pfn;
-        item.text_area.textContent = item.get_text();
-        return item;
-    }
-    constructor(voice) {
-        this.text_area = $e('div', null, '');
+    constructor(voice, lang, obj) {
+        this.voice = voice;
+        if (obj) {
+            this.lang = obj.lang;
+            this.text = obj.text;
+            this.phonemic = obj.phonemic;
+            this.speed = obj.speed;
+            this.pitch = obj.pitch;
+            this.accent = obj.accent;
+            this.volume = obj.volume;
+            this.pfn = obj.pfn;
+        } else {
+            this.lang = lang.tag;
+            this.text = '';
+            this.phonemic = '';
+            this.speed = lang.params.speed;
+            this.accent = lang.params.accent;
+            this.pitch = 0;
+            this.volume = 0; // dB
+            this.pfn = [];
+        }
+        this.text_area = $e('div', null, this.get_text());
         this.voice_anchor = $e('div');
         this.elem = $e('div', {'class': 'tts-item', draggable:'true'},
             $e('div', {'class': 'tts-voice-select'}, this.voice_anchor, $e('img', {width:32, height:32})),
             this.text_area,
             $e('div', {'class': 'tts-item-del'}, create_icon('x'))
         );
-
-        this.voice = voice;
-        this.lang = 'ja';
-        this.text = '';
-        this.phonetic = '';
-        this.speed = 480;
-        this.pitch = 0;
-        this.accent = 400;
-        this.volume = 0; // dB
-        this.pfn = [];
         this.update_icon();
+    }
+    async load_speech_lang(db) {
+        const lang = speech_langs[this.lang];
+        if (!lang.is_loaded()) {
+            await lang.load();
+            if (lang.use_dic) {
+                lang.to_phonemic.load(await db.get_dic(this.lang));
+            }
+        }
     }
     update_icon() {
         this.elem.getElementsByTagName('img')[0].setAttribute('src', this.voice.icon);
@@ -64,7 +70,10 @@ class TtsItem
         return this.elem.classList.contains('tts-selected');
     }
     get_text() {
-        return this.text !== '' ? this.text : this.phonetic;
+        return this.text !== '' ? this.text : this.phonemic;
+    }
+    get_lang() {
+        return speech_langs[this.lang];
     }
     get_volume_linear() {
         if (this.volume > 0) return 1;
@@ -75,7 +84,7 @@ class TtsItem
             voice: this.voice.name,
             lang: this.lang,
             text: this.text,
-            phonetic: this.phonetic,
+            phonemic: this.phonemic,
             speed: this.speed,
             pitch: this.pitch,
             accent: this.accent,
@@ -121,12 +130,12 @@ class NumberControl
 }
 export class TtsPage
 {
-    constructor(db, voices, dialog, player, ja_reading) {
+    constructor(db, voices, dialog, speech_lang, player) {
         this.db = db;
         this.voices = voices;
         this.dialog = dialog;
         this.player = player;
-        this.ja_reading = ja_reading;
+        this.speech_lang = speech_lang;
  
         this.list = document.getElementById('tts-list');
         this.sub_save = document.getElementById('sub-save-proj');
@@ -139,7 +148,7 @@ export class TtsPage
         const template = document.getElementById('tts-editor-template').content;
         this.edit_root = template.getElementById('tts-editor');
         this.edit_text = template.getElementById('tts-text-src');
-        this.edit_phonetic = template.getElementById('tts-text-phonetic');
+        this.edit_phonemic = template.getElementById('tts-text-phonemic');
         this.tts_speed = new NumberControl('tts-speed');
         this.tts_pitch = new NumberControl('tts-pitch');
         this.tts_accent = new NumberControl('tts-accent');
@@ -181,11 +190,12 @@ export class TtsPage
             this.redo();
         });
 
-        this.item_append.addEventListener('click', () => {
+        this.item_append.addEventListener('click', async () => {
             for (const it of this.items) {
                 it.unselect();
             }
-            const new_item = this.#add_item(new TtsItem(this.voices[0]));
+            const new_item = new TtsItem(this.voices[0], this.speech_lang, null);
+            this.#add_item(new_item);
             this.push_undo({type:'del', i:this.items.length - 1});
             new_item.select();
             this.#begin_edit(new_item);
@@ -198,20 +208,21 @@ export class TtsPage
                 this.text_changed = true;
             }
             this.edit_text.value = this.edit_text.value.normalize('NFKC');
-            this.edit_phonetic.value = this.ja_reading.conv(this.edit_text.value);
+            const converter = this.editing_item.get_lang().to_phonemic;
+            this.edit_phonemic.value = converter.conv(this.edit_text.value);
             this.#set_pfn();
             this.#set_note();
             this.#enable_player_buttons();
         });
         this.edit_text.addEventListener('keydown', e => {
             if (e.key === 'Enter') {
-                this.edit_phonetic.focus();
+                this.edit_phonemic.focus();
                 this.#enable_player_buttons();
             } else if (e.key === 'Escape') {
                 this.#end_edit();
             }
         });
-        this.edit_phonetic.addEventListener('change', () => {
+        this.edit_phonemic.addEventListener('change', () => {
             if (!this.text_changed) {
                 const item = this.editing_item;
                 this.push_undo({type:'text', i:item.get_index(), v:item.to_json_object()});
@@ -221,7 +232,7 @@ export class TtsPage
             this.#set_note();
             this.#enable_player_buttons();
         });
-        this.edit_phonetic.addEventListener('keydown', e => {
+        this.edit_phonemic.addEventListener('keydown', e => {
             if (e.key === 'Enter') {
                 this.#enter_line_done();
                 this.#enable_player_buttons();
@@ -249,7 +260,7 @@ export class TtsPage
             }
         });
         this.list.addEventListener('click', e => {
-            let elem = null;
+            let elem;
             if (e.currentTarget === e.target) {
                 this.#end_edit();
             } else if ((elem = e.target.closest('.tts-voice-select')) !== null) {
@@ -468,7 +479,7 @@ export class TtsPage
         switch (p.type) {
         case 'add':
             p2 = {type:'del', i:p.i};
-            this.#add_item_at(TtsItem.from_json_object(p.v, this.#find_voice_by_name(p.v.voice)), p.i);
+            this.#add_item_at(new TtsItem(this.#find_voice_by_name(p.v.voice), this.speech_lang, p.v), p.i);
             break;
         case 'swap':
             p2 = {type:'swap', src:p.dst, dst:p.src};
@@ -482,7 +493,7 @@ export class TtsPage
         case 'character':
         case 'text':
             p2 = {type:p.type, i:p.i, v:this.items[p.i].to_json_object()};
-            this.#set_item_at(TtsItem.from_json_object(p.v, this.#find_voice_by_name(p.v.voice)), p.i);
+            this.#set_item_at(new TtsItem(this.#find_voice_by_name(p.v.voice), this.speech_lang, p.v), p.i);
             break;
         case 'pfn':
             p2 = {type:'pfn', i:p.i, v:this.items[p.i].pfn.slice()};
@@ -513,7 +524,6 @@ export class TtsPage
         item.elem.dataset.i = this.items.length;
         this.items.push(item);
         this.list.insertBefore(item.elem, this.item_append);
-        return item;
     }
     #add_item_at(item, idx) {
         this.items.splice(idx, 0, item);
@@ -643,7 +653,7 @@ export class TtsPage
         this.last_selected = item;
         this.editing_item = item;
         this.edit_text.value = item.text;
-        this.edit_phonetic.value = item.phonetic;
+        this.edit_phonemic.value = item.phonemic;
         item.begin_edit(this.edit_root);
         this.edit_text.focus();
         this.edit_text.select();
@@ -662,13 +672,14 @@ export class TtsPage
         const item = this.editing_item;
         if (item === null) return;
         item.text = this.edit_text.value;
-        item.phonetic = this.edit_phonetic.value;
+        item.phonemic = this.edit_phonemic.value;
         try {
-            const c = new JaToPFN({
+            const lang = speech_langs[item.lang];
+            const c = new lang.ToSound({
                 voiceless: true,
                 reduce_pitch: true,
             });
-            item.pfn = c.conv(this.edit_phonetic.value);
+            item.pfn = c.conv(this.edit_phonemic.value);
         } catch (e) {
             console.log(e);
         }
@@ -726,7 +737,7 @@ export class TtsPage
         const item = this.editing_item;
         const idx = this.items.indexOf(item);
         if (idx === this.items.length - 1) {
-            this.#add_item(new TtsItem(this.voices[0]));
+            this.#add_item(new TtsItem(this.voices[0], this.speech_lang, null));
             this.push_undo({type:'del', i:this.items.length - 1});
         }
         if (idx < this.items.length - 1) {
@@ -841,10 +852,10 @@ export class TtsPage
         this.items = [];
         if (obj) {
             for (const it of obj.items) {
-                this.#add_item(TtsItem.from_json_object(it, this.#find_voice_by_name(it.voice)));
+                this.#add_item(new TtsItem(this.#find_voice_by_name(it.voice), this.speech_lang, it));
             }
         } else {
-            this.#add_item(new TtsItem(this.voices[0]));
+            this.#add_item(new TtsItem(this.voices[0], this.speech_lang, null));
         }
         if (this.items.length > 0) {
             this.items[0].select();

@@ -148,7 +148,10 @@ class HTMLFileSrc(HTMLParser):
 class JSFileSrc:
     def __init__(self, src, dst, src_dir):
         self.path = src
-        lines = ['']
+        lines = []
+        dynload = ''
+        import_replace = ''
+        replace_next = ''
         with open(src, 'r', encoding='utf-8') as r:
             parent = PurePath('/'.join(src.parent.parts[1:]))
             exports = set()
@@ -169,17 +172,43 @@ class JSFileSrc:
                     skip = True
                 elif line.startswith('//#endif'):
                     skip = False
+                elif line.startswith('//#dynload '):
+                    dynload = line[11:].strip()
+                elif line.startswith('//#replace '):
+                    replace_next = line[11:]
+                elif line.startswith('//#import_compat '):
+                    import_replace = line[17:].strip()
+                    lines.append("function $import(uri) {\n")
+                    lines.append(f"    if (uri in {import_replace}) return {import_replace}[uri];\n")
+                    lines.append("    const n = document.createElement('script');\n")
+                    lines.append("    n.setAttribute('src', uri);\n")
+                    lines.append("    const p = new Promise((resolve, reject) => {\n")
+                    lines.append(f"        n.addEventListener('load', e => resolve({import_replace}[uri]));\n")
+                    lines.append("    });\n")
+                    lines.append("    document.head.appendChild(n);\n")
+                    lines.append("    return p;\n")
+                    lines.append("}\n")
                 elif not skip:
                     if m := FETCH.search(line):
                         file = src_dir / m.group(1)
                         add_data_scheme_line(lines, file, line[:m.start(1)], line[m.end(1):])
+                    elif len(replace_next) > 0:
+                        lines.append(replace_next)
+                        replace_next = ''
                     else:
                         lines.append(line)
-        if len(exports) > 0:
-            lines[0] = 'const [' + ', '.join(exports) + "] = (() => {\n";
+        if (len(dynload) > 0):
+            lines.insert(0, dynload + " = (() => {\n")
+            lines.append('return {' + ', '.join(exports) + "};\n})();\n")
+        elif len(exports) > 0:
+            lines.insert(0, 'const [' + ', '.join(exports) + "] = (() => {\n")
+            if len(import_replace) > 0:
+                lines.insert(0, f"const {import_replace} = {{}};\n")
             lines.append('return [' + ', '.join(exports) + "];\n})();\n")
         else:
-            lines[0] = "(() => {\n";
+            lines.insert(0, "(() => {\n")
+            if len(import_replace) > 0:
+                lines.insert(0, f"const {import_replace} = {{}};\n")
             lines.append("})();\n")
         with open(dst, 'w', encoding='utf-8') as w:
             w.write("'use strict';\n")

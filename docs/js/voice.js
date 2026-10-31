@@ -1,8 +1,9 @@
-import { JaReading } from '../lib/text_ja.js';
 import { SAMPLING_RATE, VoiceSynth } from '../lib/vsynth.js';
+import { parse_dictionary } from '../lib/misc.js';
 import { DataHolder } from './db.js';
 import { WavPlayer } from './player.js';
 import { FileDialogSet } from './dialog.js';
+import { speech_langs, resources } from './lang.js';
 import { TtsPage } from './tts.js';
 import { $e } from './utils.js';
 
@@ -140,7 +141,7 @@ class VoicesPage
         this.#select_profile(this.voices[0]);
 
         this.list.addEventListener('click', e => {
-            let elem = null;
+            let elem;
             if ((elem = e.target.closest('.voice-item-del')) !== null) {
                 const idx = Number.parseInt(elem.parentNode.dataset.i);
                 this.delete_item(idx);
@@ -378,7 +379,7 @@ class VoicesPage
         }
         if (!names.has(n)) return n;
 
-        const m = n.match(/\-(\d+)$/);
+        const m = n.match(/-(\d+)$/);
         let s, i;
         if (m) {
             s = n.substring(0, n.length - m[1].length);
@@ -422,7 +423,7 @@ class VoicesPage
         const ctx = cv.getContext('2d');
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, cv.width, cv.height);
-        ctx.fillStyle = ['#f00', '#080', '#00f', '#c0c', '#bb0', '#888'][(Math.random() * 6) | 0];
+        ctx.fillStyle = '#888';
         ctx.beginPath();
         ctx.ellipse(16, 12, 8, 8, 0, 0, 2 * Math.PI);
         ctx.fill();
@@ -434,7 +435,7 @@ class VoicesPage
 }
 class ConfigPage
 {
-    constructor(db, ja_reading, dialog) {
+    constructor(db, dialog) {
         this.db = db;
         this.filename_single = document.getElementById('wav-filename-single');
         this.filename_seq = document.getElementById('wav-filename-seq');
@@ -447,297 +448,122 @@ class ConfigPage
         this.filename_seq.addEventListener('change', e => {
             this.db.config_save('filename_seq', e.currentTarget.value);
         });
-        document.getElementById('dic-import-ja').addEventListener('click', async () => {
-            const f = await dialog.show_upload('.txt');
-            if (f) {
-                this.enable_dic_buttons(false);
-                const src = await f.text();
-                const [alias, dic] = await db.set_ja_dic_file(src.split("\n"));
-                ja_reading.load(alias, dic);
-                document.getElementById('dic-ja-word-count').textContent = ja_reading.count;
-                this.set_button_hilight('dic-import-ja', ja_reading.count === 0);
+
+        const dic_list = document.getElementById('config-dic-list');
+        this.word_counts = {};
+        for (const k in speech_langs) {
+            const row = speech_langs[k];
+            if (row.use_dic) {
+                const count = $e('span', {'data-lang':k});
+                this.word_counts[k] = count;
+                const tr = $e('tr', null,
+                    $e('th', {'data-res':k}),
+                    $e('td', null,
+                        $e('button', {'class':'config-dic-import', 'data-res':'import-file', 'data-lang': k}),
+                        $e('button', {'class':'config-dic-export', 'data-res':'export-file', 'data-lang': k}),
 //#if_module
-                this.set_button_hilight('dic-init-ja', ja_reading.count === 0);
+                        $e('button', {'class':'config-dic-load', 'data-res':'load-dic', 'data-lang': k}),
 //#endif
-                this.enable_dic_buttons(true);
+                    ),
+                    $e('td', null, count),
+                );
+                dic_list.appendChild(tr);
+                db.get_dic_count(k).then(n => {
+                    count.textContent = n === 0 ? 'Empty' : n;
+                    ConfigPage.#set_button_hilight(tr, n === 0);
+                });
+            }
+        }
+
+        dic_list.addEventListener('click', async e => {
+            const target = e.target;
+            const row = target.closest('tr');
+            const lang = target.dataset.lang;
+            const speech_lang = speech_langs[lang];
+            if (target.classList.contains('config-dic-import')) {
+                const f = await dialog.show_upload('.txt');
+                if (f !== null) {
+                    ConfigPage.#enable_dic_buttons(false);
+                    const src = await f.text();
+                    if (!speech_lang.is_loaded()) {
+                        await speech_lang.load();
+                    }
+                    const dic = parse_dictionary(src);
+                    await db.set_dic(lang, dic);
+                    speech_lang.to_phonemic.load(dic);
+                    row.getElementsByTagName('span')[0].textContent = speech_lang.to_phonemic.count;
+                    ConfigPage.#set_button_hilight(row, speech_lang.to_phonemic.count === 0);
+                    ConfigPage.#enable_dic_buttons(true);
+                }
+            } else if (target.classList.contains('config-dic-export')) {
+                const f = await db.get_dic_as_file(lang);
+                dialog.show_download(f, `dict_${lang}.txt`);
+//#if_module
+            } else if (target.classList.contains('config-dic-load')) {
+                ConfigPage.#enable_dic_buttons(false);
+                const res = await fetch(`./files/dict_${lang}.txt`);
+                if (res.ok) {
+                    const src = await res.text();
+                    if (!speech_lang.is_loaded()) {
+                        await speech_lang.load();
+                    }
+                    const dic = parse_dictionary(src);
+                    await db.set_dic(lang, dic);
+                    speech_lang.to_phonemic.load(dic);
+                    row.getElementsByTagName('span')[0].textContent = speech_lang.to_phonemic.count;
+                    ConfigPage.#set_button_hilight(row, speech_lang.to_phonemic.count === 0);
+                } else {
+                    row.getElementsByTagName('span')[0].textContent = `Error: responce=${res.status}`;
+                }
+                ConfigPage.#enable_dic_buttons(true);
+//#endif
             }
         });
-        document.getElementById('dic-export-ja').addEventListener('click', async () => {
-            const f = await db.get_ja_dic_as_file();
-            dialog.show_download(f, 'dic_ja.txt');
-        });
-//#if_module
-        document.getElementById('dic-init-ja').addEventListener('click', async () => {
-            this.enable_dic_buttons(false);
-            const res = await fetch('./files/dict_ja.txt');
-            if (!res.ok) {
-                document.getElementById('dic-ja-word-count').textContent = `Error: responce=${res.status}`;
-            } else {
-                const src = await res.text();
-                const [alias, dic] = await db.set_ja_dic_file(src.split("\n"));
-                ja_reading.load(alias, dic);
-                document.getElementById('dic-ja-word-count').textContent = ja_reading.count;
-                this.set_button_hilight('dic-import-ja', ja_reading.count === 0);
-                this.set_button_hilight('dic-init-ja', ja_reading.count === 0);
-            }
-            this.enable_dic_buttons(true);
-        });
-//#endif
+
         document.getElementById('initialize-db').addEventListener('click', () => {
             dialog.show_delete_conform(db);
         });
     }
-    set_button_hilight(id, hilight) {
-        const btn = document.getElementById(id);
+
+    static #set_button_hilight(row, hilight) {
+        const btn1 = row.getElementsByClassName('config-dic-import')[0];
         if (hilight) {
-            btn.classList.add('button-hilight');
+            btn1.classList.add('button-hilight');
         } else {
-            btn.classList.remove('button-hilight');
+            btn1.classList.remove('button-hilight');
+        }
+//#if_module
+        const btn2 = row.getElementsByClassName('config-dic-load')[0];
+        if (hilight) {
+            btn2.classList.add('button-hilight');
+        } else {
+            btn2.classList.remove('button-hilight');
+        }
+//#endif
+    }
+
+    static #enable_dic_buttons(enabled) {
+        for (const button of document.getElementById('config-dic-list').getElementsByTagName('button')) {
+            button.disabled = !enabled;
         }
     }
-    enable_dic_buttons(enabled) {
-        document.getElementById('dic-import-ja').disabled = !enabled;
-        document.getElementById('dic-export-ja').disabled = !enabled;
-//#if_module
-        document.getElementById('dic-init-ja').disabled = !enabled;
-//#endif
+
+    show() {
+    }
+    hide() {
     }
 }
 class LanguagePage
 {
-    static #res = {
-        'en': {
-            'UI': 'en-US',
-
-            'tts': 'Text to Speech',
-            'voices': 'Voices',
-            'config': 'Settings',
-            'help': 'Help',
-            'new-proj': 'New Project',
-            'open-proj': 'Open Project',
-            'save-proj': 'Save Project',
-            'save-as': 'Save Project as',
-            'manage-proj': 'File Manager',
-            'import-file': 'Import File',
-            'export-file': 'Export File',
-            'ok':'OK',
-            'open':'Open',
-            'save':'Save',
-            'cancel':'Cancel',
-            'close':'Close',
-            'execute': 'Execute',
-            'update': 'Update',
-
-            'upload-area1': 'Drop the file here',
-            'upload-area2': 'Click here to choose the file',
-            'click-enter-text': 'Click to enter text...',
-
-            'tts-speed': 'Speed',
-            'tts-pitch': 'Pitch',
-            'tts-accent': 'Accent',
-            'tts-volume': 'Volume',
-            'voice-sample-ja': 'Listen (Japanese)',
-            'warning-laud': 'Intensity noise may occur under certain parameters.',
-            'wav-filename': 'WAV Filename',
-            'filename-single': 'Single',
-            'filename-seq': 'Series',
-            'dictionary-ja': 'Dictionary (Japanese)',
-            'load-dic': 'Load the Default Dictionary',
-            'initialize-db': 'Initialize IndexedDB',
-            'delete-all': 'Warning: Pressing this button will delete all stored data.',
-            'confirm-delete-all': 'Are you sure to delete all stored data?',
-            'delete-complete': 'All stored data has been deleted. Please close this page.',
-            'confirm-delete-voice': 'Are you sure to delete “{0}”?',
-
-            'ninbos-voice-intro': 'NinbosVoice is a speech synthesizer works on a web browser.',
-            'supported-browsers': 'Supported Browsers',
-            'terms-of-use': 'Terms of Use',
-            'tou-no-warranty': 'We assume no liability whatsoever for any damages arising from the use of this software or the inability to use it.',
-            'tou-audio-use': 'The generated audio may be used for both commercial and non-commercial purposes. Please use it at your own risk.',
-            'tou-beta-release': 'This software is a beta version. Please be aware that data created previously may become unavailable.',
-            'software-license': 'Software License',
-            'language-support-info': 'English speech synthesis is not yet available.',
-            'software-descript1': 'NinbosVoice is released under the GPL version 3 license.',
-            'software-descript2': 'This product uses modified portions of the eSpeak NG source code and audio data.',
-        },
-        'ja': {
-            'UI': 'ja-JP',
-
-            'tts': '読み上げ',
-            'voices': 'キャラクター',
-            'config': '設定',
-            'help': 'ヘルプ',
-            'new-proj': '新規プロジェクト',
-            'open-proj': 'プロジェクトを開く',
-            'save-proj': 'プロジェクトを保存',
-            'save-as': 'プロジェクトを別名で保存',
-            'manage-proj': 'ファイルマネージャー',
-            'import-file': 'ファイル取り込み',
-            'export-file': 'ファイルに保存',
-            'open':'開く',
-            'save':'保存',
-            'cancel':'キャンセル',
-            'close':'閉じる',
-            'execute': '実行',
-            'update': '更新',
-
-            'upload-area1': 'ファイルをここにドロップ',
-            'upload-area2': 'ここをクリックしてファイルを選択',
-            'click-enter-text': 'クリックしてテキストを入力...',
-
-            'tts-speed': '話速',
-            'tts-pitch': 'ピッチ',
-            'tts-accent': '抑揚',
-            'tts-volume': '音量',
-            'voice-sample-ja': '試聴',
-            'warning-laud': 'パラメーターによっては激しいノイズが発生する場合があります。',
-            'wav-filename': 'WAV ファイル名',
-            'filename-single': '単独',
-            'filename-seq': '連番',
-            'dictionary-ja': '辞書',
-            'load-dic': 'デフォルト辞書を読み込む',
-            'initialize-db': 'IndexedDB の初期化',
-            'delete-all': '警告: ボタンを押すと保存されているすべてのデータを削除します。',
-            'confirm-delete-all': '保存されているすべてのデータを削除してもよろしいですか？',
-            'delete-complete': '保存されているすべてのデータは削除されました。このままページを閉じてください。',
-            'confirm-delete-voice': '「{0}」を削除しますか？',
-
-            'ninbos-voice-intro': 'NinbosVoice は、ブラウザで動作する音声合成ソフトウェアです。',
-            'supported-browsers': '対応ブラウザ',
-            'terms-of-use': '利用規約',
-            'tou-no-warranty': '本ソフトウェアの使用、もしくは使用不能によって生じた損害の責任は一切負いません。',
-            'tou-audio-use': '作成した音声は商用・非商用問わず利用できます。ご自身の責任でご使用ください。',
-            'tou-beta-release': '本ソフトウェアはベータ版です。作成したデータが使用できなくなる可能性があることをご了承ください。',
-            'software-license': 'ソフトウェアライセンス',
-            'language-support-info': '',
-            'software-descript1': 'NinbosVoice は GPL version 3 ライセンスが適用されます。',
-            'software-descript2': '本ソフトウェアは eSpeak NG のソースコード・音声データの一部を改変して利用しています。',
-        },
-        'zh': {
-            'UI': 'zh',
-
-            'tts': '文字转语音',
-            'voices': '声音个性',
-            'config': '设置',
-            'help': '帮助',
-            'new-proj': '新建工程',
-            'open-proj': '打开工程',
-            'save-proj': '储存工程',
-            'save-as': '将工程另存为',
-            'manage-proj': '文件管理器',
-            'import-file': '从文件导入',
-            'export-file': '导出到文件',
-            'ok':'确定',
-            'cancel':'取消',
-            'close':'关闭',
-            'open':'打开',
-            'save':'储存',
-            'execute': '执行',
-            'update': '更新',
-
-            'upload-area1': '在此处拖放文件',
-            'upload-area2': '单击此处以选择文件',
-            'click-enter-text': '点击以输入文字...',
-
-            'tts-speed': '语速',
-            'tts-pitch': '音高',
-            'tts-accent': '重音',
-            'tts-volume': '音量',
-            'voice-sample-ja': '预听 (日语)',
-            'warning-laud': '在特定参数下，可能会出现强度噪声。',
-            'wav-filename': 'WAV 文件名',
-            'filename-single': '单个',
-            'filename-seq': '连载',
-            'dictionary-ja': '词典 (日语)',
-            'load-dic': '加载默认词典',
-            'initialize-db': '初始化 IndexedDB',
-            'delete-all': '警告: 按下此按钮将删除所有已存储的数据。',
-            'confirm-delete-all': '您确定要删除所有已存储的数据吗？',
-            'delete-complete': '所有已存储的数据均已删除。请关闭此页面。',
-            'confirm-delete-voice': '确定要删除“{0}”吗？',
-
-            'ninbos-voice-intro': 'NinbosVoice 是在网页浏览器上运行的语音合成器。',
-            'supported-browsers': '浏览器支持',
-            'terms-of-use': '使用条款',
-            'software-license': '软件许可',
-            'language-support-info': '中文语音合成功能尚无法使用。',
-            'software-descript1': 'NinbosVoice 基于 GPL 第 3 版本许可证发布。',
-            'software-descript2': '本软件使用了 eSpeak NG 源代码和音频数据中部分内容的修改版本。',
-        },
-        'zh-hant': {
-            'UI': 'zh-Hant',
-
-            'tts': '文字轉語音',
-            'voices': '聲音個性',
-            'config': '設置',
-            'help': '幫助',
-            'new-proj': '新建工程',
-            'open-proj': '打開工程',
-            'save-proj': '儲存工程',
-            'save-as': '將工程另存為',
-            'manage-proj': '文件管理器',
-            'import-file': '從文件導入',
-            'export-file': '匯出到文件',
-            'ok':'確定',
-            'cancel':'取消',
-            'close':'關閉',
-            'open':'打開',
-            'save':'儲存',
-            'execute': '執行',
-            'update': '更新',
-
-            'upload-area1': '在此處拖放文件',
-            'upload-area2': '單擊這裡以選擇文件',
-            'click-enter-text': '單擊以輸入文字...',
-
-            'tts-speed': '語速',
-            'tts-pitch': '音高',
-            'tts-accent': '重音',
-            'tts-volume': '音量',
-            'voice-sample-ja': '預聽 (日語)',
-            'warning-laud': '在特定參數下，可能會出現強度噪音。',
-            'wav-filename': 'WAV 檔案名稱',
-            'filename-single': '單個',
-            'filename-seq': '序號',
-            'dictionary-ja': '詞典 (日語)',
-            'load-dic': '載入預設詞典',
-            'initialize-db': '初始化 IndexedDB',
-            'delete-all': '警告: 按下此按鈕將刪除所有已儲存的資料。',
-            'confirm-delete-all': '您確定要刪除所有已儲存的資料嗎？',
-            'delete-complete': '所有已儲存的資料均已刪除。請關閉此頁面。',
-            'confirm-delete-voice': '確定要刪除「{0}」嗎？',
-
-            'supported-browsers': '瀏覽器支持',
-            'terms-of-use': '使用條款',
-            'ninbos-voice-intro': 'NinbosVoice 是在網頁瀏覽器上運行的語音合成器。',
-            'software-license': '軟件授權條款',
-            'language-support-info': '中文語音合成功能尚無法使用。',
-            'software-descript1': 'NinbosVoice 根據 GPL 版本 3 的授權協議發布。',
-            'software-descript2': '本軟件使用了 eSpeak NG 原始碼和音訊資料的修改版本。',
-        },
-    };
-
-    static get_resource(lang) {
-        const r = LanguagePage.#res[lang];
+    static #get_resource(lang) {
+        const r = resources[lang];
         if (lang !== 'en') {
-            const en = LanguagePage.#res.en;
+            const en = resources.en;
             for (const k in en) {
                 if (!(k in r)) r[k] = en[k];
             }
         }
         return r;
-    }
-
-    constructor(db) {
-        this.db = db;
-        const lang = db.lang !== '' ? db.lang : LanguagePage.#get_default_lang();
-        const lang_select = document.getElementById('setting-language');
-        lang_select.value = lang;
-        lang_select.addEventListener('change', e => {
-            this.#select(e.currentTarget.value);
-        });
-        this.#select(lang);
-        if (db.lang !== '') db.config_save('lang', lang);
     }
     static #get_default_lang() {
         const zh_hant = ['zh-tw', 'zh-hk', 'zh-mo'];
@@ -748,18 +574,39 @@ class LanguagePage
                 return 'zh-hant';
             }
             const s = k.split('-')[0];
-            if (s in LanguagePage.#res) {
+            if (s in resources) {
                 return s;
             }
         }
         return 'en';
     }
-    #select(lang) {
-        this.res = LanguagePage.get_resource(lang);
+
+    constructor(db) {
+        this.db = db;
+        this.lang = db.lang !== '' ? db.lang : LanguagePage.#get_default_lang();
+        const lang_select = document.getElementById('setting-language');
+        lang_select.value = this.lang;
+        lang_select.addEventListener('change', e => {
+            this.lang = e.currentTarget.value;
+            this.res = LanguagePage.#get_resource(this.lang);
+            this.update();
+            this.db.config_save('lang', this.lang);
+        });
+        if (db.lang !== '') db.config_save('lang', this.lang);
+        this.res = LanguagePage.#get_resource(this.lang);
+    }
+    update() {
         document.body.setAttribute('lang', this.res.UI);
         LanguagePage.#update_text(document.body, this.res);
-        this.db.config_save('lang', lang);
     }
+    get_speech_lang() {
+        return speech_langs[this.res['speech-lang']]
+    }
+    show() {
+    }
+    hide() {
+    }
+
     static #update_text(node, res) {
         for (const elem of node.childNodes) {
             if (elem instanceof Element) {
@@ -778,46 +625,38 @@ document.addEventListener('DOMContentLoaded', async () =>
 {
     const db = await DataHolder.open();
 
-    const ja_reading = new JaReading();
     const player = new WavPlayer(SAMPLING_RATE, 0.4, 0.9);
     const lang_page = new LanguagePage(db);
     const dialog = new FileDialogSet(lang_page);
     const voices_page = new VoicesPage(db, await db.get_voices(), player, lang_page, dialog);
-    const tts_page = new TtsPage(db, voices_page.voices, dialog, player, ja_reading);
-    const config_page = new ConfigPage(db, ja_reading, dialog);
+    const tts_page = new TtsPage(db, voices_page.voices, dialog, lang_page.get_speech_lang(), player);
+    const config_page = new ConfigPage(db, dialog);
 
+    lang_page.update();
+    {
+        const lang = lang_page.get_speech_lang();
+        await lang.load();
+        lang.to_phonemic.load(await db.get_dic(lang.tag));
+    }
     voices_page.on_list_change = () => tts_page.refresh_icon = true;
 
-    {
-        const [alias, dic] = await db.get_ja_dic();
-        ja_reading.load(alias, dic);
-        document.getElementById('dic-ja-word-count').textContent = ja_reading.count;
-        config_page.set_button_hilight('dic-import-ja', ja_reading.count === 0);
-//#if_module
-        config_page.set_button_hilight('dic-init-ja', ja_reading.count === 0);
-//#endif
-    }
+    const pages = {
+        tts: tts_page,
+        voices: voices_page,
+        config: config_page,
+        language: lang_page,
+    };
 
     const tab = new TabPage((prev, key) => {
         const btn_key = 'sub-' + key;
         for (const btn of document.getElementById('sub').getElementsByTagName('button')) {
             btn.style.display = btn.classList.contains(btn_key) ? '' : 'none';
         }
-        if (prev === 'tts') {
-            tts_page.hide();
-        } else if (prev === 'voices') {
-            voices_page.hide();
-        }
-        if (key === 'tts') {
-            tts_page.show();
-        } else if (key === 'voices') {
-            voices_page.show();
-        }
+        const prev_page = pages[prev];
+        if (prev_page) prev_page.hide();
+        const current_page = pages[key];
+        if (current_page) current_page.show();
     });
-    if (ja_reading.count > 0) {
-        tab.init('tts');
-    } else {
-        tab.init('config');
-    }
+    tab.init('tts');
     document.body.style.display = 'grid';
 });

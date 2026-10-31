@@ -467,7 +467,7 @@ button:not(:disabled):hover {
 .tts-voice {
     cursor: pointer;
 }
-#tts-text-src, #tts-text-phonetic {
+#tts-text-src, #tts-text-phonemic {
     width: 100%;
 }
 

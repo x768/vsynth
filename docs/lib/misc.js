@@ -1,3 +1,30 @@
+export function parse_dictionary(src)
+{
+    let is_alias = true;
+    const alias = [];
+    const words = [];
+    for (const line of src.split("\n")) {
+        if (line === '=') {
+            is_alias = false;
+        } else if (is_alias) {
+            const a = line.split('|');
+            if (a.length >= 2) {
+                const obj = {s:a[0], d:a[1]};
+                alias.push(obj);
+            }
+        } else {
+            const a = line.split('|');
+            if (a.length >= 3) {
+                const w = a.shift();
+                const k = a.shift();
+                const obj = {w:w, k:k, v:a};
+                words.push(obj);
+            }
+        }
+    }
+    return [alias, words];
+}
+
 export class Compressor
 {
     constructor(gain, limit) {

@@ -1,4 +1,4 @@
-import { Compressor } from '../lib/wavfile.js';
+import { Compressor } from '../lib/misc.js';
 
 export class WavPlayer
 {

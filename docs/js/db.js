@@ -1,5 +1,3 @@
-import { JaReading } from '../lib/text_ja.js';
-
 export class DataHolder
 {
     static async open() {
@@ -17,12 +15,15 @@ export class DataHolder
                 this.db.createObjectStore('config', { keyPath: 'key' });
                 this.db.createObjectStore('voices', { keyPath: 'order' });
                 this.db.createObjectStore('projects', { keyPath: 'name' });
+
                 this.db.createObjectStore('ja_alias', { keyPath: 's' });
-                this.db.createObjectStore('ja_dic', { keyPath: 'w' });
+                this.db.createObjectStore('ja_words', { keyPath: 'w' });
+                this.db.createObjectStore('en_alias', { keyPath: 's' });
+                this.db.createObjectStore('en_words', { keyPath: 'w' });
             });
         });
     }
-    static #to_promise(request) {
+    static to_promise(request) {
         return new Promise((resolve, reject) => {
             request.addEventListener('error', e => {
                 reject(e);
@@ -51,8 +52,8 @@ export class DataHolder
         this.lang = '';
     }
     async init() {
-        const store = this.#open_read('config');
-        const list = await DataHolder.#to_promise(store.getAll());
+        const store = this.open_read('config');
+        const list = await DataHolder.to_promise(store.getAll());
         for (const row of list) {
             this[row.key] = row.value;
         }
@@ -67,7 +68,7 @@ export class DataHolder
     get_filename_seq() {
         return DataHolder.split_format(this.filename_seq);
     }
-    #open_read(name) {
+    open_read(name) {
         const tr = this.db.transaction(name, 'readonly');
         if (name instanceof Array) {
             return name.map(n => tr.objectStore(n));
@@ -75,7 +76,7 @@ export class DataHolder
             return tr.objectStore(name);
         }
     }
-    #open_rw(name) {
+    open_rw(name) {
         const tr = this.db.transaction(name, 'readwrite');
         if (name instanceof Array) {
             return name.map(n => tr.objectStore(n));
@@ -83,14 +84,16 @@ export class DataHolder
             return tr.objectStore(name);
         }
     }
+
     config_save(key, value) {
-        const store = this.#open_rw('config');
+        const store = this.open_rw('config');
         store.put({key, value});
         this[key] = value;
     }
+
     async get_voices() {
-        const store = this.#open_read('voices');
-        const list = await DataHolder.#to_promise(store.getAll());
+        const store = this.open_read('voices');
+        const list = await DataHolder.to_promise(store.getAll());
         list.sort((a, b) => a.order - b.order);
         const ret = [];
         for (const row of list) {
@@ -126,12 +129,12 @@ export class DataHolder
         return v;
     }
     save_voice(voice, index) {
-        const store = this.#open_rw('voices');
+        const store = this.open_rw('voices');
         store.put({order: index, value: DataHolder.#trim_voice_data(voice)});
     }
     async save_all_voices(voices) {
-        const store = this.#open_rw('voices');
-        const count = await DataHolder.#to_promise(store.count());
+        const store = this.open_rw('voices');
+        const count = await DataHolder.to_promise(store.count());
 
         for (let i = 0; i < voices.length; i++) {
             store.put({order: i, value: DataHolder.#trim_voice_data(voices[i])});
@@ -142,59 +145,65 @@ export class DataHolder
     }
 
     async get_all_projects() {
-        const store = this.#open_read('projects');
-        const list = await DataHolder.#to_promise(store.getAll());
+        const store = this.open_read('projects');
+        const list = await DataHolder.to_promise(store.getAll());
         list.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
         return list;
     }
     save_project(name, value) {
-        const store = this.#open_rw('projects');
+        const store = this.open_rw('projects');
         store.put({name, value});
     }
     delete_project(name) {
-        const store = this.#open_rw('projects');
+        const store = this.open_rw('projects');
         store.delete(name);
     }
 
-    async get_ja_dic() {
-        const [alias_store, dic_store] = this.#open_read(['ja_alias', 'ja_dic']);
-        return await Promise.all([
-            DataHolder.#to_promise(alias_store.getAll()),
-            DataHolder.#to_promise(dic_store.getAll())
+    async get_dic_count(lang) {
+        const [alias_store, words_store] = this.open_read([`${lang}_alias`, `${lang}_words`]);
+        const c = await Promise.all([
+            DataHolder.to_promise(alias_store.count()),
+            DataHolder.to_promise(words_store.count())
         ]);
+        return c[0] + c[1];
     }
 
-    async get_ja_dic_as_file() {
-        const [alias_src, dic_src] = await this.get_ja_dic();
+    async get_dic(lang) {
+        const [alias_store, words_store] = this.open_read([`${lang}_alias`, `${lang}_words`]);
+        return await Promise.all([
+            DataHolder.to_promise(alias_store.getAll()),
+            DataHolder.to_promise(words_store.getAll())
+        ]);
+    }
+    async get_dic_as_file(lang) {
+        const [alias_src, words_src] = await this.get_dic(lang);
         const alias = alias_src.map(row => row.s + "|" + row.d + "\n").sort();
-        const dic = dic_src.map(row => [row.w, row.k, ...row.v].join("|") + "\n").sort();
+        const words = words_src.map(row => [row.w, row.k, ...row.v].join("|") + "\n").sort();
 
         const ret = [];
         for (const line of alias) {
             ret.push(line);
         }
         ret.push("=\n");
-        for (const line of dic) {
+        for (const line of words) {
             ret.push(line);
         }
         return new Blob(ret);
     }
-
-    async set_ja_dic_file(src) {
-        const [alias_store, dic_store] = this.#open_rw(['ja_alias', 'ja_dic']);
+    async set_dic(lang, dic) {
+        const [alias_store, words_store] = this.open_rw([`${lang}_alias`, `${lang}_words`]);
 
         await Promise.all([
-            DataHolder.#to_promise(alias_store.clear()),
-            DataHolder.#to_promise(dic_store.clear())
+            DataHolder.to_promise(alias_store.clear()),
+            DataHolder.to_promise(words_store.clear())
         ]);
 
-        const [alias, dic] = JaReading.parse(src);
-        for (const obj of alias) {
+        for (const obj of dic[0]) {
             alias_store.put(obj);
         }
-        for (const obj of dic) {
-            dic_store.put(obj);
+        for (const obj of dic[1]) {
+            words_store.put(obj);
         }
-        return [alias, dic];
+        return dic;
     }
 }

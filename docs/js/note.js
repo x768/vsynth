@@ -198,6 +198,7 @@ export class SpeechNote
         } else if (v < 0.7) {
             c += "\u0324"; // mrm
         } else if (v < 1.3) {
+            // do nothing
         } else if (v < 1.7) {
             c += "\u0330"; // crk
         } else {
@@ -206,7 +207,7 @@ export class SpeechNote
         return c;
     }
     static #get_consonant(fmt, v) {
-        let c = '';
+        let c;
         const r = fmt.r >= 0.5;
         if (fmt.L > 0.8) { // blb/lbd
             if (fmt.n > 0.8) {

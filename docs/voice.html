@@ -63,7 +63,7 @@
 <template id="tts-editor-template">
 <div id="tts-editor">
 <div><input type="text" id="tts-text-src" value=""></div>
-<div><input type="text" id="tts-text-phonetic" value="" spellcheck="false"></div>
+<div><input type="text" id="tts-text-phonemic" value="" spellcheck="false"></div>
 </div>
 </template>
 </div>
@@ -96,13 +96,10 @@
 <tr><th data-res="filename-single"></th><td><input type="text" id="wav-filename-single" size="50" autocomplete="off" spellcheck="false">.wav</td></tr>
 <tr><th data-res="filename-seq"></th><td><input type="text" id="wav-filename-seq" size="50" autocomplete="off" spellcheck="false">.wav</td></tr>
 </table>
-<h1 data-res="dictionary-ja"></h1>
-<div>
-<button id="dic-import-ja" data-res="import-file"></button>
-<button id="dic-export-ja" data-res="export-file"></button>
-<!-- #if_module --><button id="dic-init-ja" data-res="load-dic"></button><!-- #endif -->
-<span id="dic-ja-word-count"></span> words
-</div>
+<h1 data-res="dictionary"></h1>
+<table>
+<tbody id="config-dic-list"></tbody>
+</table>
 <h1 data-res="initialize-db"></h1>
 <p class="warning" data-res="delete-all"></p>
 <div><button id="initialize-db" data-res="execute"></button></div>
