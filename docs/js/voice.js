@@ -657,11 +657,10 @@ document.addEventListener('DOMContentLoaded', async () =>
     const config_page = new ConfigPage(db, dialog);
 
     lang_page.update();
-    {
-        const lang = lang_page.get_speech_lang();
-        await lang.load();
-        lang.to_phonemic.load(await db.get_dic(lang.tag));
-    }
+    const speech_lang = lang_page.get_speech_lang();
+    await speech_lang.load();
+    speech_lang.to_phonemic.load(await db.get_dic(speech_lang.tag));
+
     voices_page.on_list_change = () => tts_page.refresh_icon = true;
 
     const pages = {
@@ -681,6 +680,10 @@ document.addEventListener('DOMContentLoaded', async () =>
         const current_page = pages[key];
         if (current_page) current_page.show();
     });
-    tab.init('tts');
+    if (speech_lang.to_phonemic.count > 0) {
+        tab.init('tts');
+    } else {
+        tab.init('config');
+    }
     document.body.style.display = 'grid';
 });
