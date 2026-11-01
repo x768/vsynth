@@ -632,10 +632,10 @@ export class ToPhonemic
                 } else {
                     this.#roman_reading(ret, src, begin, end);
                 }
-            } else if (ToPhonemic.is_digit(chc) || (i + 1 < src.length && chc == 0x2E && ToPhonemic.is_digit(src[i + 1].charCodeAt(0)))) {
+            } else if (ToPhonemic.is_digit(chc) || (i + 1 < src.length && chc === 0x2E && ToPhonemic.is_digit(src[i + 1].charCodeAt(0)))) {
                 const begin = i;
                 i++;
-                let digits = chc === 0x30 || chc == 0x2E; // 0 or .
+                let digits = chc === 0x30 || chc === 0x2E; // 0 or .
                 while (i < src.length) {
                     const c = src[i].charCodeAt(0);
                     if (c === 0x2D) { // -

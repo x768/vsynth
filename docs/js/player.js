@@ -2,6 +2,12 @@ import { Compressor } from '../lib/misc.js';
 
 export class WavPlayer
 {
+    /**
+     * Sound player 16bit monoral only
+     * @param {number} sample_rate in Hz, 24000 or 48000 are recommended
+     * @param {number} gain 
+     * @param {number} limit 0 ... 1
+     */
     constructor(sample_rate, gain, limit) {
         this.sample_rate = sample_rate;
         this.gain = gain;
@@ -17,6 +23,11 @@ export class WavPlayer
         if (!this.ctx) this.ctx = new AudioContext();
         return ((this.ctx.currentTime - this.start_time) * this.sample_rate) | 0;
     }
+    /**
+     * 
+     * @param {Float32Array} src audio buffer
+     * @returns {Promise<void>} wait until the sound stops.
+     */
     async play(src) {
         if (!this.ctx) this.ctx = new AudioContext();
         const { promise, resolve } = Promise.withResolvers();
@@ -32,6 +43,11 @@ export class WavPlayer
 
         return await promise;
     }
+    /**
+     * 
+     * @param {() => Float32Array} on_request returns next audio buffer or null if it terminates.
+     * @returns {Promise<void>} wait until the sound stops.
+     */
     async play_seq(on_request) {
         if (!this.ctx) this.ctx = new AudioContext();
         const { promise, resolve } = Promise.withResolvers();
@@ -83,6 +99,9 @@ export class WavPlayer
         }
     }
 
+    /**
+     * stop playing sound immediately
+     */
     stop() {
         if (this.source) {
             this.source.stop();

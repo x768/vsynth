@@ -115,7 +115,7 @@ export class DataHolder
 
     /**
      * 
-     * @returns {object[]} Array of voice profile
+     * @returns {Promise<object[]>} Array of voice profile
      */
     async get_voices() {
         const store = this.#open_read('voices');

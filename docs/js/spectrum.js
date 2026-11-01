@@ -1,5 +1,11 @@
 const WINDOW_WIDTH = 1024;
 
+/**
+ * 
+ * @param {HTMLCanvasElement} canvas 
+ * @param {Float32Array} buf audio buffer
+ * @returns {void}
+ */
 export function show_waveform(canvas, buf)
 {
     const w = buf.length >> 5;
@@ -69,6 +75,12 @@ function fft(b1, tmp, sint)
         p = p >> 1;
     }
 }
+/**
+ * 
+ * @param {HTMLCanvasElement} canvas 
+ * @param {Float32Array} buf audio buffer
+ * @returns {void}
+ */
 export function show_spectrum(canvas, buf)
 {
     function create_window(len) {

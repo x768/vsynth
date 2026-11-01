@@ -9,6 +9,10 @@ import { create_icon, $e } from './utils.js';
 
 class TabPage
 {
+    /**
+     * 
+     * @param {(string, string) => void} on_tabchange 
+     */
     constructor(on_tabchange) {
         this.current_page = '';
         this.on_tabchange = on_tabchange;
@@ -25,6 +29,10 @@ class TabPage
             });
         }
     }
+    /**
+     * set current tabpage
+     * @param {string} page 
+     */
     init(page) {
         this.#select_tabpage(page);
         this.on_tabchange(this.current_page, page);
@@ -78,7 +86,7 @@ class VoicesPage
     /**
      * 
      * @param {DataHolder} db 
-     * @param {object} voices 
+     * @param {object[]} voices 
      * @param {WavPlayer} player 
      * @param {LanguagePage} lang 
      * @param {FileDialogSet} dialog 
@@ -615,6 +623,9 @@ class LanguagePage
         if (db.lang !== '') db.config_save('lang', this.lang);
         this.res = LanguagePage.#get_resource(this.lang);
     }
+    /**
+     * Apply current language setting on all pages
+     */
     update() {
         document.body.setAttribute('lang', this.res.UI);
         LanguagePage.#update_text(document.body, this.res);

@@ -1,16 +1,20 @@
-# About NinbosVoice
+# NinbosVoice Speech Synthesizer
+
+## 特徴
 
 - JavaScriptのみで実装した音声合成ソフトウェア
 - 肉声不使用・ルールベースのロボットボイス
 - 非ユーザーフレンドリー、記法覚えてね
 
-# 使う
+## Webアプリを使う
 
 https://x768.github.io/vsynth/
 
 PC版の Chrome / Firefox に対応しています。
 
-# ローカルでhttpサーバーを立てる
+## ローカルでhttpサーバーを立てて使う
+
+例
 
 ```sh
 $ cd docs
@@ -19,7 +23,7 @@ $ python -m http.server 8000
 
 `http://localhost:8000` をブラウザで開くと使えます。
 
-# ローカルファイルを開く
+## ローカルファイルを開く
 
 ローカルではESModuleが動作しないため、ESModuleを除去するスクリプトを実行します。
 
@@ -29,9 +33,9 @@ $ python make.py
 
 `file:///vsynthのパス/local/index.html` をブラウザで開くと使えます。
 
-# node.js で使う
+## node.js で使う
 
-## 注意
+### 注意
 
 1. ベータ版のため、破壊的変更が頻繁に入ります。
 2. ライセンスはGPLです。
@@ -67,7 +71,7 @@ writeFileSync('ohayou.wav', wav.create([buf]));
 npmを使用せず、ファイル単体をimportしても動作します。
 sample.jsをご覧ください。
 
-# 謝辞
+## 謝辞
 
 本ソフトウェアは、 eSpeak NG のソースコード・音声データの一部を改変して利用しています。
 
