@@ -263,6 +263,7 @@ export class TtsPage
         });
         this.edit_phonemic.addEventListener('keydown', e => {
             if (e.key === 'Enter') {
+                this.edit_text.focus(); // fire change event
                 this.#enter_line_done();
                 this.#enable_player_buttons();
             } else if (e.key === 'Escape') {
