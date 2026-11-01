@@ -9,8 +9,8 @@ const src = 'おはようございます。';
 
 const to_phonemic = new ja.ToPhonemic();
 to_phonemic.load(parse_dictionary(readFileSync(get_dictionary_path('dict_ja.txt'), {encoding:'utf-8'})));
-const latin = to_phonemic.conv(src);
-const pfn = new ja.ToSound({voiceless: true, reduce_pitch: true}).conv(latin);
+const phonemic = to_phonemic.conv(src);
+const pfn = new ja.ToSound({voiceless: true, reduce_pitch: true}).conv(phonemic);
 
 const synth = new VoiceSynth(VoiceSynth.default_voice());
 synth.set_pfn(pfn, 480, 4800, 400, 1);
