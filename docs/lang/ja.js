@@ -4,7 +4,7 @@ export const params = {
     accent: 400,
 };
 export const variants = {
-    'std': {
+    '_': {
         name: '標準語',
         voiceless: true,
         reduce_pitch: true,

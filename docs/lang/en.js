@@ -4,8 +4,8 @@ export const params = {
     accent: 400,
 };
 export const variants = {
-    'ga': {
-        name: 'GA',
+    '_': {
+        name: 'General American',
     },
 };
 

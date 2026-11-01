@@ -721,10 +721,7 @@ export class TtsPage
         item.phonemic = this.edit_phonemic.value;
         try {
             const lang = speech_langs[item.lang];
-            const c = new lang.ToSound({
-                voiceless: true,
-                reduce_pitch: true,
-            });
+            const c = new lang.ToSound(lang.variants['_']);
             item.pfn = c.conv(this.edit_phonemic.value);
         } catch (e) {
             console.log(e);
@@ -781,7 +778,7 @@ export class TtsPage
     }
     #enter_line_done() {
         const item = this.editing_item;
-        const idx = this.items.indexOf(item);
+        const idx = item.get_index();
         if (idx === this.items.length - 1) {
             this.#add_item(new TtsItem(this.voices[0], this.speech_lang, null));
             this.push_undo({type:'del', i:this.items.length - 1});
