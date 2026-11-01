@@ -61,16 +61,16 @@ class VoicesPage
 {
     // 皆さんこんにちは
     static SAMPLE_JA = [
-        'fLnv +30 fv 7 ! 5 p0 0 +10 A 7 A8',
-        'Fnv +60 f5o9v 7 ! 5 p',
-        'Fv0c5s +40 c5s +10 v0c0 +10 f5o9v 7 ! 5 p0',
-        '=0.8 f0nv 7 ! 5 p0',
-        'L7o2v0c +40 v0 +10 o5L7v 7 ! 5 p0',
-        '=0.8 Fnv 7 ! 5 p5',
-        'fnv +30 fv 7 ! 5 p5',
-        'Fv0cs +20 fv0c3s +40 v0 +10 fv 7 ! 5 p5',
-        'f5L8v +50 f5o9v 7 ! 5 p5 7 A8',
-        '.'];
+        ' fLnv 30 fv %7 ! | %5 p0 | 10 A %7 A8',
+        ' Fnv 60 f5o9v %7 ! | %5 p',
+        ' Fv0c5s 40 c5s 10 v0c0 10 f5o9v %7 ! | %5 p0',
+        ' =0.8 f0nv %7 ! | %5 p0',
+        ' L7o2v0c 40 v0 10 o5L7v %7 ! | %5 p0',
+        ' =0.8 Fnv %7 ! | %5 p5',
+        ' fnv 30 fv %7 ! | %5 p5',
+        ' Fv0cs 20 fv0c3s 40 v0 10 fv %7 ! | %5 p5',
+        ' f5L8v 50 f5o9v %7 ! | %5 p5 %7 A8',
+        ' .'];
 
     static #create_number(key, i, min, max) {
         return $e('input', {type:'number', min, max, step:'10', size:'4', 'data-key':key, 'data-i':i});

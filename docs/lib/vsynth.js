@@ -575,7 +575,7 @@ export class VoiceSynth
     }
 
     static #parse_frac(src) {
-        if (src === '' || src === '^') {
+        if (src === '') {
             return 1;
         } else {
             let f = (src.charCodeAt(0) - 0x30) * 0.1;
@@ -604,32 +604,47 @@ export class VoiceSynth
         let total_fwd = 0;
         let first = true;
 
-        for (let chunk of src_list) {
+        for (const chunk of src_list) {
             let fwd = 0;
             let off = 0;
             let sy_len = 1;
-            const i_note = chunk.indexOf('|');
-            if (i_note >= 0) {
-                const note = chunk.substring(0, i_note).trim();
-                ret.push({cmd:'chunk', fwd:total_fwd, off:0, val:note});
-                chunk = chunk.substring(i_note + 1);
-            } else {
-                ret.push({cmd:'chunk', fwd:total_fwd, off:0, val:null});
-            }
-            if (first) {
-                ret.push({cmd: 'A', fwd:total_fwd, off:0, val:0});
-                first = false;
-            }
-            for (const seg of chunk.split(' ')) {
-                if (seg.length === 0) continue;
+            let back = -1;
+            let head = null;
 
-                const c = seg[0];
-                if (c === '=') {
+            for (const seg of chunk.split(' ')) {
+                if (head === null) {
+                    head = {cmd:'chunk', fwd:total_fwd, off:0, val:seg.length > 0 ? seg : null};
+                    ret.push(head);
+                    if (first) {
+                        ret.push({cmd: 'A', fwd:total_fwd, off:0, val:0});
+                        first = false;
+                    }
+                    continue;
+                }
+
+                if (seg.length === 0) continue;
+                const ch = seg[0];
+                if (ch === '=') {
                     sy_len = Number.parseFloat(seg.substring(1));
-                } else if (c === '+' || c === '-') {
+                } else if (seg === '$') {
+                    back = ret.length;
+                    off = 0;
+                } else if (ch === '%') {
+                    if (back >= 0) throw new Error('dangling $');
+                    fwd = VoiceSynth.#parse_frac(seg.substring(1));
+                    off = 0;
+                } else if (ch >= '0' && ch <= '9') {
                     off += (Number.parseInt(seg) * MILLISEC_T) | 0;
-                } else if (c >= '0' && c <= '9' || c === '^') {
-                    fwd = VoiceSynth.#parse_frac(seg);
+                } else if (seg === '|') {
+                    if (back >= 0) {
+                        const fwd2 = total_fwd + sy_len;
+                        for (let i = back; i < ret.length; i++) {
+                            ret[i].fwd = fwd2;
+                            ret[i].off -= off;
+                        }
+                        back = -1;
+                    }
+                    fwd = 0;
                     off = 0;
                 } else if (seg === '.') {
                     ret.push({cmd: 'A', fwd:total_fwd, off:0, val:0});
@@ -690,6 +705,7 @@ export class VoiceSynth
                     }
                 }
             }
+            if (back >= 0) throw new Error('dangling $');
             total_fwd += sy_len;
         }
         ret.push({cmd:'chunk', fwd:total_fwd, off:0, val:null});

@@ -1029,17 +1029,17 @@ class Mola
         }
     }
     toString() {
-        let s = this.disp + '|';
-        if (this.len !== 1) s += '=' + this.len;
+        let s = this.disp;
+        if (this.len !== 1) s += ' =' + this.len;
         if (this.c !== '') {
             s += ' ' + this.c;
         }
         if (this.v !== '') {
             s += ' ' + this.v;
         }
-        s += ' 7 ! 5 p';
+        s += ' %7 ! | %5 p';
         if (this.pitch < 10) s += this.pitch;
-        if (this.amp !== '') s += ' ' + this.amp;
+        if (this.amp !== '') s += ' | ' + this.amp;
         return s;
     }
 }
@@ -1053,42 +1053,42 @@ export class ToSound
 
         const v = this.voiced;
         this.consonant = {
-            k: 'o2v0c +40 v0 +10',
-            ky: 'eo2v0c +40 v0 +10',
-            kw: 'o2L5v0c +40 v0 +10',
-            g: 'o2' + v + 'c +30',
-            gy: 'ef0' + v + 'c +20',
-            gw: 'f0L5' + v + 'c +20',
-            G: 'o4' + v + 'c7 +20 c7 +30',
-            Gy: 'ef0' + v + 'c7 +20 c7 +20',
-            'g~': 'o6n' + v + ' +60',
-            'g~y': 'eo6n' + v + ' +60',
-            s: 'Fv0c5s +40 ! +30',
-            sh: 'Fv0c5s +20 fv0c5s +60',
-            z: 'F' + v + 'c4s +40 c4s +10',
-            j: 'F' + v + 'c3s +20 f' + v + 'c3s +60',
-            t: 'Fv0c +40 v0 +20',
-            ts: 'Fv0c +10 c5 +40 c5 +10 v0 +10',
-            ch: 'Fv0cs +20 fv0c3s +40 v0 +10',
-            d: 'F' + v + 'c +40',
-            n: 'Fn' + v + ' +60',
-            ny: 'fn' + v + ' +30',
-            p: 'Lv0c +40 v0 +20',
-            py: 'fLv0c +40 fc0v0 +20',
-            h: 'v0 +50 v0 +20',
-            b: 'L' + v + 'c +40',
-            by: 'fL' + v + 'c +40',
-            v: 'L' + v + 'c8 +20 c8 +30',
-            vy: 'fL' + v + 'c8 +20 c8 +30',
-            hy: 'fv0c7 +20 v0c7 +40',
-            f: 'Lv0c5 +30 c5 +10 v0 +10',
-            m: 'Ln' + v + ' +20 ! +40',
-            my: 'fLn' + v + ' +30',
-            y: 'f' + v + ' +70',
-            r: 'F' + v + 'c4 +10 c0 +60',
-            ry: 'Fe' + v + 'c4 +20',
-            w: 'L' + v + ' +50',
-            q: 'g +40 g +30',
+            k: 'o2v0c 40 v0 10',
+            ky: 'eo2v0c 40 v0 10',
+            kw: 'o2L5v0c 40 v0 10',
+            g: 'o2' + v + 'c 30',
+            gy: 'ef0' + v + 'c 20',
+            gw: 'f0L5' + v + 'c 20',
+            G: 'o4' + v + 'c7 20 c7 30',
+            Gy: 'ef0' + v + 'c7 20 c7 20',
+            'g~': 'o6n' + v + ' 60',
+            'g~y': 'eo6n' + v + ' 60',
+            s: 'Fv0c5s 40 ! 30',
+            sh: 'Fv0c5s 20 fv0c5s 60',
+            z: 'F' + v + 'c4s 40 c4s 10',
+            j: 'F' + v + 'c3s 20 f' + v + 'c3s 60',
+            t: 'Fv0c 40 v0 20',
+            ts: 'Fv0c 10 c5 40 c5 10 v0 10',
+            ch: 'Fv0cs 20 fv0c3s 40 v0 10',
+            d: 'F' + v + 'c 40',
+            n: 'Fn' + v + ' 60',
+            ny: 'fn' + v + ' 30',
+            p: 'Lv0c 40 v0 20',
+            py: 'fLv0c 40 fc0v0 20',
+            h: 'v0 50 v0 20',
+            b: 'L' + v + 'c 40',
+            by: 'fL' + v + 'c 40',
+            v: 'L' + v + 'c8 20 c8 30',
+            vy: 'fL' + v + 'c8 20 c8 30',
+            hy: 'fv0c7 20 v0c7 40',
+            f: 'Lv0c5 30 c5 10 v0 10',
+            m: 'Ln' + v + ' 20 ! 40',
+            my: 'fLn' + v + ' 30',
+            y: 'f' + v + ' 70',
+            r: 'F' + v + 'c4 10 c0 60',
+            ry: 'Fe' + v + 'c4 20',
+            w: 'L' + v + ' 50',
+            q: 'g 40 g 30',
         };
         this.vwl_to_cns = {
             k: 'L',
@@ -1116,8 +1116,8 @@ export class ToSound
         };
         for (const k of 'aiueo') {
             const vwl = this.vowel[k];
-            this.vowel['y' + k] = k === 'i' ? vwl : 'f' + ToSound.get_v(vwl, 'L') + v + ' +20 ' + vwl;
-            this.vowel['w' + k] = ToSound.get_v(vwl, 'f') + 'L' + v + ' +20 ' + vwl;
+            this.vowel['y' + k] = k === 'i' ? vwl : 'f' + ToSound.get_v(vwl, 'L') + v + ' 20 ' + vwl;
+            this.vowel['w' + k] = ToSound.get_v(vwl, 'f') + 'L' + v + ' 20 ' + vwl;
         }
     }
 
@@ -1154,11 +1154,11 @@ export class ToSound
                             ret[i].pitch = 6;
                         }
                     }
-                    if (prev_mola.amp === '') prev_mola.amp = '7 A8';
+                    if (prev_mola.amp === '') prev_mola.amp = '%7 A8';
                     prev_mola = null;
                     prev_q = false;
                 }
-                ret.push('|.');
+                ret.push(' .');
             }
             const cns = m[1] || '';
             const vwl = m[2] || '';
@@ -1269,7 +1269,7 @@ export class ToSound
                 prev_mola.set_vowel_voiceless(mola);
             }
             if (!prev_mola) {
-                mola.amp = '0 +10 A 7 A8';
+                mola.amp = '10 A %7 A8';
             }
             ret.push(mola);
             prev_mola = mola;
@@ -1278,7 +1278,7 @@ export class ToSound
             if (this.voiceless) {
                 prev_mola.set_vowel_voiceless(null);
             }
-            if (prev_mola.amp === '') prev_mola.amp = '7 A8';
+            if (prev_mola.amp === '') prev_mola.amp = '%7 A8';
 
             if (this.reduce_pitch && prev_mola.pitch > 0) {
                 for (let i = edge; i < ret.length && ret[i].pitch === 10; i++) {
