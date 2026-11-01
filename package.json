@@ -1,17 +1,34 @@
 {
-  "name": "sample",
-  "version": "1.0.0",
-  "description": "VoiceSynth sample",
-  "main": "sample.js",
-  "directories": {
-    "pub/lib": "pub/lib"
+  "name": "ninbosvoice-tts",
+  "version": "0.0.0",
+  "description": "A speech synthesizer works on a web browser.",
+  "main": "./docs/lib/index.js",
+  "exports": {
+    ".": "./docs/lib/index.js",
+    "./lib/*": "./docs/lib/*.js",
+    "./lib/*.js": "./docs/lib/*.js",
+    "./lang/*": "./docs/lang/*.js",
+    "./lang/*.js": "./docs/lang/*.js",
+    "./package.json": "./package.json"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "module",
-  "author": "",
-  "license": "GPLv3",
+  "author": "x768",
+  "license": "GPL-3.0",
+  "files": [
+    "./docs/files/*",
+    "./docs/lib/*.js",
+    "./docs/lang/*.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/x768/vsynth.git"
+  },
+  "bugs": {
+    "url": "https://github.com/x768/vsynth/issues"
+  },
+  "homepage": "https://github.com/x768/vsynth",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.13.0",

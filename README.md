@@ -1,47 +1,74 @@
 # About NinbosVoice
 
-NinbosVoiceは、JavaScriptで実装した音声合成ソフトウェアです。
+- JavaScriptのみで実装した音声合成ソフトウェア
+- 肉声不使用・ルールベースのロボットボイス
+- 非ユーザーフレンドリー、記法覚えてね
 
-NinbosVoice is a speech synthesizer works on a web browser.
-English speech synthesis is not yet available.
+# 使う
 
 https://x768.github.io/vsynth/
 
-# Features
+PC版の Chrome / Firefox に対応しています。
 
-- 肉声不使用のロボットボイス
-- 100%ルールベースなので棒読み
-- 非ユーザーフレンドリー、記法覚えてね
+# ローカルでhttpサーバーを立てる
 
-# Using from node.js
+```sh
+$ cd docs
+$ python -m http.server 8000
+```
 
-音声合成に関する処理は、`docs/lib/` `docs/lang/` に入っています。
-使用例は、`sample.js`をご覧ください。
+`http://localhost:8000` をブラウザで開くと使えます。
 
-ライセンスは GPL ですので、利用の際はご注意ください。
+# ローカルファイルを開く
 
-# Use offline
+ローカルではESModuleが動作しないため、ESModuleを除去するスクリプトを実行します。
 
-本ソフトウェアは、辞書読み込み以外は外部と通信していないため、オフラインで使用することもできます。
+```sh
+$ python make.py
+```
 
-## ローカルでhttpサーバーを立てる
+`file:///vsynthのパス/local/index.html` をブラウザで開くと使えます。
 
-`docs/` をルートにしてhttpサーバーを立てることで、ローカルで動かすことができます。
+# node.js で使う
 
-## ESModule未使用版を直接開く
+## 注意
 
-`make.py` を実行すると、ESModuleを使わないファイルが `local/` に生成されるので、直接実行できます。
-初回起動時の辞書読み込みは、事前にダウンロードした `dict_ja.txt` を手動で読み込んでください。
+1. ベータ版のため、破壊的変更が頻繁に入ります。
+2. ライセンスはGPLです。
 
-# WARNING
+```sh
+$ npm install github:x768/vsynth
+```
 
-本ソフトウェアはベータ版です。
-作成したデータが使用できなくなる可能性があることをご了承ください。
+```js
+import { readFileSync, writeFileSync } from 'fs';
+import { SAMPLING_RATE, VoiceSynth } from 'ninbosvoice-tts/lib/vsynth.js';
+import { parse_dictionary, WavFile } from 'ninbosvoice-tts/lib/misc.js';
+import { get_dictionary_path } from 'ninbosvoice-tts/lib/helper.js';
+import * as ja from 'ninbosvoice-tts/lang/ja.js';
 
-# Acknowledgments
+
+const src = 'おはようございます。';
+
+const to_phonemic = new ja.ToPhonemic();
+to_phonemic.load(parse_dictionary(readFileSync(get_dictionary_path('dict_ja.txt'), {encoding:'utf-8'})));
+const latin = to_phonemic.conv(src);
+const pfn = new ja.ToSound({voiceless: true, reduce_pitch: true}).conv(latin);
+
+const synth = new VoiceSynth(VoiceSynth.default_voice());
+synth.set_pfn(pfn, 480, 4800, 400, 1);
+const buf = new Float32Array(synth.get_remaining());
+synth.generate(buf);
+
+const wav = new WavFile(SAMPLING_RATE, 1, 1);
+writeFileSync('ohayou.wav', wav.create([buf]));
+```
+
+npmを使用せず、ファイル単体をimportしても動作します。
+sample.jsをご覧ください。
+
+# 謝辞
 
 本ソフトウェアは、 eSpeak NG のソースコード・音声データの一部を改変して利用しています。
-
-This product uses modified portions of the eSpeak NG source code and audio data.
 
 https://github.com/espeak-ng/espeak-ng/

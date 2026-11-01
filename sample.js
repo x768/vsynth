@@ -1,13 +1,14 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { SAMPLING_RATE, VoiceSynth } from './docs/lib/vsynth.js';
 import { parse_dictionary, WavFile } from './docs/lib/misc.js';
+import { get_dictionary_path } from './docs/lib/helper.js';
 import * as ja from './docs/lang/ja.js';
 
 
 const src = 'おはようございます。';
 
 const to_phonemic = new ja.ToPhonemic();
-to_phonemic.load(parse_dictionary(readFileSync('./docs/files/dict_ja.txt', {encoding:'utf-8'})));
+to_phonemic.load(parse_dictionary(readFileSync(get_dictionary_path('dict_ja.txt'), {encoding:'utf-8'})));
 const latin = to_phonemic.conv(src);
 const pfn = new ja.ToSound({voiceless: true, reduce_pitch: true}).conv(latin);
 
