@@ -593,7 +593,6 @@ export class VoiceSynth
         return p;
     }
     static #parse_pfn(src_list, pitch, accent) {
-        const MILLISEC_T = SAMPLING_RATE / 1000;
         const ret = [];
         const fmt = {};
 
@@ -601,23 +600,21 @@ export class VoiceSynth
             fmt[k] = 0;
         }
         let prev_v = 0;
-        let total_fwd = 0;
         let first = true;
 
-        for (const chunk of src_list) {
+        for (const src of src_list) {
             let fwd = 0;
             let off = 0;
-            let sy_len = 1;
             let back = -1;
-            let head = null;
+            let chunk = null;
+            let head = true;
 
-            for (const seg of chunk.split(' ')) {
-                if (head === null) {
-                    head = {cmd:'chunk', fwd:total_fwd, off:0, val:seg.length > 0 ? seg : null};
-                    ret.push(head);
+            for (const seg of (src + ' |').split(' ')) {
+                if (chunk === null) {
+                    chunk = {cmd:'chunk', fwd:0, off:0, val:seg.length > 0 ? seg : null, len:1, head:0, tail:0};
+                    ret.push(chunk);
                     if (first) {
-                        ret.push({cmd: 'A', fwd:total_fwd, off:0, val:0});
-                        first = false;
+                        ret.push({cmd: 'A', fwd:0, off:0, val:0});
                     }
                     continue;
                 }
@@ -625,38 +622,41 @@ export class VoiceSynth
                 if (seg.length === 0) continue;
                 const ch = seg[0];
                 if (ch === '=') {
-                    sy_len = Number.parseFloat(seg.substring(1));
+                    chunk.len = Number.parseFloat(seg.substring(1));
                 } else if (seg === '$') {
                     back = ret.length;
                     off = 0;
                 } else if (ch === '%') {
                     if (back >= 0) throw new Error('dangling $');
+                    if (head && fwd === 0) {
+                        chunk.head = off;
+                    }
                     fwd = VoiceSynth.#parse_frac(seg.substring(1));
                     off = 0;
                 } else if (ch >= '0' && ch <= '9') {
-                    off += (Number.parseInt(seg) * MILLISEC_T) | 0;
+                    off += Number.parseInt(seg);
                 } else if (seg === '|') {
                     if (back >= 0) {
-                        const fwd2 = total_fwd + sy_len;
                         for (let i = back; i < ret.length; i++) {
-                            ret[i].fwd = fwd2;
+                            ret[i].fwd = 1;
                             ret[i].off -= off;
                         }
+                        if (head) chunk.tail = off;
                         back = -1;
                     }
+                    ret.push({cmd:'bound', fwd:0, off:0});
                     fwd = 0;
                     off = 0;
+                    head = false;
                 } else if (seg === '.') {
-                    ret.push({cmd: 'A', fwd:total_fwd, off:0, val:0});
-                    ret.push({cmd: 'A', fwd:total_fwd + sy_len, off:0, val:0});
+                    ret.push({cmd: 'A', fwd:0, off:0, val:0});
+                    ret.push({cmd: 'A', fwd:1, off:0, val:0});
                 } else if (seg === '!') {
-                    const fwd2 = total_fwd + fwd * sy_len;
-                    ret.push({cmd: 'v', fwd:fwd2, off:off, val:prev_v});
-                    ret.push({cmd:'fmt', fwd:fwd2, off:off, val: VoiceSynth.#copy_obj(fmt)});
+                    ret.push({cmd: 'v', fwd:fwd, off:off, val:prev_v});
+                    ret.push({cmd:'fmt', fwd:fwd, off:off, val: VoiceSynth.#copy_obj(fmt)});
                 } else {
                     let fmt_exist = false;
                     let articulation = false;
-                    const fwd2 = total_fwd + fwd * sy_len;
 
                     for (const m of seg.matchAll(/(\w)(\d*)/g)) {
                         let cmd = m[1];
@@ -694,42 +694,54 @@ export class VoiceSynth
                                 fmt.e = val;
                             }
                         } else if (p_keys.indexOf(cmd) >= 0) {
-                            ret.push({cmd:cmd, fwd:fwd2, off:off, val: val});
+                            ret.push({cmd:cmd, fwd:fwd, off:off, val: val});
                             if (cmd === 'v') prev_v = val;
                         } else {
                             throw new Error('unknown cmd: ' + cmd);
                         }
                     }
                     if (fmt_exist) {
-                        ret.push({cmd:'fmt', fwd:fwd2, off:off, val: VoiceSynth.#copy_obj(fmt)});
+                        ret.push({cmd:'fmt', fwd:fwd, off:off, val: VoiceSynth.#copy_obj(fmt)});
                     }
                 }
             }
+            first = false;
             if (back >= 0) throw new Error('dangling $');
-            total_fwd += sy_len;
         }
-        ret.push({cmd:'chunk', fwd:total_fwd, off:0, val:null});
+        ret.push({cmd:'chunk', fwd:0, off:0, val:null, head_len:0, tail_len:0});
         return ret;
     }
 
     static #calc_ticks(cmd, ut, init_ticks, volume) {
+        const millisec_t = SAMPLING_RATE / 1000;
         const ret = [];
         const prev = {};
         for (let k of p_keys) prev[k] = -1;
         prev.fmt = -1;
 
+        let ck = null;
         let chunk = null;
+        let total_ticks = init_ticks;
         let last_ticks = init_ticks;
 
         for (const c of cmd) {
-            const ticks = init_ticks + ((c.fwd * ut) | 0) + c.off;
             if (c.cmd === 'chunk') {
-                if (chunk) {
-                    chunk.len = ticks - chunk.ticks;
+                if (ck !== null) {
+                    total_ticks += (ck.len * ut) | 0;
                 }
-                chunk = {cmd:'chunk', ticks:ticks, len:0, val:c.val ?? ''};
+                ck = c;
+                if (chunk !== null) {
+                    chunk.len = total_ticks - chunk.ticks;
+                }
+                chunk = {cmd:'chunk', ticks:total_ticks, len:0, val:c.val ?? ''};
                 ret.push(chunk);
-            } else if (c.cmd === 'fmt') {
+                continue;
+            } else if (c.cmd === 'bound') {
+                // TODO
+                continue;
+            }
+            const ticks = total_ticks + ((c.fwd * ck.len * ut + c.off * millisec_t) | 0);
+            if (c.cmd === 'fmt') {
                 const pre = prev.fmt;
                 const t2 = pre >= 0 ? pre : last_ticks;
                 const len = pre >= 0 ? ticks - t2 : 0;
@@ -842,7 +854,7 @@ export class VoiceSynth
         this.current_pitch = this.#get_current_pitch();
 
         const cmd = VoiceSynth.#parse_pfn(src, pitch, accent);
-        const ut = (SAMPLING_RATE * 60 / speed) | 0;
+        const ut = SAMPLING_RATE * 60 / speed;
         const cmd2 = VoiceSynth.#calc_ticks(cmd, ut, this.cmd_list.at(-1).ticks, Math.sqrt(volume));
         if (this.cmd_list.length === 1) {
             this.cmd_list = cmd2;
