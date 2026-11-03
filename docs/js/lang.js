@@ -2,14 +2,18 @@
 
 class SpeechLang
 {
-    constructor(tag, use_dic, use_phonemic) {
+    constructor(tag, variants, use_dic) {
         this.tag = tag;
         this.use_dic = use_dic;
-        this.use_phonemic = use_phonemic;
         this.to_phonemic = null;
         this.ToSound = null;
         this.params = null;
-        this.variants = null;
+        this.v_list = [];
+        this.v_map = {};
+        for (const v of variants) {
+            this.v_list.push(v.tag);
+            this.v_map[v.tag] = v;
+        }
     }
 
     is_loaded() {
@@ -27,9 +31,9 @@ class SpeechLang
 }
 
 export const speech_langs = {
-//    'en': new SpeechLang('en', true, true),
-    'ja': new SpeechLang('ja', true, true),
-//    'zh': new SpeechLang('zh', true, true),
+//    'en': new SpeechLang('en', [{tag:'ga'}], true),
+    'ja': new SpeechLang('ja', [{tag:'std', voiceless: true, reduce_pitch: true}], true),
+//    'zh': new SpeechLang('zh', [{tag:'cmn'}], true),
 };
 
 export const resources = {
@@ -80,6 +84,9 @@ export const resources = {
         'en': 'English',
         'ja': 'Japanese',
         'zh': 'Chinese',
+        'en-ga': 'English/GenAm',
+        'ja-std': 'Japanese/Common',
+        'zh-cmn': 'Chinese/Mandarin',
 
         'ninbos-voice-intro': 'NinbosVoice is a speech synthesizer works on a web browser.',
         'supported-browsers': 'Supported Browsers',
@@ -138,6 +145,9 @@ export const resources = {
         'en': '英語',
         'ja': '日本語',
         'zh': '中国語',
+        'en-ga': '英語/米国',
+        'ja-std': '日本語/標準語',
+        'zh-cmn': '中国語/普通話',
 
         'ninbos-voice-intro': 'NinbosVoice は、ブラウザで動作する音声合成ソフトウェアです。',
         'supported-browsers': '対応ブラウザ',
@@ -197,6 +207,9 @@ export const resources = {
         'en': '英语',
         'ja': '日语',
         'zh': '汉语',
+        'en-ga': '英语/美国',
+        'ja-std': '日语/标准語',
+        'zh-cmn': '汉语/普通话',
 
         'ninbos-voice-intro': 'NinbosVoice 是在网页浏览器上运行的语音合成器。',
         'supported-browsers': '浏览器支持',
@@ -253,6 +266,9 @@ export const resources = {
         'en': '英語',
         'ja': '日語',
         'zh': '漢語',
+        'en-ga': '英語/美國',
+        'ja-std': '日語/標準語',
+        'zh-cmn': '漢語/普通話',
 
         'supported-browsers': '瀏覽器支持',
         'terms-of-use': '使用條款',

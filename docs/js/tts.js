@@ -8,7 +8,7 @@ class TtsItem
 {
     /**
      * 
-     * @param {object} voice 
+     * @param {object} voice voice porfile object
      * @param {SpeechLang} lang 
      * @param {obj|null} obj to_json_object() created object or null
      */
@@ -16,6 +16,7 @@ class TtsItem
         this.voice = voice;
         if (obj) {
             this.lang = obj.lang;
+            this.variant = obj.variant;
             this.text = obj.text;
             this.phonemic = obj.phonemic;
             this.speed = obj.speed;
@@ -25,6 +26,7 @@ class TtsItem
             this.pfn = obj.pfn;
         } else {
             this.lang = lang.tag;
+            this.variant = lang.v_list[0];
             this.text = '';
             this.phonemic = '';
             this.speed = lang.params.speed;
@@ -92,6 +94,7 @@ class TtsItem
         return {
             voice: this.voice.name,
             lang: this.lang,
+            variant: this.variant,
             text: this.text,
             phonemic: this.phonemic,
             speed: this.speed,
@@ -159,12 +162,13 @@ export class TtsPage
      * @param {SpeechLang} speech_lang 
      * @param {WavPlayer} player 
      */
-    constructor(db, voices, dialog, speech_lang, player) {
+    constructor(db, voices, dialog, lang, player) {
         this.db = db;
         this.voices = voices;
         this.dialog = dialog;
         this.player = player;
-        this.speech_lang = speech_lang;
+        this.lang = lang;
+        this.speech_lang = lang.get_speech_lang();
  
         this.list = document.getElementById('tts-list');
         this.sub_save = document.getElementById('sub-save-proj');
@@ -182,6 +186,7 @@ export class TtsPage
         this.tts_pitch = new NumberControl('tts-pitch');
         this.tts_accent = new NumberControl('tts-accent');
         this.tts_volume = new NumberControl('tts-volume');
+        this.tts_language = document.getElementById('tts-language');
         this.play_mark = document.getElementById('tts-play-mark');
         this.stop_mark = document.getElementById('tts-stop-mark');
         this.pfn_edit = document.getElementById('tts-pfn-edit');
@@ -211,6 +216,8 @@ export class TtsPage
         this.ctrlkey = false;
         this.text_changed = false;
         this.is_page_showing = false;
+
+        this.#init_language();
 
         this.sub_undo.addEventListener('click', () => {
             this.undo();
@@ -287,6 +294,8 @@ export class TtsPage
                 item.pitch = this.tts_pitch.get();
                 item.accent = this.tts_accent.get();
                 item.volume = this.tts_volume.get();
+                const lang = this.tts_language.value;
+                [item.lang, item.variant] = lang.split('-');
             }
         });
         this.list.addEventListener('click', e => {
@@ -436,6 +445,18 @@ export class TtsPage
         this.is_playing = false;
     }
 
+    #init_language() {
+        for (const lang_tag in speech_langs) {
+            const lang = speech_langs[lang_tag];
+            for (const v_key of lang.v_list) {
+                const v = lang.v_map[v_key];
+                const tag = `${lang.tag}-${v.tag}`;
+                this.tts_language.appendChild($e('option', {'data-res':tag, value:tag}));
+            }
+        }
+        this.lang.update_node(this.tts_language);
+    }
+
     #set_filename(name) {
         this.filename = name;
         this.filename_area.textContent = name === '' ? '' : ': ' + name;
@@ -568,11 +589,13 @@ export class TtsPage
     }
 
     #add_item(item) {
+        this.lang.update_node(item.elem);
         item.elem.dataset.i = this.items.length;
         this.items.push(item);
         this.list.insertBefore(item.elem, this.item_append);
     }
     #add_item_at(item, idx) {
+        this.lang.update_node(item.elem);
         this.items.splice(idx, 0, item);
         this.list.insertBefore(item.elem, this.list.childNodes[idx]);
         this.#renumber();
@@ -591,6 +614,7 @@ export class TtsPage
         }
     }
     #set_item_at(item, idx) {
+        this.lang.update_node(item.elem);
         if (this.items[idx].is_selected()) {
             item.select();
         }
@@ -686,11 +710,13 @@ export class TtsPage
         this.tts_pitch.enable(b);
         this.tts_accent.enable(b);
         this.tts_volume.enable(b);
+        this.tts_language.disabled = !b;
         if (item !== null) {
             this.tts_speed.set(item.speed);
             this.tts_pitch.set(item.pitch);
             this.tts_accent.set(item.accent);
             this.tts_volume.set(item.volume);
+            this.tts_language.value = `${item.lang}-${item.variant}`;
         }
     }
     #begin_edit(item) {
@@ -722,7 +748,7 @@ export class TtsPage
         item.phonemic = this.edit_phonemic.value;
         try {
             const lang = speech_langs[item.lang];
-            const c = new lang.ToSound(lang.variants['_']);
+            const c = new lang.ToSound(lang.v_map[item.variant]);
             item.pfn = c.conv(this.edit_phonemic.value);
         } catch (e) {
             console.log(e);

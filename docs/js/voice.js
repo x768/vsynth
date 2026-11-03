@@ -628,8 +628,21 @@ class LanguagePage
      */
     update() {
         document.body.setAttribute('lang', this.res.UI);
-        LanguagePage.#update_text(document.body, this.res);
+        this.update_node(document.body);
     }
+    update_node(node) {
+        for (const elem of node.childNodes) {
+            if (elem instanceof Element) {
+                const k = elem.dataset.res;
+                if (k in this.res) {
+                    elem.textContent = this.res[k];
+                } else {
+                    this.update_node(elem);
+                }
+            }
+        }
+    }
+
     /**
      * 
      * @returns {SpeechLang}
@@ -641,19 +654,6 @@ class LanguagePage
     }
     hide() {
     }
-
-    static #update_text(node, res) {
-        for (const elem of node.childNodes) {
-            if (elem instanceof Element) {
-                const k = elem.dataset.res;
-                if (k in res) {
-                    elem.textContent = res[k];
-                } else {
-                    LanguagePage.#update_text(elem, res);
-                }
-            }
-        }
-    }
 }
 
 document.addEventListener('DOMContentLoaded', async () =>
@@ -664,7 +664,7 @@ document.addEventListener('DOMContentLoaded', async () =>
     const lang_page = new LanguagePage(db);
     const dialog = new FileDialogSet(lang_page);
     const voices_page = new VoicesPage(db, await db.get_voices(), player, lang_page, dialog);
-    const tts_page = new TtsPage(db, voices_page.voices, dialog, lang_page.get_speech_lang(), player);
+    const tts_page = new TtsPage(db, voices_page.voices, dialog, lang_page, player);
     const config_page = new ConfigPage(db, dialog);
 
     lang_page.update();

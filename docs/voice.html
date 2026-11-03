@@ -57,6 +57,7 @@
 <p><input type="range" id="tts-accent-r"></p>
 <p><span data-res="tts-volume"></span> <input type="number" id="tts-volume-t" min="-20" max="0" value="0" size="5" step="1"> dB</p>
 <p><input type="range" id="tts-volume-r"></p>
+<p><select id="tts-language"></select></p>
 </div>
 <div id="tts-voice-select" popover></div>
 <div id="tts-list"><div id="tts-item-add"><div data-res="click-enter-text"></div><div><svg class="icon16" viewBox="-8,-8,16,16"><path d="M0,-8 L0,8 M-8,0 L8,0" /></svg></div></div></div>
@@ -75,7 +76,7 @@
 <table>
 <tr><th>Base Pitch</th><td><input type="number" id="voice-pitch" min="50" max="500" value="50" size="5" step="10" data-key="pitch"> Hz</td></tr>
 <tr><th>Flutter</th><td><input type="number" id="voice-flutter" min="0" max="256" value="0" size="5" step="16" data-key="flutter"> / 256</td></tr>
-<tr><th>Fricative Amp.</th><td><input type="number" id="voice-fricative" min="0" max="256" value="0" size="5" step="16" data-key="fricative"> / 256</td></tr>
+<tr><th>Fricative</th><td><input type="number" id="voice-fricative" min="0" max="256" value="0" size="5" step="16" data-key="fricative"> / 256</td></tr>
 </table>
 <table>
 <tr id="voice-formant-header"><th></th></tr>

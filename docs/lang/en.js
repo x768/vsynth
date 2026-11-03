@@ -3,11 +3,6 @@ export const params = {
     speed: 300,
     accent: 400,
 };
-export const variants = {
-    '_': {
-        name: 'General American',
-    },
-};
 
 export class ToPhonemic
 {

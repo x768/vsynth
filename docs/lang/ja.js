@@ -3,13 +3,6 @@ export const params = {
     speed: 480,
     accent: 400,
 };
-export const variants = {
-    '_': {
-        name: '標準語',
-        voiceless: true,
-        reduce_pitch: true,
-    },
-};
 
 class Word
 {
@@ -1037,7 +1030,7 @@ class Mola
         if (this.v !== '') {
             s += ' ' + this.v;
         }
-        s += ' %7 ! | %5 p';
+        s += ' %5 ! | %5 p';
         if (this.pitch < 10) s += this.pitch;
         if (this.amp !== '') s += ' | ' + this.amp;
         return s;
