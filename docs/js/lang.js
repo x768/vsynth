@@ -208,7 +208,7 @@ export const resources = {
         'ja': '日语',
         'zh': '汉语',
         'en-ga': '英语/美国',
-        'ja-std': '日语/标准語',
+        'ja-std': '日语/标准语',
         'zh-cmn': '汉语/普通话',
 
         'ninbos-voice-intro': 'NinbosVoice 是在网页浏览器上运行的语音合成器。',

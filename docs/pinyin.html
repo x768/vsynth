@@ -1,17 +1,25 @@
 <!doctype html>
-<html lang="zh-Hant">
+<html>
 <head>
 <meta charset="UTF-8">
 <link rel="icon" href="favicon.png">
 <link rel="stylesheet" href="css/style.css">
+<script src="js/page-lang.js" type="module"></script>
 <title>ASCII化拼音</title>
 </head>
 <body>
-<div id="container">
+<div id="language-select">
+<select id="language" data-tr="zh,zh-hant"></select>
+</div>
+<main>
 <h1>ASCII化拼音</h1>
-<p><b>ASCII化拼音</b>是漢語拼音為ASCII代碼化的方案。</p>
+<p data-zh="*ASCII化拼音*是汉语拼音为ASCII代码化的方案。"
+   data-zht="*ASCII化拼音*是漢語拼音為ASCII代碼化的方案。"
+><b>ASCII化拼音</b>是漢語拼音為ASCII代碼化的方案。</p>
 
-<h2>與拼音的差異</h2>
+<h2 data-zh="与拼音的差異"
+    data-zht="與拼音的差異"
+>与拼音的差異</h2>
 <ul>
     <li>用數碼標聲調(1〜4)</li>
     <li>聲調一律標變調</li>
@@ -329,6 +337,6 @@
 <h2>變調</h2>
 <p>聲調一律標變調，不標原調。即「你好」寫成<span class="code">ni2hao3</span>。</p>
 
-</div>
+</main>
 </body>
 </html>

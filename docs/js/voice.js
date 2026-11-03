@@ -590,7 +590,7 @@ class LanguagePage
         return r;
     }
     static #get_default_lang() {
-        const zh_hant = ['zh-tw', 'zh-hk', 'zh-mo'];
+        const zh_hant = ['zh-hant', 'zh-tw', 'zh-hk', 'zh-mo'];
 
         for (const ln of window.navigator.languages) {
             const k = ln.toLowerCase();

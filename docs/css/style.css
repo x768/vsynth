@@ -28,15 +28,12 @@ body {
     fill: var(--fg-color);
     font-family: sans-serif;
 }
-.ipa {
-    font-family: 'Charis SIL', 'Doulos SIL', 'DejaVu Sans', 'Segoe UI', sans-serif;
-}
-#container {
+main {
     width: 1200px;
     margin: auto;
 }
 h1 {
-    margin: 0.8em 0;
+    margin: 0 0 0.8em;
     padding: 0 0.2em;
     font-size: 160%;
     font-weight: bold;
@@ -89,6 +86,21 @@ path.border {
 }
 path.graph {
     stroke: var(--fg-color);
+}
+#language-select {
+    width: 1200px;
+    margin: auto;
+    text-align: end;
+}
+.not-translated {
+    width: 600px;
+    margin: 12px auto 24px;
+    border: 1px solid red;
+    padding: 0.5em 2em;
+    color: red;
+}
+.ipa {
+    font-family: 'Charis SIL', 'Doulos SIL', 'DejaVu Sans', 'Segoe UI', sans-serif;
 }
 .code {
     border: 1px solid var(--border-color);

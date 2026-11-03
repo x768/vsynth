@@ -4,51 +4,87 @@
 <meta charset="UTF-8">
 <link rel="icon" href="favicon.png">
 <link rel="stylesheet" href="css/style.css">
+<script src="js/page-lang.js" type="module"></script>
 <title>NinbosVoice</title>
 </head>
 <body>
-<div id="container">
+<div id="language-select">
+<select id="language"></select>
+</div>
+<main>
 
 <h1>NinbosVoice (Artifical Voice)</h1>
-<p>NinbosVoiceは、JavaScriptで実装した音声合成ソフトウェアです。以下のリンクからブラウザ上で実行できます。</p>
+<p data-ja="NinbosVoice は、ブラウザで動作する音声合成ソフトウェアです。以下のリンクから実行できます。"
+   data-zh="NinbosVoice 是在网页浏览器上运行的语音合成器。您可以通过下方链接运行它。"
+   data-zht="NinbosVoice 是在網頁瀏覽器上運行的語音合成器。您可以透過以下連結運行它。"
+>NinbosVoice is a speech synthesizer works on a web browser. You can run it via the link below.</p>
 <p><a href="voice.html" class="button-style-link">NinbosVoice Speech Synthesizer</a></p>
-<h3>特徴</h3>
-<ul>
-    <li>肉声不使用のロボットボイス</li>
-    <li>100%ルールベースなので棒読み</li>
-    <li>非ユーザーフレンドリー、記法覚えてね</li>
-</ul>
 
-<h2>Other Contents</h2>
+<h2 data-ja="その他のコンテンツ"
+    data-zh="其他内容"
+    data-zht="其他內容"
+>Other Contents</h2>
 <dl>
-<dt><a href="ipa.html">音声付きIPA一覧表</a></dt>
-<dd>子音・母音のサンプル音声です。</dd>
-<dt><a href="https://github.com/x768/vsynth/">GitHub - x768/vsynth</a></dt>
-<dd>Issuesはこちらから。</dd>
+<dt><a href="ipa.html"
+    data-ja="音声付きIPA一覧表"
+    data-zh="带音频的国际音标表"
+    data-zht="附音訊的國際音標圖表"
+>IPA Charts with Audio</a></dt>
+<dd data-ja="子音・母音のサンプル音声です。"
+    data-zh="这是辅音和元音的语音示例。"
+    data-zht="這些是子音和母音的音訊樣本。"
+>These are sample audio clips of consonants and vowels.</dd>
+<dt><a href="https://github.com/x768/vsynth">GitHub - x768/vsynth</a></dt>
+<dd data-ja="NinbosVoice の GitHub リポジトリのページです。"
+    data-zh="这是 NinbosVoice 的 GitHub 仓库页面。"
+    data-zht="這是 NinbosVoice 的 GitHub 程式碼倉庫頁面。"
+>This is the GitHub repository page for NinbosVoice.</dd>
 </dl>
 
-<h2>Files</h2>
+<h2 data-ja="ファイル"
+    data-zh="文件"
+    data-zht="檔案"
+>Files</h2>
 <dl>
-<dt><a href="files/dict_ja.txt" download="dict_ja.txt">dict_ja.txt</a></dt>
-<dd>日本語の辞書ファイル。「設定」からファイルを登録できます。</dd>
+<dt><a href="./files/dict_ja.txt" download="dict_ja.txt">dict_ja.txt</a></dt>
+<dd data-ja="日本語の辞書ファイルです。"
+    data-zh="这是日文词典文件。"
+    data-zht="這是日文詞典檔案。"
+>Japanese dictionary file.</dd>
 </dl>
 
-<h2>Documents</h2>
+<h2 data-ja="文書"
+    data-zh="文档"
+    data-zht="文件"
+>Documents</h2>
 <dl>
-<dt><a href="pfn.ja.html">弁別素性表記</a></dt>
-<dd>NinbosVoiceで使用している、言語に依存しない音声表記法です。</dd>
-<dt><a href="romaji.html">表音式ローマ字</a></dt>
-<dd>日本語の音声・アクセントをASCIIで表記する方法。入力欄下段のローマ字の書式です。</dd>
-<dt lang="en"><a href="arpabet.html">Modified ARPABET</a></dt>
+<dt><a href="./pfn.html"
+    data-ja="弁別素性表記"
+    data-zh="语音特征记谱"
+    data-zht="語音特徵記譜"
+>Phonetic Feature Notation</a></dt>
+<dd data-ja="このソフトウェアで使用している、言語に依存しない音声表記法です。"
+    data-zh="这是本软件所采用的一种与语言无关的语音记谱法。"
+    data-zht="這是本軟體中所使用的與語言無關的語音轉寫方法。"
+>This is a language-independent phonetic notation used in this software.</dd>
+<dt lang="ja"><a href="./romaji.html">表音式ローマ字</a></dt>
+<dd lang="ja">日本語の音声・アクセントをASCIIで表記する方法です。</dd>
+<dt lang="en"><a href="./arpabet.html">Modified ARPABET</a></dt>
 <dd lang="en">A representation of phonemes of English (GA) with ASCII characters.</dd>
-<dt lang="zh-Hant"><a href="pinyin.html">ASCII化拼音</a></dt>
+<dt lang="zh-Hant"><a href="./pinyin.html">ASCII化拼音</a></dt>
 <dd lang="zh-Hant">漢語拼音為ASCII代碼化的方案</dd>
 </dl>
 
-<h2>Acknowledgments</h2>
-<p>本ソフトウェアは、 eSpeak NG のソースコード・音声データの一部を改変して利用しています。</p>
+<h2 data-ja="謝辞"
+    data-zh="致谢"
+    data-zht="致謝"
+>Acknowledgments</h2>
+<p data-ja="本ソフトウェアは、 eSpeak NG のソースコード・音声データの一部を改変して利用しています。"
+   data-zh="本软件使用了 eSpeak NG 源代码和音频数据中部分内容的修改版本。"
+   data-zht="本軟件使用了 eSpeak NG 原始碼和音訊資料的修改版本。"
+>This product uses modified portions of the eSpeak NG source code and audio data.</p>
 <p><a href="https://github.com/espeak-ng/espeak-ng/">GitHub - espeak-ng/espeak-ng</a></p>
 
-</div>
+</main>
 </body>
 </html>
