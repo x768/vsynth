@@ -30,12 +30,18 @@
 
 <table>
 <tr><th>パターン</th><th>例</th><th></th></tr>
+<tr><td>\d+</td><td class="code">10</td><td>現在位置から10ms移動</td></tr>
+<tr><td>\$</td><td class="code">$</td><td>音節末開始点</td></tr>
+<tr><td>\|</td><td class="code">|</td><td>チャンク始点に戻る</td></tr>
 <tr><td>%\d</td><td class="code">%3</td><td>チャンク全体の30%時点に移動</td></tr>
 <tr><td>%\d\d</td><td class="code">%45</td><td>チャンク全体の45%時点に移動</td></tr>
-<tr><td>\d+</td><td class="code">10</td><td>終点方向に10ms移動</td></tr>
-<tr><td>\$</td><td class="code">$</td><td>チャンク末尾(音節末子音開始)</td></tr>
-<tr><td>\|</td><td class="code">|</td><td>チャンク始点に戻る</td></tr>
 </table>
+
+<p>例: pan (1音節の語)</p>
+<pre class="code">f5Lv0c 40 v0 20 f5o9v %7 ! $ Fnv 70</pre>
+<p>頭子音が<span class="code">f5Lv0c 40 v0 20</span>、音節核が、<span class="code">f5o9v %7 !</span>、末尾子音が<span class="code">$ Fnv 70</span>となる。</p>
+<p>それぞれの継続時間は、頭子音が60ms、末尾子音が70msで、残りが音節核となる。</p>
+<p>音節核が20msより短い場合、頭子音と末尾子音の時間を削って調整するが、子音の時間が元の半分以下にならないように音節全体の長さの下限が設定される。</p>
 
 <h2>割合指定</h2>
 <p>本文書内で「割合を指定する」と記載されている場合、以下の3種類の指定方法とする。</p>
@@ -50,8 +56,7 @@
 <p>パラメーター指定された2点間は線形補間される。
 ただし、最初のパラメーター指定点より前や、最後のパラメーター指定点の後は、最も近い指定点の値となる。</p>
 <p>例: ピッチ変更</p>
-<pre class="code">%3 P4800 %7 P5000
-</pre>
+<pre class="code">%3 P4800 %7 P5000</pre>
 
 <svg class="chart" style="width:400px;height:160px" viewBox="0,0,400,160">
     <path fill="none" class="border" stroke-width="2" d="M50,20 L50,120 L310,120" />
@@ -74,7 +79,7 @@
 
 <h3>相対指定</h3>
 <p><span class="code">p</span>に続き割合を指定する。実際のピッチは別途指定する。</p>
-<p>例: 中国語の第三声 mǎ は、<span class="code">f5Lnv 70 f5o9v | %2 p3 %5 p0 %8 p</span> (声調は<span class="code">%2 p3 %5 p0 %8 p</span>)</p>
+<p>例: 中国語の第三声 mǎ は、<span class="code">f5Lnv 20 ! 40 f5o9v | %2 p3 %5 p0 %8 p</span> (声調は<span class="code">%2 p3 %5 p0 %8 p</span>)</p>
 
 <h2>声量</h2>
 <p><span class="code">A</span>に続き割合を指定する。

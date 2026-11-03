@@ -592,7 +592,15 @@ export class VoiceSynth
         }
         return p;
     }
+    /**
+     * 
+     * @param {string[]} src_list 
+     * @param {number} pitch in cents
+     * @param {number} accent in cents
+     * @returns {{cmd:string, fwd:number, off:number, val:object, len:number?, head:number?, tail:number?}[]}
+     */
     static #parse_pfn(src_list, pitch, accent) {
+        const millisec_t = SAMPLING_RATE / 1000;
         const ret = [];
         const fmt = {};
 
@@ -605,7 +613,7 @@ export class VoiceSynth
         for (const src of src_list) {
             let fwd = 0;
             let off = 0;
-            let back = -1;
+            let tail = -1;
             let chunk = null;
             let head = true;
 
@@ -624,25 +632,25 @@ export class VoiceSynth
                 if (ch === '=') {
                     chunk.len = Number.parseFloat(seg.substring(1));
                 } else if (seg === '$') {
-                    back = ret.length;
+                    tail = ret.length;
                     off = 0;
                 } else if (ch === '%') {
-                    if (back >= 0) throw new Error('dangling $');
+                    if (tail >= 0) throw new Error('dangling $');
                     if (head && fwd === 0) {
                         chunk.head = off;
                     }
                     fwd = VoiceSynth.#parse_frac(seg.substring(1));
                     off = 0;
                 } else if (ch >= '0' && ch <= '9') {
-                    off += Number.parseInt(seg);
+                    off += Number.parseInt(seg) * millisec_t;
                 } else if (seg === '|') {
-                    if (back >= 0) {
-                        for (let i = back; i < ret.length; i++) {
+                    if (tail >= 0) {
+                        for (let i = tail; i < ret.length; i++) {
                             ret[i].fwd = 1;
                             ret[i].off -= off;
                         }
                         if (head) chunk.tail = off;
-                        back = -1;
+                        tail = -1;
                     }
                     ret.push({cmd:'bound', fwd:0, off:0});
                     fwd = 0;
@@ -706,14 +714,22 @@ export class VoiceSynth
                 }
             }
             first = false;
-            if (back >= 0) throw new Error('dangling $');
+            if (tail >= 0) throw new Error('dangling $');
         }
-        ret.push({cmd:'chunk', fwd:0, off:0, val:null, head_len:0, tail_len:0});
+        ret.push({cmd:'chunk', fwd:0, off:0, val:null, head:0, tail:0});
         return ret;
     }
 
+    /**
+     * 
+     * @param {{cmd:string, fwd:number, off:number, val:object, len:number?, head:number?, tail:number?}[]} cmd 
+     * @param {number} ut ticks per chunk
+     * @param {number} init_ticks 
+     * @param {number} volume 0 ... 1
+     * @returns {{cmd:string, ticks:number, len:number, val:object}[]}
+     */
     static #calc_ticks(cmd, ut, init_ticks, volume) {
-        const millisec_t = SAMPLING_RATE / 1000;
+        const min_core_len = SAMPLING_RATE * 0.02;
         const ret = [];
         const prev = {};
         for (let k of p_keys) prev[k] = -1;
@@ -723,6 +739,9 @@ export class VoiceSynth
         let chunk = null;
         let total_ticks = init_ticks;
         let last_ticks = init_ticks;
+        let offset = 0;
+        let core_len = ut;
+        let adjust_r = 1;
 
         for (const c of cmd) {
             if (c.cmd === 'chunk') {
@@ -733,14 +752,30 @@ export class VoiceSynth
                 if (chunk !== null) {
                     chunk.len = total_ticks - chunk.ticks;
                 }
+
+                core_len = ck.len * ut - ck.head - ck.tail;
+                if (core_len < min_core_len) {
+                    core_len = min_core_len;
+                    adjust_r = (ck.len * ut - min_core_len) / (ck.head + ck.tail);
+                    if (adjust_r < 0.5) {
+                        adjust_r = 0.5;
+                        ck.len = ((ck.head + ck.tail) / 2 + min_core_len) / ut;
+                        core_len = ck.len * ut - (ck.head - ck.tail) * adjust_r;
+                    }
+                }
+                offset = ck.head * adjust_r;
+
                 chunk = {cmd:'chunk', ticks:total_ticks, len:0, val:c.val ?? ''};
                 ret.push(chunk);
                 continue;
             } else if (c.cmd === 'bound') {
-                // TODO
+                offset = 0;
+                core_len = ck.len * ut;
+                adjust_r = 1;
                 continue;
             }
-            const ticks = total_ticks + ((c.fwd * ck.len * ut + c.off * millisec_t) | 0);
+            const t2 = c.fwd === 0 ? 0 : c.fwd === 1 ? ck.len * ut : offset + c.fwd * core_len;
+            const ticks = total_ticks + ((t2 + c.off * adjust_r) | 0);
             if (c.cmd === 'fmt') {
                 const pre = prev.fmt;
                 const t2 = pre >= 0 ? pre : last_ticks;
