@@ -1041,8 +1041,8 @@ export class ToSound
 {
     constructor(prm) {
         this.voiced = prm.voiced !== undefined ? 'v' + ((this.voiced * 10) | 0) : 'v';
-        this.voiceless = prm.voiceless;
-        this.reduce_pitch = prm.reduce_pitch;
+        this.voiceless = prm.voiceless ?? true;
+        this.reduce_pitch = prm.reduce_pitch ?? true;
 
         const v = this.voiced;
         this.consonant = {

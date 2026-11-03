@@ -32,7 +32,7 @@ class SpeechLang
 
 export const speech_langs = {
 //    'en': new SpeechLang('en', [{tag:'ga'}], true),
-    'ja': new SpeechLang('ja', [{tag:'std', voiceless: true, reduce_pitch: true}], true),
+    'ja': new SpeechLang('ja', [{tag:'std'}], true),
 //    'zh': new SpeechLang('zh', [{tag:'cmn'}], true),
 };
 
