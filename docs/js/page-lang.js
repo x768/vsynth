@@ -1,4 +1,23 @@
-const LANG_LIST = ['en', 'ja', 'zh', 'zh-hant'];
+const LANG_KEYS = ['en', 'ja', 'zh', 'zh-hant'];
+
+const LANG_MAP = {
+    'en': {
+        name:'English',
+        not_tr:'This document has not been translated.',
+    },
+    'ja': {
+        name:'日本語',
+        not_tr:'この文書は翻訳されていません。',
+    },
+    'zh': {
+        name:'简体中文',
+        not_tr:'本文档尚未翻译。',
+    },
+    'zh-hant': {
+        name:'繁體中文',
+        not_tr:'本文檔尚未翻譯。',
+    },
+};
 
 /**
  * 
@@ -16,7 +35,7 @@ function get_default_lang()
             return 'zh-hant';
         }
         const s = k.split('-')[0];
-        if (LANG_LIST.indexOf(s)) {
+        if (LANG_KEYS.indexOf(s)) {
             return s;
         }
     }
@@ -29,16 +48,10 @@ function get_default_lang()
  */
 function init_language_select(lang, elem)
 {
-    const list = [
-        ['en', 'English'],
-        ['ja', '日本語'],
-        ['zh', '简体中文'],
-        ['zh-hant', '繁體中文'],
-    ];
-    for (const [tag, name] of list) {
+    for (const tag of LANG_KEYS) {
         const option = document.createElement('option');
         option.setAttribute('value', tag);
-        option.textContent = `${name} (${tag})`;
+        option.textContent = `${LANG_MAP[tag].name} (${tag})`;
         elem.appendChild(option);
     }
     elem.value = lang;
@@ -49,23 +62,39 @@ function init_language_select(lang, elem)
  * @param {string} lang 
  * @param {HTMLElement} node 
  */
-function update_language(lang, node, hash)
+function update_language(lang, node, def_lang)
 {
     for (const elem of node.childNodes) {
         if (elem instanceof Element) {
             const res = elem.dataset[lang];
-            if (res) {
-                update_content(elem, res);
+            if (res !== undefined) {
+                update_content(elem, res, def_lang);
             } else {
-                update_language(lang, elem, hash);
+                update_language(lang, elem, def_lang);
             }
             if (elem.tagName === 'A') {
                 const href = elem.getAttribute('href');
                 if (href && href.startsWith('./')) {
-                    elem.setAttribute('href', href.replace(/#.*$/, '') + hash);
+                    elem.setAttribute('href', href.replace(/#.*$/, '') + window.location.hash);
                 }
             }
         }
+    }
+}
+/**
+ * 
+ * @param {HTMLElement} elem 
+ * @param {string} text 
+ * @param {string} def_lang
+ */
+function update_content(elem, text, def_lang)
+{
+    if (!elem.dataset[def_lang]) {
+        elem.dataset[def_lang] = serialize(elem);
+    }
+    elem.textContent = '';
+    for (const n of parse_text(text)) {
+        elem.appendChild(n);
     }
 }
 function *parse_text(src)
@@ -120,7 +149,7 @@ function serialize(elem)
             ret.push('*');
             ret.push(n.textContent);
             ret.push('*');
-        } else if (tag === 'span') {
+        } else if (tag === 'SPAN') {
             ret.push('`');
             ret.push(n.textContent);
             ret.push('`');
@@ -131,41 +160,11 @@ function serialize(elem)
     return ret.join('');
 }
 
-/**
- * 
- * @param {HTMLElement} elem 
- * @param {string} text 
- * @param {string} hash location.href
- */
-function update_content(elem, text)
-{
-    if (!elem.dataset.en) {
-        elem.dataset.en = serialize(elem);
-    }
-    elem.textContent = '';
-    for (const n of parse_text(text)) {
-        elem.appendChild(n);
-    }
-}
-
 function create_not_translated_msg(lang)
 {
     const div = document.createElement('div');
     div.classList.add('not-translated');
-    switch (lang) {
-    case 'en':
-        div.textContent = 'This document has not been translated.';
-        break;
-    case 'ja':
-        div.textContent = 'この文書は翻訳されていません。';
-        break;
-    case 'zh':
-        div.textContent = '本文档尚未翻译。';
-        break;
-    case 'zh-hant':
-        div.textContent = '本文檔尚未翻譯。';
-        break;
-    }
+    div.textContent = LANG_MAP[lang].not_tr;
     div.setAttribute('lang', lang);
     return div;
 }
@@ -174,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let lang = get_default_lang();
     const select = document.getElementById('language');
     init_language_select(lang, select);
-    const lang_list = select.dataset.tr ? select.dataset.tr.split(',') : LANG_LIST;
+    const lang_list = select.dataset.list.split(',');
     let not_translated_msg = null;
 
     function update() {
@@ -189,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
             language_select.parentNode.insertBefore(not_translated_msg, language_select.nextSibling);
         }
         document.body.setAttribute('lang', alt_lang);
-        update_language(alt_lang === 'zh-hant' ? 'zht' : alt_lang, document.body, window.location.hash);
+        update_language(alt_lang === 'zh-hant' ? 'zht' : alt_lang, document.body, lang_list[0]);
     }
 
     window.addEventListener('hashchange', () => {

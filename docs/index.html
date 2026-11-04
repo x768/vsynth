@@ -9,7 +9,7 @@
 </head>
 <body>
 <div id="language-select">
-<select id="language"></select>
+<select id="language" data-list="en,ja,zh,zh-hant"></select>
 </div>
 <main>
 
@@ -43,19 +43,19 @@
 
 <h2 data-ja="ファイル"
     data-zh="文件"
-    data-zht="檔案"
+    data-zht="文件"
 >Files</h2>
 <dl>
 <dt><a href="./files/dict_ja.txt" download="dict_ja.txt">dict_ja.txt</a></dt>
 <dd data-ja="日本語の辞書ファイルです。"
     data-zh="这是日文词典文件。"
-    data-zht="這是日文詞典檔案。"
+    data-zht="這是日文詞典文件。"
 >Japanese dictionary file.</dd>
 </dl>
 
 <h2 data-ja="文書"
     data-zh="文档"
-    data-zht="文件"
+    data-zht="文檔"
 >Documents</h2>
 <dl>
 <dt><a href="./pfn.html"
@@ -64,15 +64,36 @@
     data-zht="語音特徵記譜"
 >Phonetic Feature Notation</a></dt>
 <dd data-ja="このソフトウェアで使用している、言語に依存しない音声表記法です。"
-    data-zh="这是本软件所采用的一种与语言无关的语音记谱法。"
-    data-zht="這是本軟體中所使用的與語言無關的語音轉寫方法。"
->This is a language-independent phonetic notation used in this software.</dd>
-<dt lang="ja"><a href="./romaji.html">表音式ローマ字</a></dt>
-<dd lang="ja">日本語の音声・アクセントをASCIIで表記する方法です。</dd>
-<dt lang="en"><a href="./arpabet.html">Modified ARPABET</a></dt>
-<dd lang="en">A representation of phonemes of English (GA) with ASCII characters.</dd>
-<dt lang="zh-Hant"><a href="./pinyin.html">ASCII化拼音</a></dt>
-<dd lang="zh-Hant">漢語拼音為ASCII代碼化的方案</dd>
+    data-zh="本软件所采用的一种与语言无关的语音记谱法。"
+    data-zht="本軟體中所使用的與語言無關的語音轉寫方法。"
+>A language-independent phonetic notation used in this software.</dd>
+<dt><a href="./romaji.html"
+    data-ja="表音式ローマ字"
+    data-zh="日语音标罗马字"
+    data-zht="日語音標羅馬字"
+>Japanese Phonetic Romanization</a></dt>
+<dd data-ja="ヘボン式ローマ字を修正した、日本語の音韻を ASCII で表記する方法です。"
+    data-zh="使用 ASCII 字符来表示日语语音的方法，基于平文(赫本)式罗马字。"
+    data-zht="使用 ASCII 字元表示日語語音的方法，基於平文(赫本)羅馬化。"
+>A method for representing Japanese phonology using ASCII characters, based on a Hepburn romanization.</dd>
+<dt><a href="./arpabet.html"
+    data-ja="修正ARPABET"
+    data-zh="修改的ARPABET"
+    data-zht="修改的ARPABET"
+>Modified ARPABET</a></dt>
+<dd data-ja="ARPABETを修正した、英語の音韻を ASCII で表記する方法です。"
+    data-zh="使用 ASCII 字符来表示英语语音的方法，基于 ARPABET。"
+    data-zht="使用 ASCII 字元表示英語語音的方法，基於 ARPABET。"
+>A method for representing English phonology using ASCII characters, based on a ARPABET.</dd>
+<dt><a href="./pinyin.html"
+    data-ja="ASCII化拼音"
+    data-zh="ASCII化拼音"
+    data-zht="ASCII化拼音"
+>ASCII Pinyin</a></dt>
+<dd data-ja="中国語の音韻を ASCII で表記する方法です。"
+    data-zh="使用 ASCII 字符来表示汉语语音的方法。"
+    data-zht="使用 ASCII 字元表示漢語語音的方法。"
+>A method for representing Chinese phonology using ASCII characters.</dd>
 </dl>
 
 <h2 data-ja="謝辞"

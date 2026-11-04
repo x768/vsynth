@@ -9,29 +9,35 @@
 </head>
 <body>
 <div id="language-select">
-<select id="language" data-tr="zh,zh-hant"></select>
+<select id="language" data-list="zh,zh-hant"></select>
 </div>
 <main>
 <h1>ASCII化拼音</h1>
-<p data-zh="*ASCII化拼音*是汉语拼音为ASCII代码化的方案。"
+<p data-zh=""
    data-zht="*ASCII化拼音*是漢語拼音為ASCII代碼化的方案。"
-><b>ASCII化拼音</b>是漢語拼音為ASCII代碼化的方案。</p>
+><b>ASCII化拼音</b>是汉语拼音为ASCII代码化的方案。</p>
 
-<h2 data-zh="与拼音的差異"
-    data-zht="與拼音的差異"
->与拼音的差異</h2>
+<h2 data-zht="與拼音的差異">与拼音的差异</h2>
 <ul>
-    <li>用數碼標聲調(1〜4)</li>
-    <li>聲調一律標變調</li>
-    <li>使用 <span class="code">v</span> 代替 ü</li>
-    <li>一律使用小寫字母</li>
+    <li data-zht="用數碼標聲調(1〜4)">用数码标声调(1〜4)</li>
+    <li data-zht="聲調一律標變調">声调一律标变调</li>
+    <li data-zht="使用 `v` 代替 ü">使用 <span class="code">v</span> 代替 ü</li>
+    <li data-zht="一律使用小寫字母">一律使用小写字母</li>
 </ul>
 
-<h2>聲母</h2>
+<h2 data-zht="聲母">声母</h2>
 <table>
-<tr><th colspan="2"></th><th>雙唇音<br>blb</th><th>唇齒音<br>lbd</th><th>齒齦音<br>alv</th><th>翹舌音<br>rfx</th><th>齦顎音<br>pal</th><th>軟顎音<br>vel</th></tr>
 <tr>
-    <th rowspan="2">塞音 不送氣<br>stp</th>
+    <th colspan="2"></th>
+    <th><div data-zht="雙唇音">双唇音</div><div>blb</div></th>
+    <th><div data-zht="唇齒音">唇齿音</div><div>lbd</div></th>
+    <th><div data-zht="齒齦音">齿龈音</div><div>alv</div></th>
+    <th><div data-zht="翹舌音">翘舌音</div><div>rfx</div></th>
+    <th><div data-zht="齦顎音">龈颚音</div><div>pal</div></th>
+    <th><div data-zht="軟顎音">软颚音</div><div>vel</div></th>
+</tr>
+<tr>
+    <th rowspan="2"><div data-zht="塞音 不送氣">塞音 不送气</div><div>stp</div></th>
     <th>拼音</th>
     <td class="code">b</td>
     <td class="na"></td>
@@ -41,7 +47,7 @@
     <td class="code">g</td>
 </tr>
 <tr class="b">
-    <th>國際音標</th>
+    <th data-zht="國際音標">国际音标</th>
     <td class="ipa">[p]</td>
     <td class="na"></td>
     <td class="ipa">[t]</td>
@@ -50,7 +56,7 @@
     <td class="ipa">[k]</td>
 </tr>
 <tr>
-    <th rowspan="2">塞音 送氣<br>stp asp</th>
+    <th rowspan="2"><div data-zht="塞音 送氣">塞音 送气</div><div>stp asp</div></th>
     <th>拼音</th>
     <td class="code">p</td>
     <td class="na"></td>
@@ -60,7 +66,7 @@
     <td class="code">k</td>
 </tr>
 <tr class="b">
-    <th>國際音標</th>
+    <th data-zht="國際音標">国际音标</th>
     <td class="ipa">[pʰ]</td>
     <td class="na"></td>
     <td class="ipa">[tʰ]</td>
@@ -69,7 +75,7 @@
     <td class="ipa">[kʰ]</td>
 </tr>
 <tr>
-    <th rowspan="2">鼻音<br>nas</th>
+    <th rowspan="2">鼻音</div><div>nas</div></th>
     <th>拼音</th>
     <td class="code">m</td>
     <td class="na"></td>
@@ -79,7 +85,7 @@
     <td class="na"></td>
 </tr>
 <tr class="b">
-    <th>國際音標</th>
+    <th data-zht="國際音標">国际音标</th>
     <td class="ipa">[m]</td>
     <td class="na"></td>
     <td class="ipa">[n]</td>
@@ -88,7 +94,7 @@
     <td class="na"></td>
 </tr>
 <tr>
-    <th rowspan="2">塞擦音 不送氣<br>afr</th>
+    <th rowspan="2"><div data-zht="塞擦音 不送氣">塞擦音 不送气</div><div>afr</div></th>
     <th>拼音</th>
     <td class="na"></td>
     <td class="na"></td>
@@ -98,7 +104,7 @@
     <td class="na"></td>
 </tr>
 <tr class="b">
-    <th>國際音標</th>
+    <th data-zht="國際音標">国际音标</th>
     <td class="na"></td>
     <td class="na"></td>
     <td class="ipa">[ts]</td>
@@ -107,7 +113,7 @@
     <td class="na"></td>
 </tr>
 <tr>
-    <th rowspan="2">塞擦音 送氣<br>afr asp</th>
+    <th rowspan="2"><div data-zht="塞擦音 送氣">塞擦音 送气</div><div>afr asp</div></th>
     <th>拼音</th>
     <td class="na"></td>
     <td class="na"></td>
@@ -117,7 +123,7 @@
     <td class="na"></td>
 </tr>
 <tr class="b">
-    <th>國際音標</th>
+    <th data-zht="國際音標">国际音标</th>
     <td class="na"></td>
     <td class="na"></td>
     <td class="ipa">[tsʰ]</td>
@@ -126,7 +132,7 @@
     <td class="na"></td>
 </tr>
 <tr>
-    <th rowspan="2">擦音<br>frc</th>
+    <th rowspan="2"><div>擦音</div><div>frc</div></th>
     <th>拼音</th>
     <td class="na"></td>
     <td class="code">f</td>
@@ -136,7 +142,7 @@
     <td class="code">h</td>
 </tr>
 <tr class="b">
-    <th>國際音標</th>
+    <th data-zht="國際音標">国际音标</th>
     <td class="na"></td>
     <td class="ipa">[f]</td>
     <td class="ipa">[s]</td>
@@ -145,7 +151,7 @@
     <td class="ipa">[x]</td>
 </tr>
 <tr>
-    <th rowspan="2">近音<br>apr</th>
+    <th rowspan="2"><div>近音</div><div>frc</div></th>
     <th>拼音</th>
     <td class="na"></td>
     <td class="na"></td>
@@ -155,7 +161,7 @@
     <td class="na"></td>
 </tr>
 <tr class="b">
-    <th>國際音標</th>
+    <th data-zht="國際音標">国际音标</th>
     <td class="na"></td>
     <td class="na"></td>
     <td class="na"></td>
@@ -164,7 +170,7 @@
     <td class="na"></td>
 </tr>
 <tr>
-    <th rowspan="2">邊音<br>lat apr</th>
+    <th rowspan="2"><div data-zht="邊音">边音</div><div>lat apr</div></th>
     <th>拼音</th>
     <td class="na"></td>
     <td class="na"></td>
@@ -174,7 +180,7 @@
     <td class="na"></td>
 </tr>
 <tr>
-    <th>國際音標</th>
+    <th data-zht="國際音標">国际音标</th>
     <td class="na"></td>
     <td class="na"></td>
     <td class="ipa">[l]</td>
@@ -184,12 +190,12 @@
 </tr>
 </table>
 
-<h2>韻母</h2>
+<h2 data-zht="韻母">韵母</h2>
 <table>
-<tr><th rowspan="2" colspan="2"></th><th colspan="4">單元音韻母</th><th colspan="4">複元音韻母</th><th colspan="5">帶鼻音韻母</th></tr>
+<tr><th rowspan="2" colspan="2"></th><th colspan="4" data-zht="單元音韻母">单元音韵母</th><th colspan="4" data-zht="複元音韻母">复元音韵母</th><th colspan="5" data-zht="帶鼻音韻母">带鼻音韵母</th></tr>
 <tr><th>∅</th><th>/e/</th><th>/o/</th><th>/a/</th><th>/ei/</th><th>/ai/</th><th>/ao/</th><th>/ou/</th><th>/en/</th><th>/an/</th><th>/ong/</th><th>/eng/</th><th>/ang/</th></tr>
 <tr>
-    <th rowspan="2">開口呼 ∅</th>
+    <th rowspan="2" data-zht="開口呼 ∅">开口呼 ∅</th>
     <th>拼音</th>
     <td class="code">-i</td>
     <td class="code">e</td>
@@ -206,7 +212,7 @@
     <td class="code">ang</td>
 </tr>
 <tr class="b">
-    <th>國際音標</th>
+    <th data-zht="國際音標">国际音标</th>
     <td class="ipa">∅</td>
     <td class="ipa">[ɤ]</td>
     <td class="ipa">[ɔ]</td>
@@ -222,7 +228,7 @@
     <td class="ipa">[ɑŋ]</td>
 </tr>
 <tr>
-    <th rowspan="2">齊齒呼 /i/</th>
+    <th rowspan="2" data-zht="齊齒呼 /i/">齐齿呼 /i/</th>
     <th>拼音</th>
     <td class="code">yi<br>-i</td>
     <td class="code">ye<br>-ie</td>
@@ -239,7 +245,7 @@
     <td class="code">yang<br>-iang</td>
 </tr>
 <tr class="b">
-    <th>國際音標</th>
+    <th data-zht="國際音標">国际音标</th>
     <td class="ipa">[i]</td>
     <td class="ipa">[iɛ]</td>
     <td class="na"></td>
@@ -272,7 +278,7 @@
     <td class="code">wang<br>-uang</td>
 </tr>
 <tr class="b">
-    <th>國際音標</th>
+    <th data-zht="國際音標">国际音标</th>
     <td class="ipa">[u]</td>
     <td class="na"></td>
     <td class="ipa">[uo]</td>
@@ -305,7 +311,7 @@
     <td class="na"></td>
 </tr>
 <tr>
-    <th>國際音標</th>
+    <th data-zht="國際音標">国际音标</th>
     <td class="ipa">[y]</td>
     <td class="ipa">[yɛ]</td>
     <td class="na"></td>
@@ -322,20 +328,20 @@
 </tr>
 </table>
 
-<h2>聲調、兒化</h2>
+<h2 data-zht="聲調、兒化">声调、儿化</h2>
 <table>
-<tr><th></th><th>國際音標</th><th>拼音</th><th>ASCII拼音</th></tr>
-<tr><th>第一聲（陰平、平調）</th><td class="ipa">[ä˥]</td><td>ā</td><td class="code">a1</td></tr>
-<tr><th>第二聲（陽平、升調）</th><td class="ipa">[ä˧˥]</td><td>á</td><td class="code">a2</td></tr>
-<tr><th>第三聲（上聲、上音）</th><td class="ipa">[ä˨˩˦]</td><td>ǎ</td><td class="code">a3</td></tr>
-<tr><th>第四聲（去聲、去音）</th><td class="ipa">[ä˥˩]</td><td>à</td><td class="code">a4</td></tr>
-<tr><th>輕聲</th><td class="ipa">[əˑ]</td><td>a</td><td class="code">a</td></tr>
-<tr><th>兒化</th><td class="ipa">[ɚ]</td><td>er</td><td class="code">er</td></tr>
-<tr><th>隔音符號</th><td class="ipa">[.]</td><td>'</td><td class="code">'</td></tr>
+<tr><th></th><th data-zht="國際音標">国际音标</th><th>拼音</th><th>ASCII拼音</th></tr>
+<tr><th data-zht="第一聲（陰平、平調）">第一声（阴平、平调）</th><td class="ipa">[ä˥]</td><td>ā</td><td class="code">a1</td></tr>
+<tr><th data-zht="第二聲（陽平、升調）">第二声（阳平、升调）</th><td class="ipa">[ä˧˥]</td><td>á</td><td class="code">a2</td></tr>
+<tr><th data-zht="第三聲（上聲、上音）">第三声（上声、上音）</th><td class="ipa">[ä˨˩˦]</td><td>ǎ</td><td class="code">a3</td></tr>
+<tr><th data-zht="第四聲（去聲、去音）">第四声（去声、去音）</th><td class="ipa">[ä˥˩]</td><td>à</td><td class="code">a4</td></tr>
+<tr><th data-zht="輕聲">轻声</th><td class="ipa">[əˑ]</td><td>a</td><td class="code">a</td></tr>
+<tr><th data-zht="兒化">儿化</th><td class="ipa">[ɚ]</td><td>er</td><td class="code">er</td></tr>
+<tr><th data-zht="隔音符號">隔音符号</th><td class="ipa">[.]</td><td>'</td><td class="code">'</td></tr>
 </table>
 
-<h2>變調</h2>
-<p>聲調一律標變調，不標原調。即「你好」寫成<span class="code">ni2hao3</span>。</p>
+<h2 data-zht="變調">变调</h2>
+<p data-zht="聲調一律標變調，不標原調。即「你好」寫成`ni2hao3`。">声调一律标变调，不标原调。即「你好」写成<span class="code">ni2hao3</span>。</p>
 
 </main>
 </body>
