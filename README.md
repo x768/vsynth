@@ -45,19 +45,19 @@ $ npm install github:x768/vsynth
 ```
 
 ```js
-import { readFileSync, writeFileSync } from 'fs';
+import { writeFileSync } from 'node:fs';
 import { SAMPLING_RATE, VoiceSynth } from 'ninbosvoice-tts/lib/vsynth.js';
-import { parse_dictionary, WavFile } from 'ninbosvoice-tts/lib/misc.js';
-import { get_dictionary_path } from 'ninbosvoice-tts/lib/helper.js';
+import { WavFile } from 'ninbosvoice-tts/lib/misc.js';
+import { get_dictionary } from 'ninbosvoice-tts/lib/helper.js';
 import * as ja from 'ninbosvoice-tts/lang/ja.js';
 
 
 const src = 'おはようございます。';
 
 const to_phonemic = new ja.ToPhonemic();
-to_phonemic.load(parse_dictionary(readFileSync(get_dictionary_path('dict_ja.txt'), {encoding:'utf-8'})));
+to_phonemic.load(get_dictionary('dict_ja.txt'));
 const phonemic = to_phonemic.conv(src);
-const pfn = new ja.ToSound({voiceless: true, reduce_pitch: true}).conv(phonemic);
+const pfn = new ja.ToSound({}).conv(phonemic);
 
 const synth = new VoiceSynth(VoiceSynth.default_voice());
 synth.set_pfn(pfn, 480, 4800, 400, 1);

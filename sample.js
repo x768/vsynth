@@ -1,16 +1,16 @@
-import { readFileSync, writeFileSync } from 'fs';
+import { writeFileSync } from 'node:fs';
 import { SAMPLING_RATE, VoiceSynth } from './docs/lib/vsynth.js';
-import { parse_dictionary, WavFile } from './docs/lib/misc.js';
-import { get_dictionary_path } from './docs/lib/helper.js';
+import { WavFile } from './docs/lib/misc.js';
+import { get_dictionary } from './docs/lib/helper.js';
 import * as ja from './docs/lang/ja.js';
 
 
 const src = 'おはようございます。';
 
 const to_phonemic = new ja.ToPhonemic();
-to_phonemic.load(parse_dictionary(readFileSync(get_dictionary_path('dict_ja.txt'), {encoding:'utf-8'})));
+to_phonemic.load(get_dictionary('dict_ja.txt'));
 const phonemic = to_phonemic.conv(src);
-const pfn = new ja.ToSound({voiceless: true, reduce_pitch: true}).conv(phonemic);
+const pfn = new ja.ToSound({}).conv(phonemic);
 
 const synth = new VoiceSynth(VoiceSynth.default_voice());
 synth.set_pfn(pfn, 480, 4800, 400, 1);
