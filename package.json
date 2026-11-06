@@ -15,7 +15,7 @@
   },
   "type": "module",
   "author": "x768",
-  "license": "GPL-3.0",
+  "license": "GPL-3.0-or-later",
   "files": [
     "./docs/files/*",
     "./docs/lib/*.js",
