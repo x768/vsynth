@@ -1,3 +1,5 @@
+import { VoiceSynth } from './vsynth.js';
+
 /**
  * 
  * @param {string} src 
@@ -88,11 +90,11 @@ export class WavFile
     }
     /**
      * Creates a WAV file as a buffer
-     * @param {Float32Array[]} list 
+     * @param {(Float32Array|VoiceSynth)[]} list 
      * @returns {Uint8Array} WAV file buffer
      */
     create(list) {
-        const total = list.reduce((a, b) => a + b.length, 0);
+        const total = list.reduce((a, b) => a + (b instanceof VoiceSynth ? b.get_remaining() * 2 : b.length), 0);
 
         const buf = new Uint8Array(44 + total * 2);
         WavFile.#set_str(buf, 0, 'RIFF');
@@ -109,7 +111,14 @@ export class WavFile
         WavFile.#set_i32(buf, 40, total * 2);
 
         let offset = 44;
-        for (const b of list) {
+        for (const item of list) {
+            let b;
+            if (item instanceof VoiceSynth) {
+                b = new Float32Array(item.get_remaining());
+                item.generate(b);
+            } else {
+                b = item;
+            }
             this.compressor.process(b, b);
             for (let i = 0; i < b.length; i++) {
                 const v = (b[i] * 32767) | 0;

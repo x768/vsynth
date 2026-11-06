@@ -879,10 +879,7 @@ export class TtsPage
         for (const item of sel_items) {
             const synth = new VoiceSynth(item.voice);
             synth.set_pfn(item.pfn, item.speed, item.pitch + 4800, item.accent, item.get_volume_linear());
-            const buf = new Float32Array(synth.get_remaining());
-            synth.generate(buf);
-            list.push(buf);
-
+            list.push(synth);
             if (filename === '') {
                 filename = TtsPage.#create_filename(this.db.get_filename_single(), 0, item);
             }
@@ -900,12 +897,9 @@ export class TtsPage
             const item = sel_items[i];
             const synth = new VoiceSynth(item.voice);
             synth.set_pfn(item.pfn, item.speed, item.pitch + 4800, item.accent, item.get_volume_linear());
-            const buf = new Float32Array(synth.get_remaining());
-            synth.generate(buf);
-
             const filename = TtsPage.#create_filename(this.db.get_filename_seq(), i + 1, item);
             const wav = new WavFile(SAMPLING_RATE, 1, 1)
-            list.push([new Blob([wav.create([buf])]), filename]);
+            list.push([new Blob([wav.create([synth])]), filename]);
         }
         this.dialog.show_download_list(list);
     }

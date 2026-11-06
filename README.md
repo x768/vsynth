@@ -61,11 +61,9 @@ const pfn = new ja.ToSound({}).conv(phonemic);
 
 const synth = new VoiceSynth(VoiceSynth.default_voice());
 synth.set_pfn(pfn, 480, 4800, 400, 1);
-const buf = new Float32Array(synth.get_remaining());
-synth.generate(buf);
 
 const wav = new WavFile(SAMPLING_RATE, 1, 1);
-writeFileSync('ohayou.wav', wav.create([buf]));
+writeFileSync('ohayou.wav', wav.create([synth]));
 ```
 
 npmを使用せず、ファイル単体をimportしても動作します。
