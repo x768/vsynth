@@ -111,6 +111,23 @@ path.graph {
     font-size: 16px;
     fill: var(--fg-color);
 }
+.chart-module {
+    stroke: var(--fg-color);
+    stroke-width: 2px;
+    rx: 8px;
+    ry: 8px;
+}
+.chart-class {
+    stroke: var(--fg-color);
+    stroke-width: 2px;
+    fill: var(--bg-color);
+    rx: 8px;
+    ry: 8px;
+}
+.chart-data {
+    stroke: var(--border-color);
+    fill: var(--code-color);
+}
 .not-impl {
     color: var(--border-color);
 }
