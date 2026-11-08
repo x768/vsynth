@@ -9,19 +9,26 @@
 </head>
 <body>
 <div id="language-select">
-<select id="language" data-list="ja"></select>
+<select id="language" data-list="en,ja"></select>
 </div>
 <main>
-<h1>弁別素性表記</h1>
-<p><b>弁別素性表記</b> (べんべつそせいひょうき、英:Phonetic Feature Notation (<b>PFN</b>))は、ヒトの言語音を記述するための表記法である。</p>
+<h1 data-ja="弁別素性表記">Phonetic Feature Notation</h1>
+<p data-ja="*弁別素性表記* (べんべつそせいひょうき、英:Phonetic Feature Notation (*PFN*))は、言語に依存しない音声表記法である。"
+>Phonetic Feature Notation (<b>PFN</b>) is a language-independent phonetic notation.</p>
 
-<h2>チャンク (音節)</h2>
-<p>チャンクは音節とほぼ同じであるが、子音だけのチャンクや無音のチャンクも可能。日本語であればモーラ(拍)を割り当てる。</p>
-<p>チャンクはスペースで区切られたトークンから構成される。</p>
-<p>最初のトークンは対応する自然言語の文字 (「ア」など)を指定する。不要な場合はスペースを置く。</p>
-<p>次に継続時間を指定する。デフォルトの80%の長さの場合、<span class="code">=0.8</span>を指定する。省略するとデフォルトの長さとなる。</p>
-<p>チャンク全体が無音の場合は<span class="code">.</span>を置く。</p>
-<p>例: 「一般」</p>
+<h2 data-ja="チャンク (音節)">Isochronic Chunk</h2>
+<p data-ja="チャンクは音節とほぼ同じであるが、子音だけのチャンクや無音のチャンクも可能。日本語であればモーラ(拍)を割り当てる。"
+>While “chunk” is roughly equivalent in meaning to “syllable” it is also possible for a chunk to consist solely of consonants or to be silent.</p>
+<p data-ja="チャンクはスペースで区切られたトークンから構成される。"
+>A Isochronic Chunk consists of tokens separated by spaces.</p>
+<p data-ja="最初のトークンは対応する自然言語の文字 (「ア」など)を指定する。不要な場合はスペースを置く。"
+>The first token specifies the natural language characters corresponding to the chunk. Use a space if none is required.</p>
+<p data-ja="次に継続時間を指定する。例えばデフォルトの 80% の長さの場合、`=0.8` を指定する。省略するとデフォルトの長さとなる。"
+>Next, specify the duration of the chunk. For example, to set it to 80% of the default length, specify <span class="code">=0.8</span>. If omitted, the default length will be used.</p>
+<p data-ja="チャンク全体が無音の場合はピリオドを置く。"
+>If an entire chunk is silent, place a period.</p>
+<p data-ja="例: 「一般」"
+>e.g. A Japanese word “イッパン”, means “General” or “Common”, consistes 4 molas. ッ is no audible release and ン is solely of nasal consonant.</p>
 <pre class="code">イ =0.8 fv %7 ! | %5 p0 | 10 A %7 A8
 ッ =0.8 f0Lv0c 40 v0 20 %7 ! | %5 p6
 パ f5Lv0c 40 v0 20 f5o9v %7 ! | %5 p6
@@ -29,37 +36,46 @@
  .
 </pre>
 
-<h2>時刻</h2>
-<p>時刻はチャンク内の相対値で表す。初期状態では現在位置はチャンク始点を指す。</p>
+<h2 data-ja="時刻">Time and Dulation</h2>
+<p data-ja="時刻はチャンク内の相対値で表す。初期状態では現在位置はチャンク始点を指す。チャンクの長さは話速によって変化する。"
+>Time is expressed as a relative value within a chunk. In the initial state, the current position points to the start of the chunk. The length of a chunk varies depending on the speech speed.</p>
 
 <table>
-<tr><th>パターン</th><th>例</th><th></th></tr>
-<tr><td>\d+</td><td class="code">10</td><td>現在位置から10ms移動</td></tr>
-<tr><td>\$</td><td class="code">$</td><td>音節末開始点</td></tr>
-<tr><td>\|</td><td class="code">|</td><td>チャンク始点に戻る</td></tr>
-<tr><td>%\d</td><td class="code">%3</td><td>チャンク全体の30%時点に移動</td></tr>
-<tr><td>%\d\d</td><td class="code">%45</td><td>チャンク全体の45%時点に移動</td></tr>
+<tr><th data-ja="パターン">Pattern</th><th data-ja="例">Example</th><th></th></tr>
+<tr><td>\d+</td><td class="code">10</td><td data-ja="現在位置から10ms移動 (ただし時刻の分解能は2.7ms)">Move 10 ms forward from the current position (with a time resolution of 2.7 ms)</td></tr>
+<tr><td>\$</td><td class="code">$</td><td data-ja="音節末開始点">Beginning point of syllable ending</td></tr>
+<tr><td>\|</td><td class="code">|</td><td data-ja="チャンク始点に戻る">Return to the start of the chunk</td></tr>
+<tr><td>%\d</td><td class="code">%3</td><td data-ja="チャンク全体の30%の位置に移動">Move to the 30% position of the entire chunk</td></tr>
+<tr><td>%\d\d</td><td class="code">%45</td><td data-ja="チャンク全体の45%の位置に移動">Move to the 45% position of the entire chunk</td></tr>
 </table>
 
-<p>例: pan (1音節の語)</p>
+<p data-ja="例: pan (1音節の語)">e.g. pan (Monosyllabic word)</p>
 <pre class="code">f5Lv0c 40 v0 20 f5o9v %7 ! $ Fnv 70</pre>
-<p>頭子音が<span class="code">f5Lv0c 40 v0 20</span>、音節核が、<span class="code">f5o9v %7 !</span>、末尾子音が<span class="code">$ Fnv 70</span>となる。</p>
-<p>それぞれの継続時間は、頭子音が60ms、末尾子音が70msで、残りが音節核となる。</p>
-<p>音節核が20msより短い場合、頭子音と末尾子音の時間を削って調整するが、子音の時間が元の半分以下にならないように音節全体の長さの下限が設定される。</p>
+<p data-ja="頭子音が `f5Lv0c 40 v0 20`、音節核が `f5o9v %7 !`、末尾子音が `$ Fnv 70` となる。"
+>The onset is <span class="code">f5Lv0c 40 v0 20</span>, the nucleus is <span class="code">f5o9v %7 !</span>, and the coda is <span class="code">$ Fnv 70</span>.</p>
+<p data-ja="頭子音の継続時間は60ms、末尾子音が70msで、残りが音節核となる。"
+>The onset has a duration of 60 ms, the coda 70 ms, and the remainder constitutes the nucleus.</p>
+<p data-ja="音節核が20msより短くなる場合、頭子音と末尾子音の時間を減らして調整するが、子音の時間が元の半分以下にならないように音節全体の長さの下限が設定される。"
+>If the nucleus is shorter than 20 ms, the durations of the onset and coda consonants are reduced to compensate;
+however, a lower limit is set for the total duration of the syllable to ensure that the duration of any consonant does not fall below half of its original value.</p>
 
-<h2>割合指定</h2>
-<p>本文書内で「割合を指定する」と記載されている場合、以下の3種類の指定方法とする。</p>
+<h2 data-ja="割合指定">Specify the Ratio</h2>
+<p data-ja="以下の文書内で「割合を指定する」と記載されている場合、以下の3種類の指定方法とする。"
+>Where the term "specify the ratio" appears in the following, it shall be interpreted as referring to one of the three methods of specification described below.</p>
 <table>
-<tr><th>パターン</th><th>例</th><th></th></tr>
-<tr><td>\d</td><td class="code">A3</td><td>10に対する割合 (例:30%)</td></tr>
-<tr><td>\d\d</td><td class="code">A45</td><td>100に対する割合 (例:45%)</td></tr>
-<tr><td>なし</td><td class="code">A</td><td>100%</td></tr>
+<tr><th data-ja="パターン">Pattern</th><th data-ja="例">Example</th><th></th></tr>
+<tr><td>\d</td><td class="code">A3</td><td data-ja="10に対する割合 (3/10)">Proportion relative to 10 (3/10)</td></tr>
+<tr><td>\d\d</td><td class="code">A45</td><td data-ja="100に対する割合 (45/100)">Proportion relative to 100 (45/100)</td></tr>
+<tr><td data-ja="なし">None</td><td class="code">A</td><td>100%</td></tr>
 </table>
 
-<h2>パラメーター補間</h2>
-<p>パラメーター指定された2点間は線形補間される。
-ただし、最初のパラメーター指定点より前や、最後のパラメーター指定点の後は、最も近い指定点の値となる。</p>
-<p>例: ピッチ変更</p>
+<h2 data-ja="パラメーター補間">Parameter Interpolation</h2>
+<p data-ja="パラメーターが指定された2点間は線形補間される。ただし、最初のパラメーター指定点より前や、最後のパラメーター指定点の後は、最も近い指定点の値となる。"
+>Values ​​between two points for which parameters have been specified are determined via linear interpolation.
+For positions before the first specified point or after the last specified point, the value of the nearest specified point is used.</p>
+<p data-ja="ただし、途中で無音(`A0`)がある場合は補間されない。"
+>However, if there is a silent interval (<span class="code">A0</span>) between points, no interpolation is performed.</p>
+<p data-ja="例: ピッチ曲線">e.g. Pitch curve</p>
 <pre class="code">%3 P4800 %7 P5000</pre>
 
 <svg class="chart" style="width:400px;height:160px" viewBox="0,0,400,160">
@@ -73,38 +89,39 @@
     <text text-anchor="middle" x="140" y="140">30%</text>
     <text text-anchor="middle" x="240" y="140">70%</text>
 </svg>
-<p>ただし、途中で無音(<span class="code">A0</span>)がある場合は補間されない。</p>
 
-<h2>声調</h2>
-<h3>絶対指定</h3>
-<p><span class="code">P</span>に続き数値をcentで指定する。
-(1オクターブは1200cents、12平均律の半音は100cents)</p>
-<p>4800が標準となる。(デフォルト男声の場合100Hz)</p>
+<h2 data-ja="声調">Tones</h2>
+<h3 data-ja="絶対指定">Absolute Specification</h3>
+<p data-ja="`P`に続き数値をcentで指定する。4800が基準値となる。(1オクターブは1200cents、12平均律の半音は100cents)"
+>Specify the value in cents following <span class="code">P</span>. The neutral value is 4800. (One octave is 1200 cents, and a semitone in 12-tone equal temperament is 100 cents.)</p>
 
-<h3>相対指定</h3>
-<p><span class="code">p</span>に続き割合を指定する。実際のピッチは別途指定する。</p>
-<p>例: 中国語の第三声 mǎ は、<span class="code">f5Lnv 20 ! 40 f5o9v | %2 p3 %5 p0 %8 p</span> (声調は<span class="code">%2 p3 %5 p0 %8 p</span>)</p>
+<h3 data-ja="相対指定">Relative Specification</h3>
+<p data-ja="`p` に続き割合を指定する。実際のピッチは別途指定する。"
+>Specify the ratio following <span class="code">p</span>. The actual pitch is specified via other parameters.</p>
+<p data-ja="例: 中国語の第三声 mǎ は、`f5Lnv 20 ! 40 f5o9v | %2 p3 %5 p0 %8 p` (声調は `%2 p3 %5 p0 %8 p`)"
+>e.g. The third tone of Mandarin “mǎ” is written as <span class="code">f5Lnv 20 ! 40 f5o9v | %2 p3 %5 p0 %8 p</span> (Tones are <span class="code">%2 p3 %5 p0 %8 p</span>)</p>
 
-<h2>声量</h2>
-<p><span class="code">A</span>に続き割合を指定する。
-数値の2乗に比例して振幅が増減する。</p>
+<h2 data-ja="声量">Amplitude</h2>
+<p data-ja="`A` に続き割合を指定する。振幅は値の2乗に比例する。"
+>Specify the ratio following <span class="code">A</span>. The amplitude is proportional to the square of the value.</p>
 
-<h2>声門閉鎖度</h2>
-<p>有声・無声の度合いは、<span class="code">v</span>に続いて割合を指定する。
-また、声門閉鎖の度合いは、<span class="code">g</span>に続いて割合を指定する。</p>
+<h2 data-ja="声門閉鎖度">Glottal Stopness</h2>
+<p data-ja="有声・無声の度合いは、`v` に続いて割合を指定する。また、声門閉鎖の度合いは、`g` に続いて割合を指定する。"
+>The voicelessness is specified the ratio following <span class="code">v</span>, and the glottal stopness is specified the ratio following <span class="code">g</span>.</p>
 
 <table>
 <tr><th>PFN</th><th>IPA</th><th></th></tr>
-<tr><td class="code">v0</td><td class="ipa">ḁ</td><td>無声音</td></tr>
-<tr><td class="code">v5</td><td class="ipa">a̤</td><td>かすれ声 (TODO)</td></tr>
-<tr><td class="code">v / g0</td><td class="ipa">a</td><td>有声音</td></tr>
-<tr><td class="code">g5</td><td class="ipa">a̰</td><td>きしみ声/Creaky voice (TODO)</td></tr>
-<tr><td class="code">g</td><td class="ipa">ʔ</td><td>声門閉鎖音</td></tr>
+<tr><td class="code">v0</td><td class="ipa">ḁ</td><td data-ja="無声音">Voiceless sound</td></tr>
+<tr><td class="code">v5</td><td class="ipa">a̤</td><td data-ja="かすれ声 (TODO)">Breathy voice (TODO)</td></tr>
+<tr><td class="code">v / g0</td><td class="ipa">a</td><td data-ja="有声音">Voiced sound</td></tr>
+<tr><td class="code">g5</td><td class="ipa">a̰</td><td data-ja="きしみ声 (TODO)">Creaky voice (TODO)</td></tr>
+<tr><td class="code">g</td><td class="ipa">ʔ</td><td data-ja="声門閉鎖音">Glottal stop</td></tr>
 </table>
 
-<p>例: 声門摩擦音<span class="ipa">[hä]</span>は、<span class="code">f5o9v0 50 v0 20 f5o9v</span> (母音を無声化したものを子音とする)</p>
+<p data-ja="例: 声門摩擦音 @`[hä]`は、`f5o9v0 50 v0 20 f5o9v` (無声化した母音を子音とする)"
+>e.g. Glottal fricative <span class="ipa">[hä]</span> is written as <span class="code">f5o9v0 50 v0 20 f5o9v</span> (Devoiced vowels as consonants)</p>
 
-<h2>広さと前舌度</h2>
+<h2 data-ja="広さと前舌度">Vowel Height and Backness</h2>
 <svg class="chart" style="width:400px;height:200px" viewBox="0,0,400,200">
     <path fill="none" class="border" stroke-width="2" d="M40,50 L290,50 L290,170 L160,170 z" />
     <path fill="none" class="border" stroke-width="2" d="M80,90 L290,90" />
@@ -135,11 +152,12 @@
     <text text-anchor="left" x="360" y="170" font-weight="bold">o</text>
 </svg>
 
-<p>前舌・後舌の度合いは、<span class="code">f</span>に続き割合(前舌ほど大)を指定する。
-広さ(高さ)は<span class="code">o</span>に続き割合(広いほど大)を指定する。</p>
-<p>例: 前舌狭母音<span class="ipa">[i]</span>は、<span class="code">fo0v</span>であるが、<span class="code">o0</span>は省略できるため<span class="code">fv</span>となる。</p>
+<p data-ja="舌の前後の位置は、`f` に続き割合(最奥=0)を指定する。広さは `o` に続き割合(最狭=0)を指定する。"
+>The front-to-back position (the most back = 0) is specified the ratio following <span class="code">f</span>. The height (the narrowest = 0) is specified the ratio following <span class="code">o</span>.</p>
+<p data-ja="例: 前舌狭母音 @`[i]` は、`fo0v` であるが、`o0` を省略して `fv` とする。"
+>e.g. Close front vowel <span class="ipa">[i]</span> is written as <span class="code">fo0v</span>, but <span class="code">o0</span> is often omitted, and they are written simply as <span class="code">fv</span>.</p>
 
-<h2>調音位置</h2>
+<h2 data-ja="調音位置">Place of Articulation</h2>
 <svg class="chart" style="width:400px;height:200px" viewBox="0,0,400,200">
     <path fill="none" stroke="silver" stroke-width="2" d="M40,50 L290,50 L290,170" />
 
@@ -148,14 +166,14 @@
     <text text-anchor="middle" x="290" y="22" font-weight="bold">f0</text>
 
     <text text-anchor="middle" x="40" y="50">alv</text>
-    <text text-anchor="middle" x="40" y="70">歯茎</text>
+    <text text-anchor="middle" x="40" y="70" data-ja="歯茎">Alveolar</text>
     <text text-anchor="middle" x="165" y="50">pal</text>
-    <text text-anchor="middle" x="165" y="70">硬口蓋</text>
+    <text text-anchor="middle" x="165" y="70" data-ja="硬口蓋">Palatal</text>
     <text text-anchor="middle" x="290" y="50">vel</text>
-    <text text-anchor="middle" x="290" y="70">軟口蓋</text>
+    <text text-anchor="middle" x="290" y="70" data-ja="軟口蓋">Velar</text>
 
     <text text-anchor="middle" x="290" y="130">uvl</text>
-    <text text-anchor="middle" x="290" y="150">口蓋垂</text>
+    <text text-anchor="middle" x="290" y="150" data-ja="口蓋垂">Uvular</text>
 
     <text text-anchor="left" x="360" y="50" font-weight="bold">o0</text>
     <text text-anchor="left" x="360" y="90" font-weight="bold">o4</text>
@@ -163,77 +181,79 @@
     <text text-anchor="left" x="360" y="170" font-weight="bold">o</text>
 </svg>
 
-<p>舌背音は<span class="code">f</span>に続き割合(軟口蓋=<span class="code">f0</span>、硬口蓋=<span class="code">f</span>)を指定する。
-舌端音は<span class="code">F</span>に続き割合(硬口蓋=<span class="code">F0</span>、歯茎=<span class="code">F</span>)を指定する。</p>
-<p>例: 硬口蓋音<span class="ipa">[jä]</span>は、<span class="code">fv 70 f5o9v</span>(子音は<span class="code">fv 70</span>)である。</p>
+<p data-ja="舌背音は `f` に続き割合(軟口蓋=`f0`、硬口蓋=`f`)を指定する。舌端音は `F` に続き割合(硬口蓋=`F0`、歯茎=`F`)を指定する。"
+>The dorsal consonants is speficied the ratio following <span class="code">f</span> (Velar = <span class="code">f0</span>, Palatal = <span class="code">f</span>).
+The laminal consonant is speficied the ratio following <span class="code">F</span> (Palatal = <span class="code">F0</span>, Alveolar = <span class="code">F</span>).</p>
+<p data-ja="例: 硬口蓋接近音 @`[jä]` は、`fv 70 f5o9v` (子音は`fv 70`)"
+>e.g. Palatal approximant <span class="ipa">[jä]</span> is written as <span class="code">fv 70 f5o9v</span> (The consonant is <span class="code">fv 70</span>)</p>
 
-<h2>調音区間</h2>
-<p>調音位置を区間で指定する場合、<span class="code">e</span>と<span class="code">f/F</span>を併用する。</p>
-<p><span class="code">e</span>が未指定の場合、<span class="code">f/F</span>と同一の値が指定される。</p>
-<p>例: <span class="ipa">[ɡʲi]</span>は、調音位置が軟口蓋〜硬口蓋の破裂音のため、<span class="code">f0ecv 20 fv</span>→<span class="code">f0</span>は省略可能なため、<span class="code">ecv 20 fv</span>。</p>
+<h2 data-ja="調音区間">Section of Articulation</h2>
+<p data-ja="調音区間は、`e` と `f/F` で指定する。"
+>Section of Articulation is specified by <span class="code">e</span> and <span class="code">f/F</span>.</p>
+<p data-ja="`e` が未指定の場合、`f/F` と同一の値が指定される。"
+>If <span class="code">e</span> is not specified, it is assigned the same value as <span class="code">f/F</span>.</p>
+<p data-ja="例: 硬口蓋化軟口蓋音 @`[ɡʲi]` は、`f0ecv 20 fv` であるが、`f0` を省略して `ecv 20 fv` とする。"
+>e.g. Palatalized Velar stop <span class="ipa">[ɡʲi]</span> is written as <span class="code">f0ecv 20 fv</span>, but <span class="code">f0</span> is often omitted, and they are written simply as <span class="code">ecv 20 fv</span>.</p>
 
-<h2>円唇度</h2>
-<p><span class="code">L</span>に続き割合を指定する。</p>
-<p>円唇母音または唇音化子音で使用する。</p>
+<h2 data-ja="円唇度">Labial Roundness</h2>
+<p data-ja="`L` に続き割合を指定する。">Specify the ratio following <span class="code">L</span>.</p>
 
-<h2>そり舌度</h2>
-<p><span class="code">r</span>に続き割合を指定する。</p>
-<p>R音化母音またはそり舌子音で使用する。</p>
+<h2 data-ja="そり舌度">Degree of Retroflex</h2>
+<p data-ja="`r` に続き割合を指定する。">Specify the ratio following <span class="code">r</span>.</p>
 
-<h2>側面度</h2>
-<p><span class="code">a</span>に続き割合を指定する。</p>
+<h2 data-ja="側面度">Lateralness</h2>
+<p data-ja="`a` に続き割合を指定する。">Specify the ratio following <span class="code">a</span>.</p>
 
-<h2>歯擦度</h2>
-<p><span class="code">s</span>に続き割合を指定する。</p>
+<h2 data-ja="歯擦度">Degree of Sibilant</h2>
+<p data-ja="`s` に続き割合を指定する。">Specify the ratio following <span class="code">s</span>.</p>
 
-<h2>鼻音度</h2>
-<p><span class="code">n</span>に続き割合を指定する。</p>
-<p><span class="code">n0</span>は口音、<span class="code">n</span>は鼻音(口腔閉鎖)、<span class="code">n5</span>で母音を発すると鼻母音となる。</p>
+<h2 data-ja="鼻音度">Nasalness</h2>
+<p data-ja="`n` に続き割合を指定する。">Specify the ratio following <span class="code">n</span>.</p>
+<p data-ja="`n0` は口音、`n` は鼻音(口腔閉鎖)、`n5` で母音を発すると鼻母音となる。"
+><span class="code">n0</span> is oral sound, <span class="code">n</span> is nasal consonant. When a vowel is produced with  <span class="code">n5</span>, it becomes a nasal vowel.</p>
 
-<h2>閉塞度</h2>
-<p><span class="code">c</span>に続き割合を指定する。</p>
-<p><span class="code">c0</span>は閉鎖なし、<span class="code">c</span>は調音位置で完全に閉鎖する。</p>
-<p><span class="code">c5</span>を維持することで摩擦音となる。</p>
-<p>閉鎖状態から閉塞度95%以下に遷移するとき調音位置に応じた破裂音が発生する。
-円唇度85%以上で閉鎖を開放すると両唇破裂音となる。</p>
+<h2 data-ja="閉塞度">Degree of Occlusion</h2>
+<p data-ja="`c` に続き割合を指定する。">Specify the ratio following <span class="code">c</span>.</p>
+<p data-ja="`c0` は閉鎖なし。`c` は調音位置で完全に閉鎖する。"
+>When denoted as <span class="code">c0</span>, there is no closure. when denoted as <span class="code">c</span>, there is a complete closure at the point of articulation.</p>
+<p data-ja="`c5` を維持することで摩擦音となる。"
+>Keeping <span class="code">c5</span> produces a fricative sound.</p>
+<p data-ja="閉鎖状態から閉塞度95%以下に遷移するとき調音位置に応じた破裂音が発生する。円唇度85%以上で閉鎖を開放すると両唇破裂音が発生する。"
+>When transitioning from a closed state to a degree of occlusion of 95% or less, a plosive sound corresponding to the place of articulation is produced.
+Releasing a closure with a lip-rounding degree of 85% or greater results in the production of a bilabial plosive.</p>
 
-<h2>パラメーター</h2>
+<h2 data-ja="パラメーター履歴性">Parameter Hysteresis</h2>
 <ul>
-    <li><span class="code">F/f/e/o</span> : 調音位置/前舌度/広さ</li>
-    <li><span class="code">L</span> : 円唇度</li>
-    <li><span class="code">r</span> : そり舌度</li>
-    <li><span class="code">a</span> : 側面度</li>
-    <li><span class="code">s</span> : 歯擦度</li>
-    <li><span class="code">n</span> : 鼻音度</li>
-    <li><span class="code">c</span> : 閉塞度</li>
+    <li data-ja="`L` : 円唇度"><span class="code">L</span> : Labial Roundness</li>
+    <li data-ja="`r` : そり舌度"><span class="code">r</span> : Degree of Retroflex</li>
+    <li data-ja="`a` : 側面度"><span class="code">a</span> : Lateralness</li>
+    <li data-ja="`s` : 歯擦度"><span class="code">s</span> : Degree of Sibilant</li>
+    <li data-ja="`n` : 鼻音度"><span class="code">n</span> : Nasalness</li>
+    <li data-ja="`c` : 閉塞度"><span class="code">c</span> : Degree of Occlusion</li>
 </ul>
-<p>上記のパラメーターのいずれかが指定された場合、無指定のパラメーターは前回指定と同じ値となる。</p>
-<p>ただし、<span class="code">F/f/e/o</span> については以下の通り。</p>
+<p data-ja="上記のパラメーターのいずれかが指定された場合、無指定のパラメーターは前回指定と同じ値となる。"
+>If any of the above parameters are specified, the unspecified parameters will retain the values from the previous specification.</p>
+<p data-ja="`F/f/e/o` が指定された場合は以下の通り"
+>If <span class="code">F/f/e/o</span> is specified, the following applies:</p>
 <ul>
-    <li><span class="code">F/f</span>のみ指定された場合、<span class="code">e</span>は<span class="code">F/f</span>と同じ、<span class="code">o</span>は0となる。</li>
-    <li><span class="code">e</span>のみ指定された場合、<span class="code">f/o</span>は0となる。</li>
-    <li><span class="code">o</span>のみ指定された場合、<span class="code">F/f/e</span>は0となる。</li>
-    <li><span class="code">F/f/e/o</span>のいずれかが指定された場合、他のパラメーター(<span class="code">L/r/a/s/n/c</span>)は0にリセットされる。</li>
+    <li data-ja="`F/f/e/o` のいずれかが指定された場合、他のパラメーター(`L/r/a/s/n/c`)は0にリセットされる。"
+    >If any of <span class="code">F/f/e/o</span> is specified, the other parameters (<span class="code">L/r/a/s/n/c</span>) are reset to 0.</li>
+    <li data-ja="`F/f` のみ指定された場合、`e` は `F/f` と同じ、`o` は 0 がセットされる。"
+    >If only <span class="code">F/f</span> is specified, <span class="code">e</span> is set to the same as <span class="code">F/f</span> and <span class="code">o</span> is set to 0.</li>
+    <li data-ja="`e` のみ指定された場合、`f/o` は 0 がセットされる。"
+    >If only <span class="code">e</span> is specified, <span class="code">f/o</span> is set to 0.</li>
+    <li data-ja="`o` のみ指定された場合、`f/e` は 0 がセットされる。"
+    >If only <span class="code">o</span> is specified, <span class="code">f/e</span> is set to 0.</li>
 </ul>
 
-<h2>再指定</h2>
-<p><span class="code">!</span>は、声調<span class="code">p/P</span>、声量<span class="code">A</span>と声門閉鎖度<span class="code">v/g</span>を除き直前で指定したパラメーターを、その時刻において指定しなおす。</p>
-<p>例</p>
+<h2 data-ja="再指定">Re-designation</h2>
+<p data-ja="`!` は、声調 `p/P` と声量 `A` を除き直前で指定したパラメーターを、その時刻において指定しなおす。"
+><span class="code">!</span> is for a given point in time, re-specify the parameters that were set immediately prior—excluding tone <span class="code">p/P</span> and volume <span class="code">A</span>.</p>
+<p data-ja="例">e.g.</p>
 <pre class="code">f5o9v %8 !</pre>
-<p>以下のコードと等価である。</p>
+<p data-ja="以下のコードと等価である。"
+>It is equivalent to the following code.</p>
 <pre class="code">f5o9v %8 f5o9v</pre>
-
-<h2 class="not-impl">入破音</h2>
-<p class="not-impl">TODO</p>
-
-<h2 class="not-impl">放出音</h2>
-<p class="not-impl">TODO</p>
-
-<h2 class="not-impl">吸着音</h2>
-<p class="not-impl">TODO</p>
-
-<h2 class="not-impl">ファルセット</h2>
-<p class="not-impl">TODO</p>
 
 </main>
 </body>

@@ -60,9 +60,22 @@ function init_language_select(lang, elem)
 /**
  * 
  * @param {string} lang 
+ * @param {string} def_lang 
+ */
+function update_language(lang, def_lang)
+{
+    update_language_main(lang, def_lang, document.body);
+    const h1 = document.getElementsByTagName('h1');
+    if (h1.length > 0) {
+        document.title = h1[0].textContent;
+    }
+}
+/**
+ * 
+ * @param {string} lang 
  * @param {HTMLElement} node 
  */
-function update_language(lang, node, def_lang)
+function update_language_main(lang, def_lang, node)
 {
     for (const elem of node.childNodes) {
         if (elem instanceof Element) {
@@ -70,7 +83,7 @@ function update_language(lang, node, def_lang)
             if (res !== undefined) {
                 update_content(elem, res, def_lang);
             } else {
-                update_language(lang, elem, def_lang);
+                update_language_main(lang, def_lang, elem);
             }
             if (elem.tagName === 'A') {
                 const href = elem.getAttribute('href');
@@ -113,11 +126,11 @@ function *parse_text(src)
                 begin = i + 1;
                 tag = '';
             }
-        } else if (tag === '`') {
+        } else if (tag === '`' || tag === '@') {
             if (ch === '`') {
                 if (begin < i) {
                     const span = document.createElement('span');
-                    span.classList.add('code');
+                    span.classList.add(tag === '@' ? 'ipa' : 'code');
                     span.textContent = src.substring(begin, i);
                     yield span;
                 }
@@ -131,6 +144,13 @@ function *parse_text(src)
                 }
                 begin = i + 1;
                 tag = ch;
+            } else if (ch === '@' && i + 1 < src.length && src[i + 1] === '`') {
+                if (begin < i) {
+                    yield document.createTextNode(src.substring(begin, i));
+                }
+                i++;
+                begin = i + 1;
+                tag = '@';
             }
         }
     }
@@ -150,7 +170,11 @@ function serialize(elem)
             ret.push(n.textContent);
             ret.push('*');
         } else if (tag === 'SPAN') {
-            ret.push('`');
+            if (n.classList.contains('ipa')) {
+                ret.push('@`');
+            } else {
+                ret.push('`');
+            }
             ret.push(n.textContent);
             ret.push('`');
         } else {
@@ -188,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
             language_select.parentNode.insertBefore(not_translated_msg, language_select.nextSibling);
         }
         document.body.setAttribute('lang', alt_lang);
-        update_language(alt_lang === 'zh-hant' ? 'zht' : alt_lang, document.body, lang_list[0]);
+        update_language(alt_lang === 'zh-hant' ? 'zht' : alt_lang, lang_list[0]);
     }
 
     window.addEventListener('hashchange', () => {
