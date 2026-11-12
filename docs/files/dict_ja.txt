@@ -5763,7 +5763,6 @@ $|n|doru|1
 他人事|n|taningoto
 他力|n|tariki
 他力宗|n|tarikishuu
-他力本願|n|tarikihongan
 他国|n|takoku
 他宗|n|tashuu
 他家|n|take
@@ -6049,7 +6048,6 @@ $|n|doru|1
 伊原|n|ihara|1
 伊吹|n|ibuki|1
 伊呂波|n|iroha
-伊呂波歌|n|irohauta
 伊地知|n|ijichi
 伊坂|n|isaka|1
 伊奈|n|ina|1
@@ -6892,7 +6890,6 @@ $|n|doru|1
 修女|n|shuujo
 修好|n|shuukoo
 修学|n|shuugaku
-修学旅行|n|shuugakuryokoo
 修得|n|shuutoku
 修復|n|shuufuku
 修整|n|shuusee
@@ -6975,7 +6972,6 @@ $|n|doru|1
 個個|n|koko|1
 個個人|n|kokojin
 個別|n|kobetsu
-個別布線|n|kobetsufusen
 個室|n|koshitsu
 個展|n|koten
 個性|n|kosee|1
@@ -7748,7 +7744,6 @@ $|n|doru|1
 免罪|n|menzai
 免職|n|menshoku
 免許|n|menkyo|1
-免許皆伝|n|menkyokaiden
 免訴|n|menso|1
 免責|n|menseki
 免除|n|menjo|1
@@ -9331,7 +9326,7 @@ $|n|doru|1
 判然|n|hanzen
 判示|n|hanji
 判読|n|handoku
-別|s|betsu|1
+別|s|betsu
 別れ|v|wakare
 別世界|n|bessekai
 別人|n|betsujin
@@ -10339,7 +10334,6 @@ $|n|doru|1
 十二単|n|juunihitoe
 十二宮|n|juunikyuu
 十二指腸|n|juunishichoo
-十二指腸虫|n|juunishichoochuu
 十五夜|n|juugoya
 十人並|n|juuninnami
 十人十色|n|juunintoiro
@@ -11405,7 +11399,6 @@ $|n|doru|1
 古人|n|kojin
 古今|n|kokin
 古代|n|kodai|1
-古伊万里|n|koimari
 古伝|n|koden
 古住|n|kozumi|1
 古体|n|kotai
@@ -11759,7 +11752,6 @@ $|n|doru|1
 吉元|n|yoshimoto|2
 吉兆|n|kitchoo
 吉凶|n|kikkyoo
-吉利支丹|n|kirishitan
 吉原|n|yoshiwara|2
 吉国|n|yoshikuni|2
 吉報|n|kippoo
@@ -11945,7 +11937,6 @@ $|n|doru|1
 名原|n|nahara|1
 名取|n|natori|1
 名古屋|n|nagoya|1
-名古屋帯|n|nagoyaobi
 名句|n|meeku
 名号|n|myoogoo
 名君|n|meekun
@@ -11970,7 +11961,6 @@ $|n|doru|1
 名店街|n|meetengai
 名彙|n|meee
 名所|n|meesho
-名所旧跡|n|meeshokyuuseki
 名手|n|meeshu
 名披露目|n|nabirome
 名指s|v|naza
@@ -12013,7 +12003,6 @@ $|n|doru|1
 名識|n|meeshiki
 名護|n|nago|1
 名護屋|n|nagoya|1
-名護屋帯|n|nagoyaobi
 名越|n|nagoshi|1
 名跡|n|myooseki
 名車|n|meesha
@@ -12107,7 +12096,6 @@ $|n|doru|1
 含嗽|n|gansoo
 含意|n|gan'i|1
 含有|n|gan'yuu
-含水炭素|n|gansuitanso
 含蓄|n|ganchiku
 听|s|kin|1
 吭|s|koo|1
@@ -12188,7 +12176,7 @@ $|n|doru|1
 呉竹|n|kuretake
 呉絽|n|goro
 呉絽服連|n|gorofukuren
-呉越同舟|n|goetsudooshuu
+呉越|n|goetsu|1
 呉音|n|goon
 告|s|koku|1
 告g|v|tsu
@@ -12896,8 +12884,8 @@ $|n|doru|1
 囚人|n|shuujin
 囚役|n|shuueki
 囚徒|n|shuuto|1
-囚虜|n|shuuryo
-囚衣|n|shuui
+囚虜|n|shuuryo|1
+囚衣|n|shuui|1
 四|s|yon|1
 四つ|v//|yottsu|3
 四ノ宮|n|shinomiya|2
@@ -12907,8 +12895,6 @@ $|n|doru|1
 四分六|n|shiburoku
 四分板|n|shibuita
 四則|n|shisoku
-四十九日|n|shijuukunichi
-四十八手|n|shijuuhatte
 四十腕|n|shijuuude
 四十路|n|yosoji
 四十雀|n|shijuukara
@@ -12927,7 +12913,6 @@ $|n|doru|1
 四季|n|shiki
 四季施|n|shikise
 四幅|n|yono
-四幅布団|n|yonobuton
 四恩|n|shion
 四戸|n|shinohe|2
 四手|n|yotsude
@@ -12938,7 +12923,7 @@ $|n|doru|1
 四方|n|shihoo
 四方八方|n|shihoohappoo
 四方山|n|yomoyama
-四方山話|n|yomoyamabanashi
+四方山話|n|yomoyamabanashi|5
 四方拝|n|shihoohai
 四書|n|shisho
 四本柱|n|shihonbashira
@@ -12946,11 +12931,8 @@ $|n|doru|1
 四死球|n|shishikyuu
 四民|n|shimin
 四海|n|shikai
-四海兄弟|n|shikaikeetee
 四球|n|shikyuu
 四畳半|n|yojoohan
-四百余州|n|shihyakuyoshuu
-四百四病|n|shihyakushibyoo
 四目|n|yotsume
 四目垣|n|yotsumegaki
 四目錐|n|yotsumegiri
@@ -12963,14 +12945,15 @@ $|n|doru|1
 四肢|n|shishi
 四葉|n|yotsuba
 四角|n|shikaku
-四角号碼|n|shikakugooma
-四角四面|n|shikakushimen
-四角形|n|shikakkee
+四角号碼|n|shikakugooma|4
+四角四面|n|shikakushimen|4
+四角形|n|shikakkee|3
 四諦|n|shitai
 四足|n|shisoku
 四身|n|yotsumi
 四輪|n|yonrin
 四辺|n|shihen
+四辺形|n|shihenkee|2
 四重唱|n|shijuushoo
 四重奏|n|shijuusoo
 四阿|n|azumaya
@@ -13029,9 +13012,8 @@ $|n|doru|1
 因幡|n|inaba|1
 因数|n|insuu
 因明|n|inmyoo
-因果|n|inga
+因果|n|inga|1
 因果律|n|ingaritsu
-因果応報|n|ingaoohoo
 因業|n|ingoo
 因縁|n|innen
 因習|n|inshuu
@@ -14239,7 +14221,6 @@ $|n|doru|1
 夏期|n|kaki
 夏木|n|natsuki
 夏樹|n|natsuki
-夏炉冬扇|n|karotoosen
 夏物|n//|natsumono
 夏目|n|natsume
 夏秋草|n|natsuakikusa
@@ -16015,7 +15996,7 @@ $|n|doru|1
 官報|n|kanpoo
 官女|n|kanjo
 官学|n|kangaku
-官尊民卑|n|kansonminpi
+官尊|n|kanson
 官庁|n|kanchoo|1
 官憲|n|kanken
 官房|n|kanboo
@@ -17148,8 +17129,6 @@ $|n|doru|1
 小用|n|shooyoo
 小田|n|oda
 小田原|n|odawara
-小田原提灯|n|odawarajoochin
-小田原評定|n|odawarahyoojoo
 小田巻|n|odamaki
 小田急|n|odakyuu|2
 小男|n|kootoko
@@ -17569,6 +17548,7 @@ $|n|doru|1
 山冠|n|yamakanmuri
 山刀|n|yamagatana
 山勘|n|yamakan
+山千|n|yamasen
 山原|n|yamahara|2
 山口|n|yamaguchi|2
 山号|n|sangoo
@@ -17654,7 +17634,7 @@ $|n|doru|1
 山窩|n|sanka
 山立|n|yamadachi
 山系|n|sankee
-山紫水明|n|sanshisuimee
+山紫|n|sanshi|1
 山羊|n|yagi
 山羊鬚|n|yagihige
 山肌|n|yamahada
@@ -18157,7 +18137,6 @@ $|n|doru|1
 市|s|shi|1
 市上|n|shijoo
 市中|n|shichuu
-市中金利|n|shichuukinri
 市井|n|shisee
 市会|n|shikai
 市価|n|shika
@@ -18186,7 +18165,6 @@ $|n|doru|1
 市町村|n|shichooson
 市立|n|shiritsu
 市街|n|shigai
-市街化区域|n|shigaikakuiki
 市街地|n|shigaichi
 市警|n|shikee
 市議|n|shigi
@@ -18374,17 +18352,13 @@ $|n|doru|1
 帷|s|i|1
 帷子|n|katabira
 帷幄|n|iaku
-帷幄上奏|n|iakujoosoo
 帷幕|n|ibaku
 常|s|tsune|1
 常世|n|tokoyo
-常世国|n|tokoyonokuni
 常人|n|joojin
 常任|n|joonin
 常会|n|jookai
 常住|n|joojuu
-常住不断|n|joojuufudan
-常住座臥|n|joojuuzaga
 常体|n|jootai
 常例|n|jooree
 常備|n|joobi|1
@@ -18463,7 +18437,6 @@ $|n|doru|1
 幕|s|maku|2
 幕下|n|makushita
 幕僚|n|bakuryoo
-幕僚監部|n|bakuryookanbu
 幕内|n|makuuchi
 幕別|n|makubetsu|2
 幕吏|n|bakuri
@@ -18475,7 +18448,7 @@ $|n|doru|1
 幕政|n|bakusee
 幕末|n|bakumatsu
 幕臣|n|bakushin
-幕藩時代|n|bakuhanjidai
+幕藩|n|bakuhan
 幕間|n|makuai
 幡|s|hata|2
 幡本|n|hatamoto|2
@@ -18593,7 +18566,6 @@ $|n|doru|1
 平脈|n|heemyaku
 平蜘蛛|n|hiragumo
 平行|n|heekoo
-平行四辺形|n|heekooshihenkee
 平衝|n|heekoo
 平衡|n|heekoo
 平衡木|n|heekoogi
@@ -18624,7 +18596,6 @@ $|n|doru|1
 年別|n|nenbetsu
 年利|n|nenri
 年功|n|nenkoo
-年功序列|n|nenkoojoretsu
 年収|n|nenshuu
 年取|n|toshitori
 年号|n|nengoo
@@ -18636,7 +18607,6 @@ $|n|doru|1
 年始|n|nenshi
 年子|n|toshigo
 年季|n|nenki
-年季奉公|n|nenkibookoo
 年寄|n|toshiyori
 年少|n|nenshoo
 年年|n|nennen
@@ -18990,7 +18960,7 @@ $|n|doru|1
 廃盤|n|haiban
 廃立|n|hairitsu
 廃絶|n|haizetsu
-廃藩置県|n|haihanchiken
+廃藩置県|n|haihanchiken|5
 廃虚|n|haikyo|1
 廃語|n|haigo
 廃車|n|haisha
@@ -19260,7 +19230,7 @@ $|n|doru|1
 弥|s|ya|1
 弥勒|n|miroku
 弥彦|n|yahiko
-弥明後日|n|yanoasatte
+弥明後日|n|yanoasatte|5
 弦|s|gen|1
 弦月|n|gengetsu
 弦楽|n|gengaku
@@ -19850,7 +19820,6 @@ $|n|doru|1
 御多分|n|gotabun
 御大|n|ontai
 御大層|n|gotaisoo
-御天道様|n|otentosama
 御子|n|miko
 御存知|n|gozonji
 御宇|n|gyoo
@@ -19964,8 +19933,6 @@ $|n|doru|1
 御輿|n|mikoshi
 御遊|n|gyoyuu
 御部屋様|n|oheyasama
-御都合主義|n|gotsugooshugi
-御酉様|n|otorisama
 御酒|n|miki
 御門|n|mikado
 御陰|n|okage
@@ -20127,7 +20094,6 @@ $|n|doru|1
 心心|n|kokorogokoro
 心性|n|shinsee
 心悸|n|shinki
-心悸亢進|n|shinkikooshin
 心情|n|shinjoo
 心意|n|shin'i
 心慮|n|shinryo
@@ -20148,15 +20114,11 @@ $|n|doru|1
 心理|n|shinri
 心痛|n|shintsuu
 心療|n|shinryoo
-心療内科|n|shinryoonaika
 心的|n|shinteki
 心眼|n|shingan
 心祝|n|kokoroiwai
 心神|n|shinshin
-心神喪失|n|shinshinsooshitsu
-心神耗弱|n|shinshinkoojaku
 心筋|n|shinkin
-心筋梗塞|n|shinkinkoosoku
 心算|n|shinsan
 心細i|v|kokoroboso
 心緒|n|shincho
@@ -20179,7 +20141,6 @@ $|n|doru|1
 心音|n|shin'on
 心頭|n|shintoo
 心願|n|shingan
-心食虫|n|shinkuimushi
 心髄|n|shinzui
 心魂|n|shinkon
 必|s|hitsu|1
@@ -20603,7 +20564,6 @@ $|n|doru|1
 恭敬|n|kyookee
 恭謙|n|kyooken
 恭賀|n|kyooga
-恭賀新年|n|kyoogashinnen
 恭順|n|kyoojun
 息|s|iki|1
 息吹|n|ibuki
@@ -20702,7 +20662,6 @@ $|n|doru|1
 悪口|n|waruguchi
 悪名|n|akumyoo
 悪因|n|akuin
-悪因悪果|n|akuin'akka
 悪報|n|akuhoo
 悪場|n|waruba
 悪声|n|akusee
@@ -20788,7 +20747,6 @@ $|n|doru|1
 悲愴|n|hisoo
 悲憤|n|hifun
 悲歌|n|hika
-悲歌慷慨|n|hikakoogai
 悲歎|n|hitan
 悲母|n|hibo
 悲況|n|hikyoo
@@ -21288,7 +21246,6 @@ $|n|doru|1
 懐|s|kai|1
 懐k|v|natsu
 懐中|n|kaichuu
-懐中時計|n|kaichuudokee
 懐中物|n|kaichuumono
 懐刀|n|futokorogatana
 懐勘定|n|futokorokanjoo
@@ -21664,8 +21621,7 @@ $|n|doru|1
 手刀|n|tegatana
 手刷|n|tezuri
 手前|n//|temae
-手前勝手|n|temaegatte
-手前味噌|n|temaemiso
+手前|n|temae
 手創|n|tekizu
 手動|n|shudoo
 手勢|n|tezee
@@ -21860,10 +21816,8 @@ $|n|doru|1
 扒|s|hatsu|1
 打|s|da|1
 打t|v|u
-打上花火|n|uchiagehanabi
 打倒|n|datoo
 打傷|n|uchikizu
-打出小槌|n|uchidenokozuchi
 打切|n|uchikiri
 打切r|v|uchiki
 打力|n|daryoku
@@ -21962,7 +21916,6 @@ $|n|doru|1
 承引|n|shooin
 承服|n|shoofuku
 承知|n|shoochi
-承知之助|n|shoochinosuke
 承継|n|shookee
 承認|n|shoonin
 承諾|n|shoodaku
@@ -23545,6 +23498,7 @@ $|n|doru|1
 散骨|n|sankotsu
 散髪|n|sanpatsu
 敦|s|ton|1
+敦賀|n|tsuruga|1
 敫|s|seku|1
 敬|s|kee|1
 敬w|v|uyama
@@ -25084,8 +25038,6 @@ $|n|doru|1
 最高峰|n|saikoohoo
 月|s|tsuki|2|gatsu
 月下|n|gekka
-月下氷人|n|gekkahyoojin
-月下美人|n|gekkabijin
 月世界|n|gessekai
 月並|n|tsukinami
 月亭|n|tsukitee
@@ -25099,7 +25051,6 @@ $|n|doru|1
 月刊|n|gekkan
 月別|n|tsukibetsu
 月利|n|getsuri
-月卿雲客|n|gekkeeunkaku
 月収|n|gesshuu
 月報|n|geppoo
 月夜|n|tsukiyo
@@ -25168,7 +25119,7 @@ $|n|doru|1
 有償|n|yuushoo
 有利|n|yuuri|1
 有利子|n|yuurishi
-有刺鉄線|n|yuushitessen
+有刺鉄線|n|yuushitessen|4
 有力|n|yuuryoku
 有功|n|yuukoo
 有効|n|yuukoo
@@ -25453,7 +25404,6 @@ $|n|doru|1
 木質|n|mokushitsu
 木通|n|akebi
 木造|n|mokuzoo
-木連格子|n|kitsuregooshi
 木遣|n|kiyari
 木酢|n|mokusaku
 木醂|n|kizawashi
@@ -25480,7 +25430,6 @@ $|n|doru|1
 未必|n|mihitsu
 未成|n|misee
 未成年|n|miseenen
-未払勘定|n|miharaikanjoo
 未払込|n|miharaikomi
 未払金|n|miharaikin
 未明|n|mimee
@@ -25941,7 +25890,6 @@ $|n|doru|1
 東芝|n|tooshiba
 東西|n|toozai
 東西屋|n|toozaiya
-東西東西|n|toozaitoozai
 東路|n|azumaji
 東進|n|tooshin
 東遊|n|azumaasobi
@@ -25999,21 +25947,19 @@ $|n|doru|1
 松浪|n|matsunami
 松涛|n|shootoo
 松田|n|matsuda
-松竹梅|n|shoochikubai
+松竹梅|n|shoochikubai|4
 松籟|n|shoorai
 松脂|n|matsuyani
 松花堂|n|shookadoo
 松茸|n|matsutake
 松葉|n|matsuba
-松葉杖|n|matsubazue
-松葉牡丹|n|matsubabotan
-松葉菊|n|matsubagiku
+松葉杖|n|matsubazue|4
 松蘿|n|saruogase
 松虫|n|matsumushi|2
 松蝉|n|matsuzemi
 松野|n|matsuno|1
 松阪|n|matsuzaka|2
-松露|n|shooro
+松露|n|shooro|1
 松韻|n|shooin
 松飾|n|matsukazari
 板|s|ita|1|ban
@@ -26325,7 +26271,6 @@ $|n|doru|1
 栄枯|n|eeko
 栄爵|n|eeshaku
 栄耀|n|eeyoo
-栄耀栄華|n|eeyooeega
 栄華|n|eega
 栄螺|n|sazae
 栄誉|n|eeyo
@@ -26335,7 +26280,6 @@ $|n|doru|1
 栄達|n|eetatsu
 栄養|n|eeyoo
 栄養分|n|eeyoobun
-栄養失調|n|eeyooshitchoo
 栓|s|sen|1
 栓塞|n|sensoku
 栖|s|see|1
@@ -26725,9 +26669,8 @@ $|n|doru|1
 棕|s|shu|1
 棕櫚|n|shuro
 棖|s|too|1
-棗椰子|n|natsumeyashi
 棘|s|kyoku|1
-棘皮動物|n|kyokuhidoobutsu
+棘皮|n|kyokuhi
 棘魚|n|togeuo
 棙|s|ree|1
 棚|s|tana||dana
@@ -26735,7 +26678,6 @@ $|n|doru|1
 棚卸|n|tanaoroshi
 棚卸し|v|tanaoroshi
 棚機|n|tanabata
-棚機津女|n|tanabatatsume
 棚田|n|tanada
 棚雲|n|tanagumo
 棝|s|ko|1
@@ -26771,7 +26713,7 @@ $|n|doru|1
 森沢|n|morisawa
 森田|n|morita|1
 森繁|n|morishige
-森羅万象|n|shinrabanshoo
+森羅|n|shinra
 森脇|n|moriwaki|2
 森谷|n|moritani|2
 森長|n|morinaga|2
@@ -26785,7 +26727,6 @@ $|n|doru|1
 棺|s|kan|1
 棺桶|n|kan'oke
 椀|s|wan|1
-椀飯振舞|n|oobanburumai
 椁|s|kaku|1
 椄|s|setsu|1
 椅|s|i|1
@@ -28107,8 +28048,8 @@ $|n|doru|1
 毛筋|n|kesuji
 毛管|n|mookan
 毛糸|n|keeto
+毛細|n|moosai
 毛細管|n|moosaikan
-毛細血管|n|moosaikekkan
 毛織|n|keori
 毛織物|n|keorimono
 毛繻子|n|kejusu
@@ -28151,6 +28092,7 @@ $|n|doru|1
 民俗|n|minzoku|1
 民兵|n|minpee
 民力|n|minryoku
+民卑|n|minpi
 民営|n|min'ee
 民地|n|minchi
 民家|n|minka
@@ -28442,7 +28384,6 @@ $|n|doru|1
 水面|n|suimen
 水音|n|mizuoto
 水風呂|n|mizuburo
-水飲百姓|n|mizunomibyakushoo
 水飴|n|mizuame
 水餅|n|mizumochi|2
 水髪|n|mizugami
@@ -28935,7 +28876,6 @@ $|n|doru|1
 法則|n|hoosoku
 法力|n|hooriki
 法務|n|hoomu|1
-法務大臣|n|hoomudaijin
 法印|n|hooin
 法号|n|hoogoo
 法名|n|hoomyoo
@@ -28968,7 +28908,6 @@ $|n|doru|1
 法王|n|hoooo|3
 法理|n|hoori|1
 法界|n|hookai
-法界悋気|n|hookairinki
 法的|n|hooteki
 法皇|n|hoooo
 法益|n|hooeki
@@ -29010,7 +28949,6 @@ $|n|doru|1
 泡銭|n|abukuzeni
 波|s|nami|2
 波乱|n|haran
-波乱万丈|n|haranbanjoo
 波動|n|hadoo
 波及|n|hakyuu
 波多|n|hata
@@ -29025,7 +28963,6 @@ $|n|doru|1
 波浪|n|haroo
 波涛|n|hatoo
 波瀾|n|haran
-波瀾万丈|n|haranbanjoo
 波状|n|hajoo
 波田|n|hata
 波田野|n|hatano|1
@@ -29471,15 +29408,15 @@ $|n|doru|1
 海仁草|n|makuri
 海兵|n|kaihee
 海内|n|kaidai
-海千山千|n|umisen'yamasen
-海原|n|unabara
+海千|n|umisen
+海原|n|unabara|2
 海参|n|iriko
 海友|n|kaiyuu
 海員|n|kaiin
 海嘯|n|kaishoo
 海図|n|kaizu
 海国|n|kaikoku
-海坊主|n|umiboozu
+海坊主|n|umiboozu|3
 海域|n|kaiiki
 海外|n|kaigai
 海女|n|ama
@@ -30216,9 +30153,6 @@ $|n|doru|1
 滅私|n|messhi
 滅罪|n|metsuzai
 滅茶|n|mecha
-滅茶滅茶|n|mechamecha
-滅茶目茶|n|mechamecha
-滅茶苦茶|n|mechakucha
 滅菌|n|mekkin
 滇|s|ten|1
 滈|s|koo|1
@@ -30788,7 +30722,7 @@ $|n|doru|1
 炭|s|sumi|2
 炭価|n|tanka
 炭化|n|tanka
-炭化物|n|tankabutsu
+炭化物|n|tankabutsu|3
 炭取|n|sumitori
 炭団|n|tadon
 炭坑|n|tankoo
@@ -30798,7 +30732,7 @@ $|n|doru|1
 炭庫|n|tanko
 炭櫃|n|subitsu
 炭殼|n|tangara
-炭水化物|n|tansuikabutsu
+炭水化物|n|tansuikabutsu|5
 炭水車|n|tansuisha
 炭火|n|sumibi
 炭焼|n|sumiyaki
@@ -30971,15 +30905,13 @@ $|n|doru|1
 無惨|n|muzan
 無想|n|musoo
 無意味|n|muimi
-無愛嬌|n|buaikyoo
-無愛想|n|buaisoo
-無愛敬|n|buaikyoo
+無愛嬌|n|buaikyoo|2
+無愛想|n|buaisoo|2
+無愛敬|n|buaikyoo|2
 無慙|n|muzan
 無慮|n|muryo|1
 無我|n|muga|1
-無我夢中|n|mugamuchuu
-無所属|n|mushozoku
-無手勝流|n|mutekatsuryuu
+無所属|n|mushozoku|2
 無才|n|musai
 無援|n|muen
 無敗|n|muhai
@@ -31013,13 +30945,10 @@ $|n|doru|1
 無煙|n|muen
 無煙炭|n|muentan
 無理|n|muri|1
-無理往生|n|murioojoo
-無理心中|n|murishinjuu
-無理無体|n|murimutai
-無生物|n|museebutsu
+無生物|n|museebutsu|2
 無産|n|musan
 無用|n|muyoo
-無用心|n|buyoojin
+無用心|n|buyoojin|2
 無疵|n|mukizu
 無病|n|mubyoo
 無痛|n|mutsuu
@@ -31055,7 +30984,6 @@ $|n|doru|1
 無色|n|mushoku
 無花果|n|ichijiku
 無芸|n|mugee|1
-無芸大食|n|mugeetaishoku
 無茶|n|mucha|1
 無菌|n|mukin
 無蓋|n|mugai
@@ -31831,12 +31759,9 @@ $|n|doru|1
 狐拳|n|kitsuneken
 狐格子|n|kitsunegooshi
 狐火|n|kitsunebi
-狐狸|n|kori
-狐狸妖怪|n|koriyookai
-狐饂飩|n|kitsuneudon
+狐狸|n|kori|1
 狒狒|n|hihi
 狗|s|koo|1
-狗尾草|n|enokorogusa
 狙|s|sho|1
 狙w|v|nera
 狙撃|n|sogeki
@@ -31882,7 +31807,6 @@ $|n|doru|1
 独白|n|dokuhaku
 独眼|n|dokugan
 独立|n|dokuritsu
-独立独歩|n|dokuritsudoppo
 独習|n|dokushuu
 独自|n|dokuji|1
 独航船|n|dokkoosen
@@ -31987,7 +31911,6 @@ $|n|doru|1
 猪牙|n|choki
 猪田|n|inoda|1
 猪突|n|chototsu|1
-猪突猛進|n|chototsumooshin
 猪苗代|n|inawashiro|3
 猪頚|n|ikubi
 猪首|n|ikubi
@@ -32051,11 +31974,8 @@ $|n|doru|1
 獄門|n|gokumon
 獅|s|shi|1
 獅子|n|shishi
-獅子奮迅|n|shishifunjin
-獅子王|n|shishioo
 獅子舞|n|shishimai
-獅子頭|n|shishigashira
-獅子鼻|n|shishibana
+獅子頭|n|shishigashira|3
 獅童|n|shidoo|1
 獍|s|kyoo|1
 獎|s|shoo|1
@@ -32128,8 +32048,6 @@ $|n|doru|1
 玉歩|n|gyokuho
 玉目|n|tamamoku
 玉石|n|gyokuseki
-玉石混交|n|gyokusekikonkoo
-玉石混淆|n|gyokusekikonkoo
 玉砂利|n|tamajari
 玉砕|n|gyokusai
 玉稿|n|gyokkoo
@@ -32337,6 +32255,7 @@ $|n|doru|1
 理路|n|riro|1
 理髪|n|rihatsu
 琉|s|ryuu|1
+琉球|n|ryuukyuu
 琉金|n|ryuukin
 琊|s|ya|1
 琑|s|sa|1
@@ -33018,11 +32937,9 @@ $|n|doru|1
 異形|n|igyoo
 異彩|n|isai
 異性|n|isee|1
-異性愛者|n|iseeaisha
 異才|n|isai
 異教|n|ikyoo
 異数|n|isuu
-異時同図|n|ijidoozu
 異朝|n|ichoo
 異様|n|iyoo
 異母|n|ibo
@@ -33091,7 +33008,6 @@ $|n|doru|1
 疑似|n|giji
 疑問|n|gimon
 疑心|n|gishin
-疑心暗鬼|n|gishin'anki
 疑念|n|ginen
 疑惑|n|giwaku
 疑獄|n|gigoku
@@ -33103,11 +33019,10 @@ $|n|doru|1
 疣鯛|n|ibodai
 疥|s|kai|1
 疥癬|n|kaisen
-疥癬虫|n|kaisenchuu
 疫|s|eki|1
 疫学|n|ekigaku
 疫病|n|yakubyoo
-疫病神|n|yakubyoogami
+疫病神|n|yakubyoogami|3
 疫痢|n|ekiri|1
 疫癘|n|ekiree
 疱|s|hoo|1
@@ -33129,7 +33044,6 @@ $|n|doru|1
 疾病|n|shippee
 疾走|n|shissoo
 疾風|n|shippuu
-疾風迅雷|n|shippuujinrai
 疾駆|n|shikku
 痂|s|ka|1
 痃癖|n|kenpeki
@@ -33242,7 +33156,6 @@ $|n|doru|1
 痴態|n|chitai
 痴漢|n|chikan
 痴話|n|chiwa
-痴話喧嘩|n|chiwagenka
 痺|s|hi|1
 痺れ|v|shibi
 痼|s|ko|1
@@ -33277,7 +33190,6 @@ $|n|doru|1
 癇症|n|kanshoo
 癇癖|n|kanpeki
 癇癪|n|kanshaku
-癇癪玉|n|kanshakudama
 癈人|n|haijin
 癈兵|n|haihee
 癈疾|n|haishitsu
@@ -33293,6 +33205,7 @@ $|n|doru|1
 癲癇|n|tenkan
 癸|s|ki|1
 発|s|hatsu|1
+発s|v|has
 発t|v|ta
 発令|n|hatsuree
 発会|n|hakkai
@@ -33560,7 +33473,7 @@ $|n|doru|1
 百足|n|mukade
 百錬|n|hyakuren
 百雷|n|hyakurai
-百鬼夜行|n|hyakkiyakoo
+百鬼|n|hyakki|1
 皀|s|hyuu|1
 皀莢|n|saikachi
 皃|s|boo|1
@@ -33627,7 +33540,6 @@ $|n|doru|1
 皚皚|n|gaigai
 皮|s|kawa|2
 皮下|n|hika
-皮下脂肪|n|hikashiboo
 皮剥|n|kawahagi
 皮帯|n|kawaobi
 皮癬|n|hizen
@@ -33753,6 +33665,7 @@ $|n|doru|1
 監視|n|kanshi
 監訳|n|kan'yaku
 監護|n|kango|1
+監部|n|kanbu
 盤|s|ban|1
 盤上|n|banjoo
 盤台|n|bandai
@@ -33812,6 +33725,7 @@ $|n|doru|1
 目縁|n|mabuchi
 目脂|n|meyani
 目色|n|meero
+目茶|n|mecha
 目蔭|n|makage
 目薬|n|megusuri
 目見|n|mami
@@ -34389,14 +34303,12 @@ $|n|doru|1
 知者|n|chisha
 知育|n|chiiku
 知能|n|chinoo|1
-知能指数|n|chinooshisuu
 知行|n|chigyoo
 知見|n|chiken
 知覚|n|chikaku
 知謀|n|chiboo
 知識|n|chishiki
 知識人|n|chishikijin
-知識工学|n|chishikikoogaku
 知識欲|n|chishikiyoku
 知遇|n|chiguu
 知音|n|chiin
@@ -35004,7 +34916,7 @@ $|n|doru|1
 神保|n|jinbo|1
 神像|n|shinzoo
 神典|n|shinten
-神出鬼没|n|shinshutsukibotsu
+神出|n|shinshutsu
 神前|n|shinzen
 神剣|n|shinken
 神助|n|shinjo
@@ -35012,31 +34924,31 @@ $|n|doru|1
 神君|n|shinkun
 神品|n|shinpin
 神嘗祭|n|kannamesai
-神器|n|jingi
-神国|n|shinkoku
+神器|n|jingi|1
+神国|n|shinkoku|1
 神域|n|shin'iki
 神変|n|shinpen
 神奈川|n|kanagawa|2
 神妙|n|shinmyoo
-神威|n|shin'i
+神威|n|shin'i|1
 神子|n|miko
 神学|n|shingaku
-神学校|n|shingakkoo
+神学校|n|shingakkoo|4
 神官|n|shinkan
 神宝|n|shinpoo
-神宮|n|jinguu
-神宮寺|n|jinguuji
+神宮|n|jinguu|3
+神宮寺|n|jinguuji|1
 神山|n|kamiyama
 神崎|n|kanzaki|1
-神州|n|shinshuu
+神州|n|shinshuu|1
 神式|n|shinshiki
 神徳|n|shintoku
 神性|n|shinsee
 神恵内|n|kamoenai|3
-神意|n|shin'i
-神慮|n|shinryo
+神意|n|shin'i|1
+神慮|n|shinryo|1
 神戸|n|koobe|1
-神授|n|shinju
+神授|n|shinju|1
 神政|n|shinsee
 神文|n|shinmon
 神明|n|shinmee
@@ -35380,9 +35292,7 @@ $|n|doru|1
 秋蚕|n|akigo
 秋郊|n|shuukoo
 秋雨|n|akisame
-秋雨前線|n|akisamezensen
 秋霜|n|shuusoo
-秋霜烈日|n|shuusooretsujitsu
 秋風|n|akikaze
 秋高|n|akidaka
 秏|s|moo|1
@@ -35680,10 +35590,8 @@ $|n|doru|1
 空冷|n|kuuree
 空列|n|kuuretsu
 空前|n|kuuzen
-空前絶後|n|kuuzenzetsugo
 空力|n|kuuryoku
 空包|n|kuuhoo
-空即是色|n|kuusokuzeshiki
 空合|n|soraai
 空名|n|kuumee
 空咳|n|karaseki
@@ -35696,18 +35604,17 @@ $|n|doru|1
 空寝|n|sorane
 空巣|n|akisu
 空席|n|kuuseki
-空念仏|n|karanenbutsu
 空想|n|kuusoo
 空戦|n|kuusen
 空手|n|karate
-空手形|n|karategata
+空手形|n|karategata|3
 空拳|n|kuuken
 空挺|n|kuutee
 空文|n|kuubun
 空木|n|utsugi
 空株|n|karakabu
 空梅雨|n|karatsuyu
-空模様|n|soramoyoo
+空模様|n|soramoyoo|3
 空欄|n|kuuran
 空殼|n|akigara
 空母|n|kuubo
@@ -35721,7 +35628,6 @@ $|n|doru|1
 空漠|n|kuubaku
 空爆|n|kuubaku
 空理|n|kuuri
-空理空論|n|kuurikuuron
 空疎|n|kuuso
 空発|n|kuuhatsu
 空白|n|kuuhaku
@@ -35857,8 +35763,6 @@ $|n|doru|1
 立党|n|rittoo
 立入|n|tachiiri
 立入r|v|tachii
-立入検査|n|tachiirikensa
-立入禁止|n|tachiirikinshi
 立冬|n|rittoo
 立原|n|tachihara|2
 立去r|v|tachisa
@@ -35878,7 +35782,6 @@ $|n|doru|1
 立寄r|v|tachiyo
 立射|n|rissha
 立居|n|tachii
-立居振舞|n|tachiifurumai
 立山|n|tateyama|2
 立川|n|tatekawa|2
 立引|n|tatehiki
@@ -35888,7 +35791,6 @@ $|n|doru|1
 立志|n|risshi
 立志伝|n|risshiden
 立憲|n|rikken
-立憲政体|n|rikkenseetai
 立振舞|n|tachifurumai
 立方|n|rippoo
 立方体|n|rippootai
@@ -36195,7 +36097,6 @@ $|n|doru|1
 筆触|n|hisshoku
 筆記|n|hikki
 筆記具|n|hikkigu
-筆記用具|n|hikkiyoogu
 筆誅|n|hitchuu
 筆談|n|hitsudan
 筆跡|n|hisseki
@@ -36214,7 +36115,6 @@ $|n|doru|1
 等圧線|n|tooatsusen
 等外|n|toogai
 等差|n|toosa|1
-等差級数|n|toosakyuusuu
 等式|n|tooshiki
 等比|n|toohi
 等温|n|tooon
@@ -36950,7 +36850,7 @@ $|n|doru|1
 紙鳶|n|ikanobori
 級|s|kyuu|1
 級友|n|kyuuyuu
-級数|n|kyuusuu
+級数|n|kyuusuu|3
 級長|n|kyuuchoo|1
 紛|s|fun|1
 紛ら|v|magira
@@ -37217,7 +37117,8 @@ $|n|doru|1
 絆創膏|n|bansookoo
 経|s|kee|1
 経r|v|he
-経ず|v|hezu
+経ず|v|hezu|1
+経て|v|hete|1
 経世|n|keesee
 経典|n|kyooten
 経口|n|keekoo
@@ -37386,7 +37287,7 @@ $|n|doru|1
 絶え|v|tae
 絶世|n|zessee
 絶交|n|zekkoo
-絶体絶命|n|zettaizetsumee
+絶体|n|zettai
 絶佳|n|zekka
 絶倫|n|zetsurin
 絶勝|n|zesshoo
@@ -37469,6 +37370,7 @@ $|n|doru|1
 継馬|n|tsugiuma
 続|s|zoku|1
 続k|v|tsuzu
+続け|v|tsuzuke
 続伸|n|zokushin
 続出|n|zokushutsu
 続報|n|zokuhoo
@@ -38139,9 +38041,7 @@ $|n|doru|1
 群論|n|gunron
 群雀|n|murasuzume
 群雄|n|gun'yuu
-群雄割拠|n|gun'yuukakkyo
 群集|n|gunshuu
-群集心理|n|gunshuushinri
 群雲|n|murakumo
 群青|n|gunjoo
 群馬|n|gunna|1
@@ -38396,6 +38296,7 @@ $|n|doru|1
 耕耘|n|kooon
 耕運機|n|kooonki
 耗|s|moo|1
+耗弱|n|koojaku
 耘|s|un|1
 耡|s|jo|1
 耤|s|seki|1
@@ -38933,7 +38834,6 @@ $|n|doru|1
 脱線|n|dassen
 脱肛|n|dakkoo
 脱脂|n|dasshi
-脱脂粉乳|n|dasshifunnyuu
 脱脂綿|n|dasshimen
 脱腸|n|datchoo
 脱臭|n|dasshuu
@@ -39291,7 +39191,7 @@ $|n|doru|1
 自筆|n|jihitsu
 自粛|n|jishuku
 自給|n|jikyuu
-自縄自縛|n|jijoojibaku
+自縄|n|jijoo
 自縛|n|jibaku
 自署|n|jisho|1
 自習|n|jishuu
@@ -39308,7 +39208,6 @@ $|n|doru|1
 自記|n|jiki
 自訴|n|jiso
 自証|n|jishoo
-自詠短歌|n|jieetanka
 自認|n|jinin
 自説|n|jisetsu
 自警|n|jikee
@@ -39592,7 +39491,6 @@ $|n|doru|1
 良夜|n|ryooya
 良好|n|ryookoo
 良妻|n|ryoosai
-良妻賢母|n|ryoosaikenbo
 良家|n|ryooke
 良導体|n|ryoodootai
 良心|n|ryooshin
@@ -39622,7 +39520,6 @@ $|n|doru|1
 色|s|iro|2
 色事|n|irogoto
 色付k|v|irozu
-色即是空|n|shikisokuzekuu
 色合|n|iroai
 色弱|n|shikijaku
 色彩|n|shikisai
@@ -39804,7 +39701,7 @@ $|n|doru|1
 花魁草|n|oiransoo
 花鰹|n|hanagatsuo
 花鳥|n|kachoo
-花鳥風月|n|kachoofuugetsu
+花鳥風月|n|kachoofuugetsu|4
 花鶏|n|atori
 芳|s|hoo|1
 芳し|v|kanbashi
@@ -39837,7 +39734,7 @@ $|n|doru|1
 芸歴|n|geereki
 芸者|n|geesha
 芸能|n|geenoo
-芸能人|n|geenoojin
+芸能人|n|geenoojin|3
 芸術|n|geejutsu
 芸術家|n|geejutsuka
 芸道|n|geedoo
@@ -40303,7 +40200,6 @@ $|n|doru|1
 菜切庖丁|n|nakiriboochoo
 菜園|n|saien
 菜種|n|natane
-菜種梅雨|n|natanezuyu
 菜種油|n|nataneabura
 菜箸|n|saibashi
 菜花|n|nanohana
@@ -40954,7 +40850,6 @@ $|n|doru|1
 虹彩|n|koosai
 虻|s|abu|1
 蚊|s|ka
-蚊取線香|n|katorisenkoo|4
 蚊帳|n|kaya
 蚊柱|n|kabashira|2
 蚊蜻蛉|n|katonbo
@@ -46862,16 +46757,14 @@ $|n|doru|1
 阿古屋貝|n|akoyagai
 阿吽|n|aun
 阿呆|n|aho
-阿呆陀羅経|n|ahodarakyoo
 阿国|n|okuni|1
 阿堵物|n|atobutsu
 阿媽|n|ama
 阿川|n|agawa|1
 阿弥|n|ami
 阿弥陀|n|amida
-阿弥陀仏|n|amidabutsu
-阿弥陀如来|n|amidanyorai
-阿弥陀籖|n|amidakuji
+阿弥陀仏|n|amidabutsu|3
+阿弥陀籖|n|amidakuji|3
 阿房|n|ahoo
 阿房宮|n|abookyuu
 阿曽|n|aso|1
@@ -46879,7 +46772,6 @@ $|n|doru|1
 阿波|n|awa|1
 阿漕|n|akogi
 阿片|n|ahen|1
-阿茶羅漬|n|acharazuke
 阿藤|n|atoo|1
 阿蘇|n|aso|1
 阿諛|n|ayu
@@ -46887,8 +46779,6 @@ $|n|doru|1
 阿部|n|abe
 阿闍梨|n|ajari
 阿鼻|n|abi
-阿鼻叫喚|n|abikyookan
-阿鼻地獄|n|abijigoku
 陀|s|da|1
 陀羅尼|n|darani
 附|s|fu|1
@@ -47516,7 +47406,6 @@ $|n|doru|1
 難航|n|nankoo
 難色|n|nanshoku
 難行|n|nangyoo
-難行苦行|n|nangyookugyoo
 難行道|n|nangyoodoo
 難解|n|nankai
 難語|n|nango
@@ -47613,7 +47502,6 @@ $|n|doru|1
 雲上|n|unjoo
 雲丹|n|uni
 雲助|n|kumosuke
-雲助根性|n|kumosukekonjoo
 雲呑|n|wantan
 雲壌|n|unjoo
 雲居|n|kumoi
@@ -49139,6 +49027,7 @@ $|n|doru|1
 鬼束|n|onitsuka|2
 鬼歯|n|oniba
 鬼気|n|kiki
+鬼没|n|kibotsu
 鬼火|n|onibi
 鬼灯|n|hoozuki
 鬼瓦|n|onigawara
