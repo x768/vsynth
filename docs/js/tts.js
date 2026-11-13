@@ -36,9 +36,9 @@ class TtsItem
             this.pfn = [];
         }
         this.text_area = $e('div', null, this.get_text());
-        this.voice_anchor = $e('div');
+        this.voice_anchor = $e('div', {'class': 'tts-voice-select'}, $e('img', {width:32, height:32}));
         this.elem = $e('div', {'class': 'tts-item', draggable:'true'},
-            $e('div', {'class': 'tts-voice-select'}, this.voice_anchor, $e('img', {width:32, height:32})),
+            this.voice_anchor,
             this.text_area,
             $e('div', {'class': 'tts-item-del'}, create_icon('x'))
         );
