@@ -23,6 +23,7 @@ class TtsItem
             this.pitch = obj.pitch;
             this.accent = obj.accent;
             this.volume = obj.volume;
+            this.voicing = obj.voicing;
             this.pfn = obj.pfn;
         } else {
             this.lang = lang.tag;
@@ -33,6 +34,7 @@ class TtsItem
             this.accent = lang.params.accent;
             this.pitch = 0;
             this.volume = 0; // dB
+            this.voicing = 10;
             this.pfn = [];
         }
         this.text_area = $e('div', null, this.get_text());
@@ -101,6 +103,7 @@ class TtsItem
             pitch: this.pitch,
             accent: this.accent,
             volume: this.volume,
+            voicing: this.voicing,
             pfn: this.pfn,
         };
     }
@@ -186,6 +189,7 @@ export class TtsPage
         this.tts_pitch = new NumberControl('tts-pitch');
         this.tts_accent = new NumberControl('tts-accent');
         this.tts_volume = new NumberControl('tts-volume');
+        this.tts_voicing = new NumberControl('tts-voicing');
         this.tts_language = document.getElementById('tts-language');
         this.play_mark = document.getElementById('tts-play-mark');
         this.stop_mark = document.getElementById('tts-stop-mark');
@@ -238,15 +242,17 @@ export class TtsPage
         });
 
         this.edit_text.addEventListener('change', () => {
+            const item = this.editing_item;
             if (!this.text_changed) {
-                const item = this.editing_item;
                 this.push_undo({type:'text', i:item.get_index(), v:item.to_json_object()});
                 this.text_changed = true;
             }
-            this.edit_text.value = this.edit_text.value.normalize('NFKC');
+            item.text = this.edit_text.value.normalize('NFKC');
+            this.edit_text.value = item.text;
             const converter = this.editing_item.get_lang().to_phonemic;
-            this.edit_phonemic.value = converter.conv(this.edit_text.value);
-            this.#set_pfn();
+            item.phonemic = converter.conv(this.edit_text.value);
+            this.edit_phonemic.value = item.phonemic;
+            this.#set_pfn(item);
             this.#set_note();
             this.#enable_player_buttons();
         });
@@ -259,12 +265,13 @@ export class TtsPage
             }
         });
         this.edit_phonemic.addEventListener('change', () => {
+            const item = this.editing_item;
             if (!this.text_changed) {
-                const item = this.editing_item;
                 this.push_undo({type:'text', i:item.get_index(), v:item.to_json_object()});
                 this.text_changed = true;
             }
-            this.#set_pfn();
+            item.phonemic = this.edit_phonemic.value;
+            this.#set_pfn(item);
             this.#set_note();
             this.#enable_player_buttons();
         });
@@ -280,13 +287,13 @@ export class TtsPage
         this.pfn_update_button.addEventListener('click', () => {
             const item = this.selecting_item;
             if (item !== null && this.selected_pfn !== -1) {
-                this.push_undo({type:'pfn', i:item.get_index(), v:item.pfn.slice()});
+                this.push_undo({type:'text', i:item.get_index(), v:item.to_json_object()});
                 this.text_changed = false;
                 item.pfn[this.selected_pfn] = this.pfn_edit.value;
                 this.#set_note_main([item], true);
             }
         });
-        document.getElementById('tts-parameter').addEventListener('change', () => {
+        document.getElementById('tts-parameter-synth').addEventListener('change', () => {
             const item = this.selecting_item;
             if (item !== null) {
                 this.push_undo({type:'parameter', i:item.get_index(), v:item.to_json_object()});
@@ -296,6 +303,15 @@ export class TtsPage
                 item.volume = this.tts_volume.get();
                 const lang = this.tts_language.value;
                 [item.lang, item.variant] = lang.split('-');
+            }
+        });
+        document.getElementById('tts-parameter-pfn').addEventListener('change', () => {
+            const item = this.selecting_item;
+            if (item !== null) {
+                this.push_undo({type:'text', i:item.get_index(), v:item.to_json_object()});
+                item.voicing = this.tts_voicing.get();
+                this.#set_pfn(item);
+                this.#set_note();
             }
         });
         this.list.addEventListener('click', e => {
@@ -558,15 +574,9 @@ export class TtsPage
             this.#del_item(p.i);
             break;
         case 'parameter':
-        case 'character':
         case 'text':
             p2 = {type:p.type, i:p.i, v:this.items[p.i].to_json_object()};
             this.#set_item_at(new TtsItem(this.#find_voice_by_name(p.v.voice), this.speech_lang, p.v), p.i);
-            break;
-        case 'pfn':
-            p2 = {type:'pfn', i:p.i, v:this.items[p.i].pfn.slice()};
-            this.items[p.i].pfn = p.v;
-            this.#set_note();
             break;
         case 'voice':
             p2 = {type:'voice', i:p.i, v:this.items[p.i].voice.name};
@@ -710,12 +720,14 @@ export class TtsPage
         this.tts_pitch.enable(b);
         this.tts_accent.enable(b);
         this.tts_volume.enable(b);
+        this.tts_voicing.enable(b);
         this.tts_language.disabled = !b;
         if (item !== null) {
             this.tts_speed.set(item.speed);
             this.tts_pitch.set(item.pitch);
             this.tts_accent.set(item.accent);
             this.tts_volume.set(item.volume);
+            this.tts_voicing.set(item.voicing);
             this.tts_language.value = `${item.lang}-${item.variant}`;
         }
     }
@@ -728,6 +740,7 @@ export class TtsPage
         this.edit_text.value = item.text;
         this.edit_phonemic.value = item.phonemic;
         item.begin_edit(this.edit_root);
+        this.#set_parameters(item);
         this.edit_text.focus();
         this.edit_text.select();
         item.elem.removeAttribute('draggable');
@@ -741,15 +754,12 @@ export class TtsPage
         item.elem.setAttribute('draggable', 'true');
         this.editing_item = null;
     }
-    #set_pfn() {
-        const item = this.editing_item;
+    #set_pfn(item) {
         if (item === null) return;
-        item.text = this.edit_text.value;
-        item.phonemic = this.edit_phonemic.value;
         try {
             const lang = speech_langs[item.lang];
-            const c = new lang.ToSound(lang.v_map[item.variant]);
-            item.pfn = c.conv(this.edit_phonemic.value);
+            const c = new lang.ToSound({voicing:item.voicing});
+            item.pfn = c.conv(item.phonemic);
         } catch (e) {
             console.log(e);
         }

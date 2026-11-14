@@ -49,6 +49,7 @@
 <div><textarea id="tts-pfn-edit" rows="6" spellcheck="false"></textarea></div>
 </div>
 <div id="tts-parameter">
+<div id="tts-parameter-synth">
 <p><span data-res="tts-speed"></span> <input type="number" id="tts-speed-t" min="60" max="900" value="480" size="5" step="10"> syl/min</p>
 <p><input type="range" id="tts-speed-r"></p>
 <p><span data-res="tts-pitch"></span> <input type="number" id="tts-pitch-t" min="-2400" max="2400" value="0" size="5" step="100"> cents</p>
@@ -57,7 +58,12 @@
 <p><input type="range" id="tts-accent-r"></p>
 <p><span data-res="tts-volume"></span> <input type="number" id="tts-volume-t" min="-20" max="0" value="0" size="5" step="1"> dB</p>
 <p><input type="range" id="tts-volume-r"></p>
+</div>
 <p><select id="tts-language"></select></p>
+<div id="tts-parameter-pfn">
+<p><span data-res="tts-voicing"></span> <input type="number" id="tts-voicing-t" min="0" max="10" value="10" size="5" step="1"> / 10</p>
+<p><input type="range" id="tts-voicing-r"></p>
+</div>
 </div>
 <div id="tts-voice-select" popover></div>
 <div id="tts-list"><div id="tts-item-add"><div data-res="click-enter-text"></div><div><svg class="icon16" viewBox="-8,-8,16,16"><path d="M0,-8 L0,8 M-8,0 L8,0" /></svg></div></div></div>

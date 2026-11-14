@@ -1040,7 +1040,7 @@ class Mola
 export class ToSound
 {
     constructor(prm) {
-        this.voiced = prm.voiced !== undefined ? 'v' + ((this.voiced * 10) | 0) : 'v';
+        this.voiced = prm.voicing !== undefined && prm.voicing < 10 ? 'v' + (prm.voicing | 0) : 'v';
         this.voiceless = prm.voiceless ?? true;
         this.reduce_pitch = prm.reduce_pitch ?? true;
 
