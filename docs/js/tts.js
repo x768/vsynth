@@ -16,7 +16,6 @@ class TtsItem
         this.voice = voice;
         if (obj) {
             this.lang = obj.lang;
-            this.variant = obj.variant;
             this.text = obj.text;
             this.phonemic = obj.phonemic;
             this.speed = obj.speed;
@@ -27,7 +26,6 @@ class TtsItem
             this.pfn = obj.pfn;
         } else {
             this.lang = lang.tag;
-            this.variant = lang.v_list[0];
             this.text = '';
             this.phonemic = '';
             this.speed = lang.params.speed;
@@ -38,9 +36,8 @@ class TtsItem
             this.pfn = [];
         }
         this.text_area = $e('div', null, this.get_text());
-        this.voice_anchor = $e('div', {'class': 'tts-voice-select'}, $e('img', {width:32, height:32}));
         this.elem = $e('div', {'class': 'tts-item', draggable:'true'},
-            this.voice_anchor,
+            $e('div', {'class': 'tts-voice-select'}, $e('img', {width:32, height:32})),
             this.text_area,
             $e('div', {'class': 'tts-item-del'}, create_icon('x'))
         );
@@ -96,7 +93,6 @@ class TtsItem
         return {
             voice: this.voice.name,
             lang: this.lang,
-            variant: this.variant,
             text: this.text,
             phonemic: this.phonemic,
             speed: this.speed,
@@ -297,12 +293,11 @@ export class TtsPage
             const item = this.selecting_item;
             if (item !== null) {
                 this.push_undo({type:'parameter', i:item.get_index(), v:item.to_json_object()});
+                item.lang = this.tts_language.value;
                 item.speed = this.tts_speed.get();
                 item.pitch = this.tts_pitch.get();
                 item.accent = this.tts_accent.get();
                 item.volume = this.tts_volume.get();
-                const lang = this.tts_language.value;
-                [item.lang, item.variant] = lang.split('-');
             }
         });
         document.getElementById('tts-parameter-pfn').addEventListener('change', () => {
@@ -323,7 +318,7 @@ export class TtsPage
                 const item = this.items[idx];
                 this.#create_voice_select(item);
                 this.last_click_item = item;
-                this.voice_select.showPopover({source: item.voice_anchor});
+                this.voice_select.showPopover({source: item.elem});
             } else if ((elem = e.target.closest('.tts-item-del')) !== null) {
                 this.#end_edit();
 
@@ -464,11 +459,7 @@ export class TtsPage
     #init_language() {
         for (const lang_tag in speech_langs) {
             const lang = speech_langs[lang_tag];
-            for (const v_key of lang.v_list) {
-                const v = lang.v_map[v_key];
-                const tag = `${lang.tag}-${v.tag}`;
-                this.tts_language.appendChild($e('option', {'data-res':tag, value:tag}));
-            }
+            this.tts_language.appendChild($e('option', {'data-res':lang.tag, value:lang.tag}));
         }
         this.lang.update_node(this.tts_language);
     }
@@ -728,7 +719,7 @@ export class TtsPage
             this.tts_accent.set(item.accent);
             this.tts_volume.set(item.volume);
             this.tts_voicing.set(item.voicing);
-            this.tts_language.value = `${item.lang}-${item.variant}`;
+            this.tts_language.value = item.lang;
         }
     }
     #begin_edit(item) {
