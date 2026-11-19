@@ -42,37 +42,38 @@ export function show_waveform(canvas, buf)
 
     ctx.putImageData(img, 0, 0);
 }
-function fft(b1, tmp, sint)
+function fft(x, sint)
 {
-    const n = WINDOW_WIDTH;
-    const WINDOW_WIDTH_1 = 1023;
-    const n4 = n >> 2;
-    let p = n >> 1;
-    let m = 2;
+    const WINDOW_WIDTH_1 = WINDOW_WIDTH - 1;
+    const WINDOW_WIDTH_2 = WINDOW_WIDTH >> 1;
+    const n4 = WINDOW_WIDTH >> 2;
+    let t_step = WINDOW_WIDTH >> 1;
 
-    tmp.fill(0);
-    while (m <= n) {
-        const m2 = m >> 1;
-        for (let k = 0; k < n; k += m) {
-            for (let j = 0; j < m2; j++) {
-                const sin = -sint[(p * j) & WINDOW_WIDTH_1];
-                const cos = sint[(p * j + n4) & WINDOW_WIDTH_1];
-                const kj2 = (k + j) << 1;
-                const km2 = (k + j + m2) << 1;
+    for (let n = 2; n <= WINDOW_WIDTH; n <<= 1) {
+        const n2 = n >> 1;
 
-                tmp[kj2    ] = b1[kj2    ] + cos * b1[km2] - sin * b1[km2 + 1];
-                tmp[kj2 + 1] = b1[kj2 + 1] + sin * b1[km2] + cos * b1[km2 + 1];
-                tmp[km2    ] = b1[kj2    ] - cos * b1[km2] + sin * b1[km2 + 1];
-                tmp[km2 + 1] = b1[kj2 + 1] - sin * b1[km2] - cos * b1[km2 + 1];
-            }
-            for (let j = 0; j < m; j++) {
-                const kj2 = (k + j) << 1;
-                b1[kj2    ] = tmp[kj2    ];
-                b1[kj2 + 1] = tmp[kj2 + 1];
+        for (let i = 0; i < WINDOW_WIDTH_2; i += n) {
+            const i2 = i << 1;
+            let t = 0;
+            for (let k = 0; k < n2; k++) {
+                const sin = -sint[t & WINDOW_WIDTH_1];
+                const cos = sint[(t + n4) & WINDOW_WIDTH_1];
+                const k2 = k << 1;
+                const re1 = x[i2 + k2];
+                const im1 = x[i2 + k2 + 1];
+                const re2 = x[i2 + k2 + n];
+                const im2 = x[i2 + k2 + n + 1];
+                const re3 = re2 * cos - im2 * sin;
+                const im3 = re2 * sin + im2 * cos;
+
+                x[i2 + k2] = re1 + re3;
+                x[i2 + k2 + 1] = im1 + im3;
+                x[i2 + k2 + n] = re1 - re3;
+                x[i2 + k2 + n + 1] = im1 - im3;
+                t += t_step;
             }
         }
-        m = m << 1;
-        p = p >> 1;
+        t_step >>= 1;
     }
 }
 /**
@@ -111,7 +112,6 @@ export function show_spectrum(canvas, buf)
     const rev = new Uint8Array([0,16,8,24,4,20,12,28,2,18,10,26,6,22,14,30,1,17,9,25,5,21,13,29,3,19,11,27,7,23,15,31]);
     const window = create_window(WINDOW_WIDTH);
     const src = new Float32Array(WINDOW_WIDTH);
-    const tmp = new Float32Array(WINDOW_WIDTH * 2);
     const b1 = new Float32Array(WINDOW_WIDTH * 2);
 
     const sint = sin_table(WINDOW_WIDTH);
@@ -131,13 +131,13 @@ export function show_spectrum(canvas, buf)
             const j = (rev[i & 0x1f] << 5) | rev[i >> 5];
             b1[i << 1] = src[j];
         }
-        fft(b1, tmp, sint);
+        fft(b1, sint);
         const x2 = x >> 5;
         for (let y = 0; y < h; y++) {
             const v0 = b1[y * 2];
             const v1 = b1[y * 2 + 1];
             const y0 = h - y - 1;
-            const v = (Math.log(v0 * v0 + v1 * v1 + 0.000001) * 30 + 60) | 0;
+            const v = (Math.log(v0 * v0 + v1 * v1 + 0.000001) * 28 + 95) | 0;
             const i = (x2 + y0 * w) << 2;
             const v2 = v * 2;
             img.data[i + 0] = v2;
